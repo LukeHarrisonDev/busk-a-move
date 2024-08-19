@@ -1,12 +1,12 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, ScrollView } from 'react-native';
 
-function HomeScreen(props) {
+function HomeScreen() {
     return (
-        <View>
+        <ScrollView>
             <Text style={styles.text}>
                 HomeScreen
             </Text>
-        </View>
+        </ScrollView>
     );
 }
 

@@ -1,12 +1,12 @@
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 
-function SingleBusk(props) {
+function SingleBusk() {
     return (
-        <View>
+        <ScrollView>
             <Text>
                 SingleBusk
             </Text>
-        </View>
+        </ScrollView>
     );
 }
 

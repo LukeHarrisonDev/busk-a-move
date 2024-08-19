@@ -1,12 +1,12 @@
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 
-function SignupScreen(props) {
+function SignupScreen() {
     return (
-        <View>
+        <ScrollView>
             <Text>
                 SignupScreen
             </Text>
-        </View>
+        </ScrollView>
     );
 }
 

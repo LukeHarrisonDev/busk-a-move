@@ -1,12 +1,12 @@
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 
-function LoginAccessScreen(props) {
+function LoginAccessScreen() {
     return (
-        <View>
+        <ScrollView>
             <Text>
                 LoginAccessScreen
             </Text>
-        </View>
+        </ScrollView>
     );
 }
 

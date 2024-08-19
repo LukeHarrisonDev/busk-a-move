@@ -1,12 +1,12 @@
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 
-function ChatScreen(props) {
+function ChatScreen() {
     return (
-        <View>
+        <ScrollView>
             <Text>
                 ChatScreen
             </Text>
-        </View>
+        </ScrollView>
     );
 }
 
