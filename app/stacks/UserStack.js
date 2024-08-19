@@ -1,12 +1,19 @@
 import { Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import BusksScreen from '../screens/BusksScreen';
+import CreateABuskScreen from '../screens/CreateABuskScreen';
+import SingleBusk from '../screens/SingleBusk';
 
-function UserStack(props) {
+const Stack = createNativeStackNavigator()
+
+function UserStack({navigation}) {
     return (
-        <View>
-            <Text>
-                UserStack
-            </Text>
-        </View>
+        <Stack.Navigator>
+            <Stack.Screen name="BusksScreen" component={BusksScreen}/>
+            <Stack.Screen name="CreateABusk" component={CreateABuskScreen}/>
+            <Stack.Screen name="SingleBusk" component={SingleBusk}/>
+        </Stack.Navigator>
     );
 }
 
