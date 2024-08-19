@@ -11,3 +11,7 @@ function BusksStack(props) {
 }
 
 export default BusksStack;
+
+{/* <Stack.Screen name="BusksScreen" component={BusksScreen}/>
+<Stack.Screen name="CreateABusk" component={CreateABuskScreen}/>
+<Stack.Screen name="SingleBusk" component={SingleBusk}/> */}
