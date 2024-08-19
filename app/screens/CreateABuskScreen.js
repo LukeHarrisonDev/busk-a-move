@@ -1,12 +1,12 @@
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 
-function CreateABuskScreen(props) {
+function CreateABuskScreen() {
     return (
-        <View>
+        <ScrollView>
             <Text>
                 CreateABuskScreen
             </Text>
-        </View>
+        </ScrollView>
     );
 }
 

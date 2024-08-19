@@ -1,13 +1,13 @@
 import { Text, View, ScrollView } from 'react-native';
 
-function SignupScreen() {
+function BuskerProfileScreen() {
     return (
         <ScrollView>
             <Text>
-                SignupScreen
+                BuskerProfileScreen
             </Text>
         </ScrollView>
     );
 }
 
-export default SignupScreen;
+export default BuskerProfileScreen;

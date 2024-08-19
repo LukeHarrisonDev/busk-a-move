@@ -1,12 +1,12 @@
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 
-function AllBuskersScreen(props) {
+function AllBuskersScreen() {
     return (
-        <View>
+        <ScrollView>
             <Text>
                 AllBuskersScreen
             </Text>
-        </View>
+        </ScrollView>
     );
 }
 

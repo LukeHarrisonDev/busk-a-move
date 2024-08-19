@@ -1,12 +1,12 @@
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 
-function SettingsScreen(props) {
+function SettingsScreen() {
     return (
-        <View>
+        <ScrollView>
             <Text>
                 SettingsScreen
             </Text>
-        </View>
+        </ScrollView>
     );
 }
 

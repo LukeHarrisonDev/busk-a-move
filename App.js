@@ -1,8 +1,15 @@
 import './gesture-handler';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+// import { faGuitar } from '@fortawesome/free-solid-svg-icons/faMugSaucer'
+
+import UserStack from './app/stacks/UserStack';
+import HomeScreen from './app/screens/HomeScreen';
+import BusksStack from './app/stacks/BusksStack';
+import BuskersStack from './app/stacks/BuskersStack';
+import ChatsStack from './app/stacks/ChatsStack';
 
 const Tab = createBottomTabNavigator()
 
@@ -11,7 +18,13 @@ export default function App() {
         <NavigationContainer>
             <Tab.Navigator>
                 <Tab.Screen name="Home" component={HomeScreen} />
-                <Tab.Screen name="Settings" component={SettingsScreen} />
+                {/* //dynamic? */}
+                <Tab.Screen name="User" component={UserStack} 
+                // options={{tabBarIcon: () => <FontAwesomeIcon icon={faGuitar} />}}
+                />
+                <Tab.Screen name="Busks" component={BusksStack} />
+                <Tab.Screen name="Buskers" component={BuskersStack} />
+                <Tab.Screen name="Chats" component={ChatsStack} />
             </Tab.Navigator>
       </NavigationContainer>
     );

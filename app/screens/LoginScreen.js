@@ -1,12 +1,15 @@
-import { Text, View } from 'react-native';
+import { Text, View, Button, ScrollView } from 'react-native';
 
-function LoginScreen(props) {
+function LoginScreen({navigation}) {
     return (
-        <View>
+        <ScrollView>
             <Text>
                 LoginScreen
             </Text>
-        </View>
+            <Button title="Go" onPress={() => {
+                navigation.navigate("MyProfile")
+            }}/>
+        </ScrollView>
     );
 }
 

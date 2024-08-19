@@ -1,12 +1,12 @@
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 
 function MyProfileScreen(props) {
     return (
-        <View>
+        <ScrollView>
             <Text>
                 MyProfileScreen
             </Text>
-        </View>
+        </ScrollView>
     );
 }
 

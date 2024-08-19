@@ -1,13 +1,27 @@
-import { Text, View } from 'react-native';
+import { Text, View, StyleSheet, ScrollView } from 'react-native';
 
-function HomeScreen(props) {
+function HomeScreen() {
     return (
-        <View>
-            <Text>
+        <ScrollView>
+            <Text style={styles.text}>
                 HomeScreen
             </Text>
-        </View>
+        </ScrollView>
     );
 }
 
 export default HomeScreen;
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    text: {
+        fontSize: 40,
+        alignSelf: "center",
+        // justifySelf: "center"
+    }
+});
