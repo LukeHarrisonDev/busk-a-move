@@ -2,8 +2,8 @@ import './gesture-handler';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-// import { faGuitar } from '@fortawesome/free-solid-svg-icons/faMugSaucer'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faGuitar, faUser, faHouse, faComment, faUsers } from '@fortawesome/free-solid-svg-icons'
 
 import UserStack from './app/stacks/UserStack';
 import HomeScreen from './app/screens/HomeScreen';
@@ -17,14 +17,22 @@ export default function App() {
     return (
         <NavigationContainer>
             <Tab.Navigator>
-                <Tab.Screen name="Home" component={HomeScreen} />
+                <Tab.Screen name="Home" component={HomeScreen} 
+                    options={{tabBarIcon: () => <FontAwesomeIcon icon={faHouse} size={23} />}}
+                />
                 {/* //dynamic? */}
                 <Tab.Screen name="User" component={UserStack} 
-                // options={{tabBarIcon: () => <FontAwesomeIcon icon={faGuitar} />}}
+                    options={{tabBarIcon: () => <FontAwesomeIcon icon={faUser} size={23} />}}
                 />
-                <Tab.Screen name="Busks" component={BusksStack} />
-                <Tab.Screen name="Buskers" component={BuskersStack} />
-                <Tab.Screen name="Chats" component={ChatsStack} />
+                <Tab.Screen name="Busks" component={BusksStack} 
+                    options={{tabBarIcon: () => <FontAwesomeIcon icon={faGuitar} size={23} />}}
+                />
+                <Tab.Screen name="Buskers" component={BuskersStack} 
+                    options={{tabBarIcon: () => <FontAwesomeIcon icon={faUsers} size={23} />}}
+                />
+                <Tab.Screen name="Chats" component={ChatsStack} 
+                    options={{tabBarIcon: () => <FontAwesomeIcon icon={faComment} size={23} />}}
+                />
             </Tab.Navigator>
       </NavigationContainer>
     );
