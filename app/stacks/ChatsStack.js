@@ -1,12 +1,17 @@
 import { Text, View } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import ChatsListScreen from '../screens/ChatsListScreen';
+import ChatScreen from '../screens/ChatScreen';
 
-function ChatsStack(props) {
+const Stack = createNativeStackNavigator()
+
+function ChatsStack({navigation}) {
     return (
-        <View>
-            <Text>
-                ChatsStack
-            </Text>
-        </View>
+        <Stack.Navigator>
+            <Stack.Screen name="ChatList" component={ChatsListScreen} />
+            <Stack.Screen name="ChatScreen" component={ChatScreen} />
+        </Stack.Navigator>
+
     );
 }
 
