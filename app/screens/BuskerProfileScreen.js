@@ -1,13 +1,13 @@
 import { Text, View } from 'react-native';
 
-function BuskerProfile(props) {
+function BuskerProfileScreen(props) {
     return (
         <View>
             <Text>
-                BuskerProfile
+                BuskerProfileScreen
             </Text>
         </View>
     );
 }
 
-export default BuskerProfile;
+export default BuskerProfileScreen;
