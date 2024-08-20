@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faGuitar, faUser, faHouse, faComment, faUsers } from '@fortawesome/free-solid-svg-icons'
 
+import colours from './app/config/colours';
 import UserStack from './app/stacks/UserStack';
 import HomeScreen from './app/screens/HomeScreen';
 import BusksStack from './app/stacks/BusksStack';
@@ -16,22 +17,28 @@ const Tab = createBottomTabNavigator()
 export default function App() {
     return (
         <NavigationContainer>
-            <Tab.Navigator>
+            <Tab.Navigator
+            screenOptions={{
+                tabBarActiveTintColor: colours.medium,
+                tabBarInactiveTintColor: colours.dark,
+            }}>
                 <Tab.Screen name="Home" component={HomeScreen} 
-                    options={{tabBarIcon: () => <FontAwesomeIcon icon={faHouse} size={23} />}}
+                    options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faHouse} size={23} color={color} />, headerShown: false}}
                 />
                 {/* //dynamic? */}
                 <Tab.Screen name="User" component={UserStack} 
-                    options={{tabBarIcon: () => <FontAwesomeIcon icon={faUser} size={23} />}}
+                    options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faUser} size={23} color={color} />}}
                 />
                 <Tab.Screen name="Busks" component={BusksStack} 
-                    options={{tabBarIcon: () => <FontAwesomeIcon icon={faGuitar} size={23} />}}
+                    options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faGuitar} size={23} color={color} />}}
                 />
                 <Tab.Screen name="Buskers" component={BuskersStack} 
-                    options={{tabBarIcon: () => <FontAwesomeIcon icon={faUsers} size={23} />}}
+                    options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faUsers} size={23} color={color}/>}}
                 />
                 <Tab.Screen name="Chats" component={ChatsStack} 
-                    options={{tabBarIcon: () => <FontAwesomeIcon icon={faComment} size={23} />}}
+                    options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faComment} size={23} color={color} />,
+                    tabBarBadge: 1
+                }}
                 />
             </Tab.Navigator>
       </NavigationContainer>
