@@ -43,7 +43,7 @@ function BusksScreen({ navigation }) {
 				<Button
 					title="Create Busk"
 					onPress={() => {
-						navigation.navigate("SingleBusk");
+						navigation.navigate("CreateABusk");
 					}}
 				/>
 				<FlatList

@@ -10,4 +10,8 @@ export const fetchAllBusks = () => {
 	});
 };
 
-export const fetchAllUsers = () => {};
+export const fetchAllUsers = () => {
+	return busksAPI.get("/users").then((response) => {
+		return response.data;
+	});
+};
