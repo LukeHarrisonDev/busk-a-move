@@ -21,3 +21,9 @@ export const fetchSingleBusk = (id) => {
 		return response.data;
 	});
 };
+
+export const fetchSingleBusker = (id) => {
+	return busksAPI.get(`/users/${id}`).then((response) => {
+		return response.data;
+	});
+};
