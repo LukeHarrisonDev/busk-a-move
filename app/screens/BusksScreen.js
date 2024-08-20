@@ -51,8 +51,15 @@ function BusksScreen({ navigation }) {
 					renderItem={({ item }) => {
 						return (
 							<View style={styles.card}>
-								<Text style={styles.titleText}>{item.title}</Text>
-								<Text style={styles.titleText}>{item.body}</Text>
+								<Text
+									onPress={() => {
+										navigation.navigate("SingleBusk", { id: item.id });
+									}}
+									style={styles.titleText}
+								>
+									{item.title}
+								</Text>
+								<Text style={styles.bodyText}>{item.body}</Text>
 							</View>
 						);
 					}}

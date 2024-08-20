@@ -15,3 +15,9 @@ export const fetchAllUsers = () => {
 		return response.data;
 	});
 };
+
+export const fetchSingleBusk = (id) => {
+	return busksAPI.get(`/posts/${id}`).then((response) => {
+		return response.data;
+	});
+};
