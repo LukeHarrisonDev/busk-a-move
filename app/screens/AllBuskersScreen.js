@@ -9,7 +9,7 @@ import {
 	StyleSheet,
 } from "react-native-web";
 
-function AllBuskersScreen() {
+function AllBuskersScreen({ navigation }) {
 	const [buskersList, setBuskersList] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
@@ -44,7 +44,14 @@ function AllBuskersScreen() {
 					renderItem={({ item }) => {
 						return (
 							<View style={styles.card}>
-								<Text style={styles.titleText}>{item.username}</Text>
+								<Text
+									onPress={() => {
+										navigation.navigate("BuskerProfile", { id: item.id });
+									}}
+									style={styles.titleText}
+								>
+									{item.username}
+								</Text>
 								<Text style={styles.titleText}>{item.address.city}</Text>
 								<Text style={styles.titleText}>{item.address.geo.lat}</Text>
 								<Text style={styles.titleText}>{item.address.geo.lng}</Text>
