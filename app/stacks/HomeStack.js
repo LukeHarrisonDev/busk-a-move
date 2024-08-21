@@ -7,7 +7,7 @@ const Stack = createNativeStackNavigator()
 function ChatsStack() {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="HomeScreen" component={HomeScreen} />
+            <Stack.Screen name="HomeScreen" component={HomeScreen} options={{headerShown: false}} />
             <Stack.Screen name="SignUp" component={SignupScreen} />
         </Stack.Navigator>
     );

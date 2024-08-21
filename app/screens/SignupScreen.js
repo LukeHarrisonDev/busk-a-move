@@ -22,20 +22,9 @@ export default function SignUpForm() {
     setup: '',
   });
 
-  const handleInputChange = (key, value) => {
-    setForm({ ...form, [key]: value });
+  const handleInputChange = (e) => {
+    setForm(e.target.value);
     console.log(form)
-  };
-
-  const handleInstrumentChange = (instrument, value) => {
-    setForm({
-      ...form,
-      instruments: {
-        ...form.instruments,
-        [instrument]: value,
-      },
-    });
-      console.log(form)
   };
 
   const handleSubmit = () => {
@@ -80,9 +69,9 @@ export default function SignUpForm() {
       />
 
       
-      <Text style={styles.label}>Pic Upload:</Text>
+      <Text style={styles.label}>Upload your profile picture here. It will be shown on your public profile!</Text>
       <TouchableOpacity style={styles.uploadButton}>
-        <Text style={styles.uploadText}>Upload files</Text>
+        <Text style={styles.uploadText}>Upload picture</Text>
       </TouchableOpacity>
 
      
@@ -100,62 +89,34 @@ export default function SignUpForm() {
         <View style={styles.checkboxRow}>
           <Switch
             value={form.instruments.acousticGuitar}
-            onValueChange={(value) => handleInstrumentChange('acousticGuitar', value)}
           />
           <Text style={styles.checkboxLabel}>Acoustic Guitar</Text>
           <Switch
             value={form.instruments.electricGuitar}
-            onValueChange={(value) => handleInstrumentChange('electricGuitar', value)}
           />
           <Text style={styles.checkboxLabel}>Electric Guitar</Text>
         </View>
         <View style={styles.checkboxRow}>
           <Switch
             value={form.instruments.singing}
-            onValueChange={(value) => handleInstrumentChange('singing', value)}
           />
           <Text style={styles.checkboxLabel}>Singing</Text>
           <Switch
             value={form.instruments.bass}
-            onValueChange={(value) => handleInstrumentChange('bass', value)}
           />
           <Text style={styles.checkboxLabel}>Bass</Text>
         </View>
         <View style={styles.checkboxRow}>
           <Switch
             value={form.instruments.violin}
-            onValueChange={(value) => handleInstrumentChange('violin', value)}
           />
           <Text style={styles.checkboxLabel}>Violin</Text>
           <Switch
             value={form.instruments.drums}
-            onValueChange={(value) => handleInstrumentChange('drums', value)}
           />
           <Text style={styles.checkboxLabel}>Drums</Text>
         </View>
       </View>
-
-     
-      <Text style={styles.label}>Share with other buskers a bit about yourself:</Text>
-      <TextInput
-        style={styles.textArea}
-        placeholder="Describe yourself"
-        value={form.about}
-        onChangeText={(text) => handleInputChange('about', text)}
-        multiline
-        numberOfLines={4}
-      />
-
-   
-      <Text style={styles.label}>What is your main typical setup:</Text>
-      <TextInput
-        style={styles.textArea}
-        placeholder="Describe your setup"
-        value={form.setup}
-        onChangeText={(text) => handleInputChange('setup', text)}
-        multiline
-        numberOfLines={4}
-      />
     
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitText}>Submit</Text>
@@ -201,14 +162,6 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     marginRight: 20,
-  },
-  textArea: {
-    borderWidth: 1,
-    borderColor: colours.dark,
-    color: colours.white,
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 15,
   },
   submitButton: {
     backgroundColor: colours.medium,
