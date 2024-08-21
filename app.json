@@ -12,7 +12,8 @@
       "backgroundColor": "#263d42"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.lukeharrisondev.buskamove"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,6 +24,11 @@
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "04721ea2-bdb0-4322-b167-0387cf9c9c27"
+      }
     }
   }
 }
