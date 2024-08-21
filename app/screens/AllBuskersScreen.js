@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
 import { fetchAllUsers } from "../api";
-import { SafeAreaView } from "react-native-safe-area-context";
 import {
+	Text,
+	View,
+	SafeAreaView,
 	ActivityIndicator,
 	FlatList,
 	StatusBar,
 	StyleSheet,
-} from "react-native-web";
+} from "react-native";
 
 function AllBuskersScreen({ navigation }) {
 	const [buskersList, setBuskersList] = useState([]);
