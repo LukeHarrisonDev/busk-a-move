@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
 import { fetchSingleBusk } from "../api";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ActivityIndicator, StatusBar, StyleSheet } from "react-native-web";
+import {
+	Text,
+	View,
+	SafeAreaView,
+	ActivityIndicator,
+	StatusBar,
+	StyleSheet,
+} from "react-native";
 
 function SingleBusk({ route }) {
 	const { id } = route.params;
