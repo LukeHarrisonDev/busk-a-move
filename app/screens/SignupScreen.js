@@ -22,8 +22,7 @@ export default function SignUpForm() {
     setup: '',
   });
 
-  const handleInputChange = (e) => {
-    setForm(e.target.value);
+  const handleInputChange = () => {
     console.log(form)
   };
 
@@ -67,9 +66,8 @@ export default function SignUpForm() {
         onChangeText={(text) => handleInputChange('password', text)}
         secureTextEntry
       />
-
       
-      <Text style={styles.label}>Upload your profile picture here. It will be shown on your public profile!</Text>
+      <Text style={styles.label}>Upload your profile picture here. It will be shown on your public profile.</Text>
       <TouchableOpacity style={styles.uploadButton}>
         <Text style={styles.uploadText}>Upload picture</Text>
       </TouchableOpacity>
@@ -136,14 +134,14 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: colours.dark,
+    borderColor: colours.gunmetal,
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
     backgroundColor: colours.white,
   },
   uploadButton: {
-    backgroundColor: colours.medium,
+    backgroundColor: colours.rust,
     padding: 10,
     borderRadius: 5,
     marginBottom: 15,
@@ -164,7 +162,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   submitButton: {
-    backgroundColor: colours.medium,
+    backgroundColor: colours.rust,
     padding: 15,
     alignItems: 'center',
     borderRadius: 5,
