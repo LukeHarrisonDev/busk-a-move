@@ -1,8 +1,8 @@
-import { Text, View, StyleSheet, ScrollView, Image } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Image, Button } from 'react-native';
 
 import colours from '../config/colours';
 
-function HomeScreen() {
+function HomeScreen({navigation}) {
     return (
             <ScrollView contentContainerStyle={styles.container}>
                 <Text style={styles.header}>
@@ -11,7 +11,10 @@ function HomeScreen() {
                 <View style={styles.pictures}>
                     <Image style={styles.image} source={{uri: "https://images.unsplash.com/photo-1532959801411-cf28447984f9?q=80&w=1890&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}}/>
                     <Image style={styles.image} source={{uri: "https://images.unsplash.com/photo-1483069125343-4ef290c07840?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}}/>
-                </View>
+            </View>           
+            <Button title="Sign up" onPress={() => {
+                navigation.navigate("SignUp")
+            }}/>
             </ScrollView>
     );
 }

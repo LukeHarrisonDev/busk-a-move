@@ -7,7 +7,7 @@ import { faGuitar, faUser, faHouse, faComment, faUsers } from '@fortawesome/free
 
 import colours from './app/config/colours';
 import UserStack from './app/stacks/UserStack';
-import HomeScreen from './app/screens/HomeScreen';
+import HomeStack from './app/stacks/HomeStack';
 import BusksStack from './app/stacks/BusksStack';
 import BuskersStack from './app/stacks/BuskersStack';
 import ChatsStack from './app/stacks/ChatsStack';
@@ -22,7 +22,7 @@ export default function App() {
                 tabBarActiveTintColor: colours.medium,
                 tabBarInactiveTintColor: colours.dark,
             }}>
-                <Tab.Screen name="Home" component={HomeScreen} 
+                <Tab.Screen name="Home" component={HomeStack} 
                     options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faHouse} size={23} color={color} />, headerShown: false}}
                 />
                 {/* //dynamic? */}
