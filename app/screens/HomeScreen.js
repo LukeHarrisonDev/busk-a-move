@@ -1,10 +1,11 @@
-import { Text, View, StyleSheet, ScrollView, Image, Button } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Image, Button, SafeAreaView } from 'react-native';
 
 import colours from '../config/colours';
 
 function HomeScreen({navigation}) {
     return (
-            <ScrollView contentContainerStyle={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <ScrollView >
                 <Text style={styles.header}>
                     Busk-A-Move
                 </Text>
@@ -17,6 +18,7 @@ function HomeScreen({navigation}) {
                 navigation.navigate("SignUp")
             }}/>
             </ScrollView>
+        </SafeAreaView>
     );
 }
 
@@ -28,16 +30,14 @@ const styles = StyleSheet.create({
         backgroundColor: colours.lightOrange,
     },
     header: {
-        fontSize: 50,
+        fontSize: "55%",
         fontFamily: "ChelseaMarketRegular",
         alignSelf: "center",
-        marginTop: 50,
         color: colours.rust,
     },
     text: {
         fontSize: 40,
         alignSelf: "center",
-        // justifySelf: "center"
     },
     pictures: {
         flexDirection: "row",
