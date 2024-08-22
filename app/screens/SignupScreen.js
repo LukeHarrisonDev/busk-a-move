@@ -2,59 +2,66 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { Switch } from 'react-native';
 import colours from '../config/colours';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SignUpForm() {
-  const [form, setForm] = useState({
-    name: '',
-    username: '',
-    email: '',
-    password: '',
-    location: '',
-    instruments: {
-      acousticGuitar: false,
-      electricGuitar: false,
-      singing: false,
-      bass: false,
-      violin: false,
-      drums: false,
-    },
-    about: '',
-    setup: '',
-  });
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [about, setAbout] = useState('');
+  const [errorMsg, setErrorMsg] = useState({});
 
-  const handleInputChange = () => {
-    console.log(form)
-  };
+  const validateForm = () => {
+    let errors = {};
+
+    if (!name) errors.name = "*Name is required";
+
+    setErrorMsg(errors)
+    return Object.keys(errors).length === 0;
+  }
 
   const handleSubmit = () => {
-    console.log(form);
+    if (validateForm()) {
+      console.log("Submited", name)
+      setName("");
+    }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <SafeAreaView style={styles.container}>
+    <ScrollView>
       <Text style={styles.label}>Name:</Text>
       <TextInput style={styles.input} 
         placeholder="Enter your name"
-        value={form.name}
-        onChangeText={(text) => handleInputChange('name', text)}
-      />
-
+        value={name}
+          onChangeText={setName}
+          autoCorrect={false}
+          autoCapitalize='words'
+        />
+        {
+          errorMsg.name ? <Text style={styles.errorText}>{errorMsg.name}</Text> : null
+        }        
       <Text style={styles.label}>Username:</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter your username"
-        value={form.username}
-        onChangeText={(text) => handleInputChange('username', text)}
+        value={username}
+        onChangeText={setUsername}
+        autoCorrect={false}
+        autoCapitalize='none'
       />
 
-      
+     
       <Text style={styles.label}>Email:</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter your email"
-        value={form.email}
-        onChangeText={(text) => handleInputChange('email', text)}
+        placeholder="email@example.com"
+        value={email}
+        onChangeText={setEmail}
         keyboardType="email-address"
+        autoCorrect={false}
+        autoCapitalize='none'
       />
 
      
@@ -62,11 +69,14 @@ export default function SignUpForm() {
       <TextInput
         style={styles.input}
         placeholder="Create password"
-        value={form.password}
-        onChangeText={(text) => handleInputChange('password', text)}
+        value={password}
+        onChangeText={setPassword}
+        autoCorrect={false}
+        autoCapitalize='none'
         secureTextEntry
       />
       
+         {/*
       <Text style={styles.label}>Upload your profile picture here. It will be shown on your public profile.</Text>
       <TouchableOpacity style={styles.uploadButton}>
         <Text style={styles.uploadText}>Upload picture</Text>
@@ -78,11 +88,11 @@ export default function SignUpForm() {
         style={styles.input}
         placeholder="Enter your location"
         value={form.location}
-        onChangeText={(text) => handleInputChange('location', text)}
-      />
+        onChangeText={setForm.location}
+      /> */}
 
       
-      <Text style={styles.label}>What instruments do you use when busking?</Text>
+      {/* <Text style={styles.label}>What instruments do you use when busking?</Text>
       <View style={styles.checkboxContainer}>
         <View style={styles.checkboxRow}>
           <Switch
@@ -114,41 +124,66 @@ export default function SignUpForm() {
           />
           <Text style={styles.checkboxLabel}>Drums</Text>
         </View>
-      </View>
+      </View> */}
+        
+      <Text style={styles.label}>Tell us a bit about yourself. Is it your first time busking? Which genres do you usually perform? This will help other buskers get to know you better:</Text>
+      <TextInput
+        style={styles.textArea}
+        placeholder="Tell us about yourself"
+        value={about}
+        onChangeText={setAbout}
+          autoCapitalize='sentences'
+          multiline
+        />
+
+      <Text style={styles.label}>What is your main typical setup:</Text>
+      <TextInput
+        style={styles.textArea}
+        placeholder="Tell us about your setup"
+        value={about}
+        onChangeText={setAbout}
+          autoCapitalize='sentences'
+          multiline
+      />
     
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitText}>Submit</Text>
       </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+      </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    minHeight: "100%",
     padding: 20,
-    backgroundColor: colours.blueExtraLight,
+    backgroundColor: colours.primaryBackground,
+  },
+  errorText: {
+    color: colours.errorText,
+    marginBottom: 15,
   },
   label: {
-    // fontSize: 16,
-    marginBottom: 5,
+    marginVertical: 10,
   },
   input: {
     borderWidth: 1,
-    borderColor: colours.gunmetal,
+    borderColor: colours.darkHighlight,
     padding: 10,
-    marginBottom: 15,
+    marginBottom: 10,
     borderRadius: 5,
-    backgroundColor: colours.white,
+    backgroundColor: colours.lightText,
   },
   uploadButton: {
-    backgroundColor: colours.rust,
+    backgroundColor: colours.primaryHighlight,
     padding: 10,
     borderRadius: 5,
     marginBottom: 15,
     alignItems: 'center',
   },
   uploadText: {
-    color: colours.white,
+    color: colours.lightText,
   },
   checkboxContainer: {
     marginBottom: 15,
@@ -161,13 +196,23 @@ const styles = StyleSheet.create({
   checkboxLabel: {
     marginRight: 20,
   },
+  textArea: {
+    minHeight: 100,
+    borderWidth: 1,
+    borderColor: colours.darkHighlight,
+    padding: 10,
+    marginBottom: 15,
+    borderRadius: 5,
+    backgroundColor: colours.lightText,
+    textAlignVertical: "top",
+  },
   submitButton: {
-    backgroundColor: colours.rust,
+    backgroundColor: colours.primaryHighlight,
     padding: 15,
     alignItems: 'center',
     borderRadius: 5,
   },
   submitText: {
-    color: '#fff',
+    color: colours.lightText,
   },
 });
