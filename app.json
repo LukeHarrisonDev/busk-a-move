@@ -12,7 +12,8 @@
 			"backgroundColor": "#263d42"
 		},
 		"ios": {
-			"supportsTablet": true
+			"supportsTablet": true,
+			"bundleIdentifier": "com.lukeharrisondev.buskamove"
 		},
 		"android": {
 			"config": {
