@@ -9,11 +9,23 @@ import {
 	StatusBar,
 	StyleSheet,
 } from "react-native";
+import { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView from "react-native-maps";
+import { Marker } from "react-native-maps";
 
 function AllBuskersScreen({ navigation }) {
 	const [buskersList, setBuskersList] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
+	const [fakeLocations, setFakeLocations] = useState([
+		{
+			latitude: 53.801468,
+			longitude: Number(-1.549067),
+			title: "Calverley Street",
+		},
+		{ latitude: 53.799168, longitude: Number(-1.551856), title: "Park Square" },
+		{ latitude: 53.798826, longitude: Number(-1.547062), title: "Park Row" },
+	]);
 
 	const handleRefresh = () => {
 		setRefreshing(true);
@@ -40,6 +52,30 @@ function AllBuskersScreen({ navigation }) {
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.listContainer}>
+				<MapView
+					style={styles.map}
+					provider={PROVIDER_GOOGLE}
+					initialRegion={{
+						latitude: 53.801468,
+						longitude: Number(-1.549067),
+						latitudeDelta: 0.0102,
+						longitudeDelta: 0.0101,
+					}}
+				>
+					{fakeLocations.map((marker, index) => {
+						return (
+							<Marker
+								key={index}
+								coordinate={{
+									latitude: marker.latitude,
+									longitude: marker.longitude,
+								}}
+								title={marker.title}
+								description="Busk location"
+							/>
+						);
+					})}
+				</MapView>
 				<FlatList
 					data={buskersList}
 					renderItem={({ item }) => {
@@ -121,6 +157,10 @@ const styles = StyleSheet.create({
 		paddingTop: StatusBar.currentHeight,
 		justifyContent: "center",
 		alignItems: "center",
+	},
+	map: {
+		width: "50%",
+		height: "50%",
 	},
 });
 
