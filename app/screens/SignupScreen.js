@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     backgroundColor: colours.blueExtraLight,
   },
   label: {
-    fontSize: 16,
+    // fontSize: 16,
     marginBottom: 5,
   },
   input: {
@@ -169,6 +169,5 @@ const styles = StyleSheet.create({
   },
   submitText: {
     color: '#fff',
-    fontSize: 18,
   },
 });

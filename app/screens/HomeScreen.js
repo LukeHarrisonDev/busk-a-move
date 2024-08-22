@@ -1,14 +1,18 @@
 import { Text, View, StyleSheet, ScrollView, Image, Button, SafeAreaView } from 'react-native';
 
 import colours from '../config/colours';
+import { width } from '@fortawesome/free-solid-svg-icons/fa0';
 
 function HomeScreen({navigation}) {
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView >
-                <Text style={styles.header}>
-                    Busk-A-Move
-                </Text>
+                <View style={styles.headerContainer}>
+                    <Image
+                      style={styles.image}
+                      source={require("../assets/busk-a-move-header.png")}
+                    />
+                </View>
                 <View style={styles.pictures}>
                     <Image style={styles.image} source={{uri: "https://images.unsplash.com/photo-1532959801411-cf28447984f9?q=80&w=1890&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}}/>
                     <Image style={styles.image} source={{uri: "https://images.unsplash.com/photo-1483069125343-4ef290c07840?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}}/>
@@ -30,13 +34,19 @@ const styles = StyleSheet.create({
         backgroundColor: colours.lightOrange,
     },
     header: {
-        fontSize: "55%",
+        // fontSize: "55%",
         fontFamily: "ChelseaMarketRegular",
         alignSelf: "center",
         color: colours.rust,
     },
+    headerContainer: {
+        width: "100%",
+        display: "flex",
+        backgroundColor: "red",
+
+    },
     text: {
-        fontSize: 40,
+        // fontSize: 40,
         alignSelf: "center",
     },
     pictures: {
@@ -53,6 +63,6 @@ const styles = StyleSheet.create({
         textAlign: "justify",
         color: colours.rust,
         marginHorizontal: 50,
-        fontSize: 20
+        // fontSize: 20
     }
 });
