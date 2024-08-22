@@ -19,8 +19,8 @@ export default function App() {
         <NavigationContainer>
             <Tab.Navigator
             screenOptions={{
-                tabBarActiveTintColor: colours.rust,
-                tabBarInactiveTintColor: colours.gunmetal,
+                tabBarActiveTintColor: colours.primaryHighlight,
+                tabBarInactiveTintColor: colours.darkHighlight,
             }}>
                 <Tab.Screen name="Home" component={HomeStack} 
                     options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faHouse} size={23} color={color} />, headerShown: false}}
