@@ -8,6 +8,8 @@ import {
 	StatusBar,
 	StyleSheet,
 } from "react-native";
+import { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView from "react-native-maps";
 
 function SingleBusk({ route }) {
 	const { id } = route.params;
@@ -47,6 +49,7 @@ function SingleBusk({ route }) {
 				<View style={styles.card}>
 					<Text style={styles.titleText}>{singleBusk.title}</Text>
 					<Text style={styles.bodyText}>{singleBusk.body}</Text>
+					<MapView style={styles.map} provider={PROVIDER_GOOGLE} />
 				</View>
 			</SafeAreaView>
 		</>
@@ -78,6 +81,10 @@ const styles = StyleSheet.create({
 	bodyText: {
 		fontSize: 24,
 		color: "#666666",
+	},
+	map: {
+		width: "100%",
+		height: "100%",
 	},
 });
 export default SingleBusk;
