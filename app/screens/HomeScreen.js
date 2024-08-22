@@ -27,13 +27,13 @@ export default HomeScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colours.lightOrange,
+        backgroundColor: colours.secondaryBackground,
     },
     header: {
         fontSize: "55%",
         fontFamily: "ChelseaMarketRegular",
         alignSelf: "center",
-        color: colours.rust,
+        color: colours.primaryHighlight,
     },
     text: {
         fontSize: 40,
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     },
     blurb: {
         textAlign: "justify",
-        color: colours.rust,
+        color: colours.primaryHighlight,
         marginHorizontal: 50,
         fontSize: 20
     }
