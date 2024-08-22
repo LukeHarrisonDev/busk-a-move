@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { Switch } from 'react-native';
 import colours from '../config/colours';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SignUpForm() {
   const [form, setForm] = useState({
@@ -22,21 +23,18 @@ export default function SignUpForm() {
     setup: '',
   });
 
-  const handleInputChange = () => {
-    console.log(form)
-  };
-
   const handleSubmit = () => {
     console.log(form);
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <SafeAreaView style={styles.container}>
+    <ScrollView>
       <Text style={styles.label}>Name:</Text>
       <TextInput style={styles.input} 
         placeholder="Enter your name"
         value={form.name}
-        onChangeText={(text) => handleInputChange('name', text)}
+        onChangeText={setForm.name}
       />
 
       <Text style={styles.label}>Username:</Text>
@@ -119,14 +117,15 @@ export default function SignUpForm() {
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitText}>Submit</Text>
       </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+      </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: colours.blueExtraLight,
+    backgroundColor: colours.primaryBackground,
   },
   label: {
     // fontSize: 16,
@@ -134,21 +133,21 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: colours.gunmetal,
+    borderColor: colours.darkHighlight,
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
-    backgroundColor: colours.white,
+    backgroundColor: colours.lightText,
   },
   uploadButton: {
-    backgroundColor: colours.rust,
+    backgroundColor: colours.primaryHighlight,
     padding: 10,
     borderRadius: 5,
     marginBottom: 15,
     alignItems: 'center',
   },
   uploadText: {
-    color: colours.white,
+    color: colours.lightText,
   },
   checkboxContainer: {
     marginBottom: 15,
@@ -162,12 +161,12 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   submitButton: {
-    backgroundColor: colours.rust,
+    backgroundColor: colours.primaryHighlight,
     padding: 15,
     alignItems: 'center',
     borderRadius: 5,
   },
   submitText: {
-    color: '#fff',
+    color: colours.lightText,
   },
 });
