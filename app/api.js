@@ -1,11 +1,11 @@
 import axios from "axios";
 
 const busksAPI = axios.create({
-	baseURL: "https://jsonplaceholder.typicode.com/",
+	baseURL: "https://be-busk-a-move.onrender.com/api/",
 });
 
 export const fetchAllBusks = () => {
-	return busksAPI.get("/posts").then((response) => {
+	return busksAPI.get("/busks").then((response) => {
 		return response.data;
 	});
 };
@@ -17,8 +17,8 @@ export const fetchAllUsers = () => {
 };
 
 export const fetchSingleBusk = (id) => {
-	return busksAPI.get(`/posts/${id}`).then((response) => {
-		return response.data;
+	return busksAPI.get(`/busks/${id}`).then((response) => {
+		return response.data.busk;
 	});
 };
 

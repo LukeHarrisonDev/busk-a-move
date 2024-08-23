@@ -48,11 +48,7 @@ function BuskerProfileScreen({ route }) {
 		>
 			<View style={styles.card}>
 				<Text style={styles.titleText}>{singleBusker.username}</Text>
-				<Text style={styles.bodyText}>{singleBusker.address.city}</Text>
-				<Text style={styles.bodyText}>
-					{Number(singleBusker.address.geo.lat)}
-				</Text>
-				<Text style={styles.bodyText}>{singleBusker.address.geo.lng}</Text>
+				<Text style={styles.bodyText}>{singleBusker.user_location}</Text>
 				<MapView
 					style={styles.map}
 					provider={PROVIDER_GOOGLE}
