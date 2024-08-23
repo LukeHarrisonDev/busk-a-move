@@ -35,7 +35,7 @@ function AllBuskersScreen({ navigation }) {
 
 	useEffect(() => {
 		fetchAllUsers().then((response) => {
-			setBuskersList(response);
+			setBuskersList(response.users);
 			setIsLoading(false);
 		});
 	}, []);
@@ -83,15 +83,14 @@ function AllBuskersScreen({ navigation }) {
 							<View style={styles.card}>
 								<Text
 									onPress={() => {
-										navigation.navigate("BuskerProfile", { id: item.id });
+										navigation.navigate("BuskerProfile", { id: item.users_id });
 									}}
 									style={styles.titleText}
 								>
 									{item.username}
 								</Text>
-								<Text style={styles.titleText}>{item.address.city}</Text>
-								<Text style={styles.titleText}>{item.address.geo.lat}</Text>
-								<Text style={styles.titleText}>{item.address.geo.lng}</Text>
+								<Text style={styles.titleText}>{item.username}</Text>
+								<Text style={styles.titleText}>{item.user_location}</Text>
 							</View>
 						);
 					}}

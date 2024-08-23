@@ -40,19 +40,26 @@ function SingleBusk({ route }) {
 	}
 
 	return (
-		<>
-			<SafeAreaView
-				style={styles.container}
-				refreshing={refreshing}
-				onRefresh={handleRefresh}
-			>
-				<View style={styles.card}>
-					<Text style={styles.titleText}>{singleBusk.title}</Text>
-					<Text style={styles.bodyText}>{singleBusk.body}</Text>
-					<MapView style={styles.map} provider={PROVIDER_GOOGLE} />
-				</View>
-			</SafeAreaView>
-		</>
+		<SafeAreaView
+			style={styles.container}
+			refreshing={refreshing}
+			onRefresh={handleRefresh}
+		>
+			<View style={styles.card}>
+				<Text style={styles.titleText}>{singleBusk.busk_location_name}</Text>
+				<Text style={styles.bodyText}>{singleBusk.busk_about_me}</Text>
+				<MapView
+					style={styles.map}
+					provider={PROVIDER_GOOGLE}
+					initialRegion={{
+						latitude: singleBusk.busk_location.latitude,
+						longitude: singleBusk.busk_location.longitude,
+						latitudeDelta: 0.0922,
+						longitudeDelta: 0.0421,
+					}}
+				/>
+			</View>
+		</SafeAreaView>
 	);
 }
 
