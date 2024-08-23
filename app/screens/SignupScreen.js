@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
 import { Switch } from 'react-native';
 import colours from '../config/colours';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { createUser } from '../api';
 
 export default function SignUpForm() {
   const [name, setName] = useState('');
@@ -15,6 +16,7 @@ export default function SignUpForm() {
   const [isSetup, setIsSetup] = useState(false);
   const [errorMsg, setErrorMsg] = useState({});
   const [instruments, setInstruments] = useState(['']);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const validateForm = () => {
     let errors = {};
@@ -42,23 +44,59 @@ export default function SignUpForm() {
 
    const handleSubmit = () => {
     if (validateForm()) {
-      console.log("Submited", name, username, email, password, profileImg, location, instruments, about, isSetup)
-      setName("");
-      setUsername("");
-      setEmail("");
-      setPassword("");
-      setProfileImg("");
-      setLocation("");
-      setInstruments([""]);
-      setAbout("");
-      setIsSetup("");
+      
+      createUser({
+        username: username,
+        full_name: name,
+        user_email: email,
+        user_password: password,
+        user_image_url: profileImg,
+        user_location: location,
+        user_about_me: about,
+        instruments: instruments
+      })
+      .then(() => {
+        setIsModalVisible(true)
+      })
+      .then(() => {
+        setName("");
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        setProfileImg("");
+        setLocation("");
+        setInstruments([""]);
+        setAbout("");
+        setIsSetup("");
+      })
+        
+
+   
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {/* Existing Form Fields */}
+             <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.successMessage}>Your profile was created successfully!</Text>
+            <TouchableOpacity
+              onPress={() => setIsModalVisible(false)}
+              style={styles.closeButton}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+       
         <Text style={styles.label}>Name:</Text>
         <TextInput style={styles.input} 
           placeholder="Enter your name"
@@ -140,7 +178,6 @@ export default function SignUpForm() {
           <Text style={styles.addButtonText}>Add another instrument</Text>
         </TouchableOpacity>
 
-        {/* Existing Form Fields Continue */}
         <Text style={styles.label}>Tell us a bit about yourself:</Text>
         <TextInput
           style={styles.textArea}
@@ -226,5 +263,31 @@ const styles = StyleSheet.create({
   },
   submitText: {
     color: colours.lightText,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  successMessage: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  closeButton: {
+    backgroundColor: '#6200ee',
+    padding: 10,
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
