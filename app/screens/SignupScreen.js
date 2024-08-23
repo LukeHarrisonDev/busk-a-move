@@ -10,12 +10,17 @@ export default function SignUpForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [about, setAbout] = useState('');
+  const [location, setLocation] = useState('');
+  const [isSetup, setIsSetup] = useState(false);
   const [errorMsg, setErrorMsg] = useState({});
 
   const validateForm = () => {
     let errors = {};
 
     if (!name) errors.name = "*Name is required";
+    if (!username) errors.username = "*Username is required";
+    if (!email) errors.email = "*Email is required";
+    if (!password) errors.password = "*Password is required";
 
     setErrorMsg(errors)
     return Object.keys(errors).length === 0;
@@ -51,8 +56,9 @@ export default function SignUpForm() {
         autoCorrect={false}
         autoCapitalize='none'
       />
-
-     
+       {
+          errorMsg.username ? <Text style={styles.errorText}>{errorMsg.username}</Text> : null
+        } 
       <Text style={styles.label}>Email:</Text>
       <TextInput
         style={styles.input}
@@ -63,7 +69,9 @@ export default function SignUpForm() {
         autoCorrect={false}
         autoCapitalize='none'
       />
-
+        {
+          errorMsg.email ? <Text style={styles.errorText}>{errorMsg.email}</Text> : null
+        } 
      
       <Text style={styles.label}>Create password:</Text>
       <TextInput
@@ -74,9 +82,12 @@ export default function SignUpForm() {
         autoCorrect={false}
         autoCapitalize='none'
         secureTextEntry
-      />
+        />
+          {
+          errorMsg.password ? <Text style={styles.errorText}>{errorMsg.password}</Text> : null
+        } 
       
-         {/*
+         
       <Text style={styles.label}>Upload your profile picture here. It will be shown on your public profile.</Text>
       <TouchableOpacity style={styles.uploadButton}>
         <Text style={styles.uploadText}>Upload picture</Text>
@@ -87,9 +98,9 @@ export default function SignUpForm() {
       <TextInput
         style={styles.input}
         placeholder="Enter your location"
-        value={form.location}
-        onChangeText={setForm.location}
-      /> */}
+        value={location}
+        onChangeText={setLocation}
+      />
 
       
       {/* <Text style={styles.label}>What instruments do you use when busking?</Text>
@@ -136,15 +147,15 @@ export default function SignUpForm() {
           multiline
         />
 
-      <Text style={styles.label}>What is your main typical setup:</Text>
-      <TextInput
-        style={styles.textArea}
-        placeholder="Tell us about your setup"
-        value={about}
-        onChangeText={setAbout}
-          autoCapitalize='sentences'
-          multiline
-      />
+      <Text style={styles.label}>Do you require an additional setup?</Text>
+      <View style={styles.checkboxContainer}>
+        <View style={styles.checkboxRow}>
+          <Switch
+              value={isSetup}
+              onValueChange={() => setIsSetup((prev) => !prev)}
+          />
+        </View>
+      </View>
     
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitText}>Submit</Text>
