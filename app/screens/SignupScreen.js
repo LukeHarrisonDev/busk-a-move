@@ -9,8 +9,9 @@ export default function SignUpForm() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [about, setAbout] = useState('');
+  const [profileImg, setProfileImg] = useState('');
   const [location, setLocation] = useState('');
+  const [about, setAbout] = useState('');
   const [isSetup, setIsSetup] = useState(false);
   const [errorMsg, setErrorMsg] = useState({});
   const [instruments, setInstruments] = useState(['']);
@@ -22,6 +23,7 @@ export default function SignUpForm() {
     if (!username) errors.username = "*Username is required";
     if (!email) errors.email = "*Email is required";
     if (!password) errors.password = "*Password is required";
+    if (!profileImg) errors.profileImg = "*Profile picture is required"
     if (!location) errors.location = "*Location is required";
 
     setErrorMsg(errors);
@@ -40,11 +42,12 @@ export default function SignUpForm() {
 
    const handleSubmit = () => {
     if (validateForm()) {
-      console.log("Submited", name, username, email, password, location, instruments, about, isSetup)
+      console.log("Submited", name, username, email, password, profileImg, location, instruments, about, isSetup)
       setName("");
       setUsername("");
       setEmail("");
       setPassword("");
+      setProfileImg("");
       setLocation("");
       setInstruments([""]);
       setAbout("");
@@ -100,6 +103,17 @@ export default function SignUpForm() {
           secureTextEntry
         />
         {errorMsg.password && <Text style={styles.errorText}>{errorMsg.password}</Text>}
+
+        <Text style={styles.label}>Upload your profile picture:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Share your image link"
+          value={profileImg}
+          onChangeText={setProfileImg}
+          autoCorrect={false}
+          autoCapitalize='none'
+        />
+        {errorMsg.profileImg && <Text style={styles.errorText}>{errorMsg.profileImg}</Text>}
         
         <Text style={styles.label}>Where are you based?</Text>
         <TextInput
