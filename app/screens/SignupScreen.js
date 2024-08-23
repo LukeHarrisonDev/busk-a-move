@@ -5,7 +5,7 @@ import colours from '../config/colours';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createUser } from '../api';
 
-export default function SignUpForm() {
+export default function SignUpForm({navigation}) {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -68,12 +68,14 @@ export default function SignUpForm() {
         setInstruments([""]);
         setAbout("");
         setIsSetup("");
-      })
-        
-
-   
+      }) 
     }
-  };
+   };
+  
+  const handleNavigation = () => {
+    setIsModalVisible(false);
+    navigation.navigate("Busks")
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,19 +88,20 @@ export default function SignUpForm() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-              <Text style={styles.successMessage}>Your profile was created successfully!</Text>
+              <Text style={styles.successMessage}>Your profile has been successfully created!</Text>
                <View >
                 <Image
                       style={styles.modalImg}
                       source={require("../assets/check-circle.png")}
                     />
-                </View>
+            </View>
             <TouchableOpacity
-              onPress={() => setIsModalVisible(false)}
+              onPress={() => handleNavigation()}
               style={styles.modalButton}
             >
-              <Text style={styles.modalButtonText}>Go to Busks</Text>
-              </TouchableOpacity>            
+                <Text style={styles.modalButtonText}>Go to Busks                  
+                </Text>
+            </TouchableOpacity>            
           </View>
         </View>
       </Modal>       
@@ -277,8 +280,8 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: 300,
-    padding: 30,
-    paddingVertical: 60,
+    padding: 20,
+    paddingVertical: 55,
     backgroundColor: colours.primaryBackground,
     borderRadius: 5,
     alignItems: 'center',
@@ -290,8 +293,9 @@ const styles = StyleSheet.create({
     lineHeight: 25
   },
   modalButton: {
+    width: 200,
+    padding: 20,
     backgroundColor:colours.secondaryHighlight,
-    padding: 10,
     paddingHorizontal: 50,
     borderRadius: 5,
   },
