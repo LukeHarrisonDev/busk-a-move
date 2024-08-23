@@ -13,6 +13,7 @@ export default function SignUpForm() {
   const [location, setLocation] = useState('');
   const [isSetup, setIsSetup] = useState(false);
   const [errorMsg, setErrorMsg] = useState({});
+  const [instruments, setInstruments] = useState(['']);
 
   const validateForm = () => {
     let errors = {};
@@ -23,148 +24,134 @@ export default function SignUpForm() {
     if (!password) errors.password = "*Password is required";
     if (!location) errors.location = "*Location is required";
 
-    setErrorMsg(errors)
+    setErrorMsg(errors);
     return Object.keys(errors).length === 0;
-  }
+  };
 
-  const handleSubmit = () => {
+  const handleInstrumentChange = (index, value) => {
+    const updatedInstruments = [...instruments];
+    updatedInstruments[index] = value;
+    setInstruments(updatedInstruments);
+  };
+
+  const addInstrumentInput = () => {
+    setInstruments([...instruments, '']);
+  };
+
+   const handleSubmit = () => {
     if (validateForm()) {
-      console.log("Submited", name)
+      console.log("Submited", name, username, email, password, location, instruments, about, isSetup)
       setName("");
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setLocation("");
+      setInstruments([""]);
+      setAbout("");
+      setIsSetup("");
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-    <ScrollView>
-      <Text style={styles.label}>Name:</Text>
-      <TextInput style={styles.input} 
-        placeholder="Enter your name"
-        value={name}
+      <ScrollView>
+        {/* Existing Form Fields */}
+        <Text style={styles.label}>Name:</Text>
+        <TextInput style={styles.input} 
+          placeholder="Enter your name"
+          value={name}
           onChangeText={setName}
           autoCorrect={false}
           autoCapitalize='words'
         />
-        {
-          errorMsg.name ? <Text style={styles.errorText}>{errorMsg.name}</Text> : null
-        }        
-      <Text style={styles.label}>Username:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your username"
-        value={username}
-        onChangeText={setUsername}
-        autoCorrect={false}
-        autoCapitalize='none'
-      />
-       {
-          errorMsg.username ? <Text style={styles.errorText}>{errorMsg.username}</Text> : null
-        } 
-      <Text style={styles.label}>Email:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="email@example.com"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCorrect={false}
-        autoCapitalize='none'
-      />
-        {
-          errorMsg.email ? <Text style={styles.errorText}>{errorMsg.email}</Text> : null
-        } 
-     
-      <Text style={styles.label}>Create password:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Create password"
-        value={password}
-        onChangeText={setPassword}
-        autoCorrect={false}
-        autoCapitalize='none'
-        secureTextEntry
-        />
-          {
-          errorMsg.password ? <Text style={styles.errorText}>{errorMsg.password}</Text> : null
-        } 
-      
-         
-      <Text style={styles.label}>Upload your profile picture here. It will be shown on your public profile.</Text>
-      <TouchableOpacity style={styles.uploadButton}>
-        <Text style={styles.uploadText}>Upload picture</Text>
-      </TouchableOpacity>
-
-     
-      <Text style={styles.label}>Where are you based?</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your location"
-        value={location}
-        onChangeText={setLocation}
-        />
-          {
-          errorMsg.location ? <Text style={styles.errorText}>{errorMsg.location}</Text> : null
-        } 
-      
-      {/* <Text style={styles.label}>What instruments do you use when busking?</Text>
-      <View style={styles.checkboxContainer}>
-        <View style={styles.checkboxRow}>
-          <Switch
-            value={form.instruments.acousticGuitar}
-          />
-          <Text style={styles.checkboxLabel}>Acoustic Guitar</Text>
-          <Switch
-            value={form.instruments.electricGuitar}
-          />
-          <Text style={styles.checkboxLabel}>Electric Guitar</Text>
-        </View>
-        <View style={styles.checkboxRow}>
-          <Switch
-            value={form.instruments.singing}
-          />
-          <Text style={styles.checkboxLabel}>Singing</Text>
-          <Switch
-            value={form.instruments.bass}
-          />
-          <Text style={styles.checkboxLabel}>Bass</Text>
-        </View>
-        <View style={styles.checkboxRow}>
-          <Switch
-            value={form.instruments.violin}
-          />
-          <Text style={styles.checkboxLabel}>Violin</Text>
-          <Switch
-            value={form.instruments.drums}
-          />
-          <Text style={styles.checkboxLabel}>Drums</Text>
-        </View>
-      </View> */}
+        {errorMsg.name && <Text style={styles.errorText}>{errorMsg.name}</Text>}
         
-      <Text style={styles.label}>Tell us a bit about yourself. Is it your first time busking? Which genres do you usually perform? This will help other buskers get to know you better:</Text>
-      <TextInput
-        style={styles.textArea}
-        placeholder="Tell us about yourself"
-        value={about}
-        onChangeText={setAbout}
+        <Text style={styles.label}>Username:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your username"
+          value={username}
+          onChangeText={setUsername}
+          autoCorrect={false}
+          autoCapitalize='none'
+        />
+        {errorMsg.username && <Text style={styles.errorText}>{errorMsg.username}</Text>}
+        
+        <Text style={styles.label}>Email:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="email@example.com"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCorrect={false}
+          autoCapitalize='none'
+        />
+        {errorMsg.email && <Text style={styles.errorText}>{errorMsg.email}</Text>}
+        
+        <Text style={styles.label}>Create password:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Create password"
+          value={password}
+          onChangeText={setPassword}
+          autoCorrect={false}
+          autoCapitalize='none'
+          secureTextEntry
+        />
+        {errorMsg.password && <Text style={styles.errorText}>{errorMsg.password}</Text>}
+        
+        <Text style={styles.label}>Where are you based?</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your location"
+          value={location}
+          autoCapitalize='none'
+          onChangeText={setLocation}
+        />
+        {errorMsg.location && <Text style={styles.errorText}>{errorMsg.location}</Text>}
+        
+        <Text style={styles.label}>What instruments do you use when busking?</Text>
+        {instruments.map((instrument, index) => (
+          <TextInput
+            key={index}
+            style={styles.input}
+            placeholder={`Instrument ${index + 1}`}
+            value={instrument}
+            onChangeText={(text) => handleInstrumentChange(index, text)}
+          />
+        ))}
+        
+        <TouchableOpacity style={styles.addButton} onPress={addInstrumentInput}>
+          <Text style={styles.addButtonText}>Add another instrument</Text>
+        </TouchableOpacity>
+
+        {/* Existing Form Fields Continue */}
+        <Text style={styles.label}>Tell us a bit about yourself:</Text>
+        <TextInput
+          style={styles.textArea}
+          placeholder="Tell us about yourself"
+          value={about}
+          onChangeText={setAbout}
           autoCapitalize='sentences'
           multiline
         />
 
-      <Text style={styles.label}>Do you require an additional setup?</Text>
-      <View style={styles.checkboxContainer}>
-        <View style={styles.checkboxRow}>
-          <Switch
+        <Text style={styles.label}>Do you require an additional setup?</Text>
+        <View style={styles.checkboxContainer}>
+          <View style={styles.checkboxRow}>
+            <Switch
               value={isSetup}
               onValueChange={() => setIsSetup((prev) => !prev)}
-          />
+            />
+          </View>
         </View>
-      </View>
     
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitText}>Submit</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitText}>Submit</Text>
+        </TouchableOpacity>
       </ScrollView>
-      </SafeAreaView>
+    </SafeAreaView>
   );
 }
 
@@ -189,14 +176,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: colours.lightText,
   },
-  uploadButton: {
+  addButton: {
     backgroundColor: colours.primaryHighlight,
     padding: 10,
     borderRadius: 5,
     marginBottom: 15,
     alignItems: 'center',
   },
-  uploadText: {
+  addButtonText: {
     color: colours.lightText,
   },
   checkboxContainer: {
@@ -206,9 +193,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
-  },
-  checkboxLabel: {
-    marginRight: 20,
   },
   textArea: {
     minHeight: 100,
