@@ -10,6 +10,8 @@ import {
 	StyleSheet,
 } from "react-native";
 import { fetchAllBusks } from "../api";
+import { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView from "react-native-maps";
 
 function BusksScreen({ navigation }) {
 	const [busksList, setBusksList] = useState([]);
@@ -24,7 +26,7 @@ function BusksScreen({ navigation }) {
 
 	useEffect(() => {
 		fetchAllBusks().then((response) => {
-			setBusksList(response);
+			setBusksList(response.busks);
 			setIsLoading(false);
 		});
 	}, []);
@@ -47,6 +49,16 @@ function BusksScreen({ navigation }) {
 						navigation.navigate("CreateABusk");
 					}}
 				/>
+				<MapView
+					style={styles.map}
+					provider={PROVIDER_GOOGLE}
+					initialRegion={{
+						latitude: 53.801468,
+						longitude: Number(-1.549067),
+						latitudeDelta: 0.0102,
+						longitudeDelta: 0.0101,
+					}}
+				></MapView>
 				<FlatList
 					data={busksList}
 					renderItem={({ item }) => {
@@ -54,13 +66,13 @@ function BusksScreen({ navigation }) {
 							<View style={styles.card}>
 								<Text
 									onPress={() => {
-										navigation.navigate("SingleBusk", { id: item.id });
+										navigation.navigate("SingleBusk", { id: item.busk_id });
 									}}
 									style={styles.titleText}
 								>
-									{item.title}
+									{item.busk_location_name}
 								</Text>
-								<Text style={styles.bodyText}>{item.body}</Text>
+								<Text style={styles.bodyText}>{item.busk_about_me}</Text>
 							</View>
 						);
 					}}
@@ -126,6 +138,10 @@ const styles = StyleSheet.create({
 		paddingTop: StatusBar.currentHeight,
 		justifyContent: "center",
 		alignItems: "center",
+	},
+	map: {
+		width: "100%",
+		height: "50%",
 	},
 });
 
