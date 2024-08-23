@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { PROVIDER_GOOGLE } from "react-native-maps";
 import MapView from "react-native-maps";
-import { Marker } from "react-native-maps";
 
 function BuskerProfileScreen({ route }) {
 	const { id } = route.params;
@@ -58,19 +57,7 @@ function BuskerProfileScreen({ route }) {
 						latitudeDelta: 0.0922,
 						longitudeDelta: 0.0421,
 					}}
-				>
-					{/* map over array to produce a list of markers */}
-					<Marker
-						coordinate={{ latitude: 53.8008, longitude: -1.5491 }}
-						title="Calverley Street"
-						description="Busk location"
-					/>
-					<Marker
-						coordinate={{ latitude: 53.4756, longitude: -1.3306 }}
-						title="Calverley Street"
-						description="Busk location"
-					/>
-				</MapView>
+				></MapView>
 			</View>
 		</SafeAreaView>
 	);
