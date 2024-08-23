@@ -13,6 +13,7 @@ import { fetchAllBusks } from "../api";
 import { PROVIDER_GOOGLE } from "react-native-maps";
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
+import BuskSearchComponent from "../components/BuskSearchComponent";
 
 function BusksScreen({ navigation }) {
 	const [busksList, setBusksList] = useState([]);
@@ -59,6 +60,7 @@ function BusksScreen({ navigation }) {
 						navigation.navigate("CreateABusk");
 					}}
 				/>
+				<BuskSearchComponent/>
 				<MapView
 					style={styles.map}
 					provider={PROVIDER_GOOGLE}
