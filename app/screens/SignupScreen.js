@@ -21,6 +21,7 @@ export default function SignUpForm() {
     if (!username) errors.username = "*Username is required";
     if (!email) errors.email = "*Email is required";
     if (!password) errors.password = "*Password is required";
+    if (!location) errors.location = "*Location is required";
 
     setErrorMsg(errors)
     return Object.keys(errors).length === 0;
@@ -100,8 +101,10 @@ export default function SignUpForm() {
         placeholder="Enter your location"
         value={location}
         onChangeText={setLocation}
-      />
-
+        />
+          {
+          errorMsg.location ? <Text style={styles.errorText}>{errorMsg.location}</Text> : null
+        } 
       
       {/* <Text style={styles.label}>What instruments do you use when busking?</Text>
       <View style={styles.checkboxContainer}>
