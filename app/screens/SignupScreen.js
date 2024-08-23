@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal, Image } from 'react-native';
 import { Switch } from 'react-native';
 import colours from '../config/colours';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -78,7 +78,7 @@ export default function SignUpForm() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-             <Modal
+        <Modal
         animationType="slide"
         transparent={true}
         visible={isModalVisible}
@@ -86,17 +86,22 @@ export default function SignUpForm() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.successMessage}>Your profile was created successfully!</Text>
+              <Text style={styles.successMessage}>Your profile was created successfully!</Text>
+               <View >
+                <Image
+                      style={styles.modalImg}
+                      source={require("../assets/check-circle.png")}
+                    />
+                </View>
             <TouchableOpacity
               onPress={() => setIsModalVisible(false)}
-              style={styles.closeButton}
+              style={styles.modalButton}
             >
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
+              <Text style={styles.modalButtonText}>Go to Busks</Text>
+              </TouchableOpacity>            
           </View>
         </View>
-      </Modal>
-       
+      </Modal>       
         <Text style={styles.label}>Name:</Text>
         <TextInput style={styles.input} 
           placeholder="Enter your name"
@@ -272,22 +277,31 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: 300,
-    padding: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
+    padding: 30,
+    paddingVertical: 60,
+    backgroundColor: colours.primaryBackground,
+    borderRadius: 5,
     alignItems: 'center',
   },
   successMessage: {
-    fontSize: 18,
-    marginBottom: 20,
+    fontSize: 16,
+    marginBottom: 30,
+    textAlign: "center",
+    lineHeight: 25
   },
-  closeButton: {
-    backgroundColor: '#6200ee',
+  modalButton: {
+    backgroundColor:colours.secondaryHighlight,
     padding: 10,
+    paddingHorizontal: 50,
     borderRadius: 5,
   },
-  closeButtonText: {
-    color: '#fff',
+  modalButtonText: {
+    color: colours.lightText,
     fontSize: 16,
   },
+  modalImg: {
+    width: 80,
+    height: 80,
+    marginBottom: 30,
+  }
 });
