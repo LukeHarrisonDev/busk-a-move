@@ -60,7 +60,7 @@ function BusksScreen({ navigation }) {
 						navigation.navigate("CreateABusk");
 					}}
 				/>
-				<BuskSearchComponent/>
+				<BuskSearchComponent setBusksList={setBusksList}/>
 				<MapView
 					style={styles.map}
 					provider={PROVIDER_GOOGLE}
