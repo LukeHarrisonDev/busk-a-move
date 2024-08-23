@@ -7,7 +7,6 @@ import { fetchAllBusks } from '../api';
 import colours from '../config/colours';
 
 function BuskSearchComponent({setBusksList}) {
-    const [instrumentFilter, setInstrumentFilter] = useState("")
     const [isLoading, setIsLoading] = useState(true)
     const [listOfIntruments, setListOfInstruments] = useState([])
 
@@ -46,7 +45,6 @@ function BuskSearchComponent({setBusksList}) {
                 style={styles.picker}
                 onValueChange={handleInstrumentChange}
                 placeholder={{label: "Select an Instrument...", value: null}}
-                // value={}
                 items={
                     selectInstrumentData
             }
@@ -66,8 +64,8 @@ const styles = StyleSheet.create({
         backgroundColor: colours.secondaryBackground,
         borderWidth: 3,
         borderColor: colours.primaryHighlight,
-        //Temporary, since the thing will not go to the centre.
-        marginHorizontal: 90,
+
+        marginHorizontal: 90, //Temporary, since the thing will not go to the centre.
         maxWidth: 200,
     },
     picker: {

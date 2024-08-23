@@ -7,7 +7,6 @@ const busksAPI = axios.create({
 export const fetchAllBusks = (instrumentFilter) => {
 	if(instrumentFilter) {
 		return busksAPI.get(`/busks?instruments=${instrumentFilter}`).then((response) => {
-			// console.log(response.data.busks,"<<< API")
 			return response.data
 		})
 	} else{
