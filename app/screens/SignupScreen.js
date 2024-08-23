@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal, Image } from 'react-native';
 import { Switch } from 'react-native';
 import colours from '../config/colours';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { createUser } from '../api';
 
-export default function SignUpForm() {
+export default function SignUpForm({navigation}) {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [about, setAbout] = useState('');
+  const [profileImg, setProfileImg] = useState('');
   const [location, setLocation] = useState('');
+  const [about, setAbout] = useState('');
   const [isSetup, setIsSetup] = useState(false);
   const [errorMsg, setErrorMsg] = useState({});
   const [instruments, setInstruments] = useState(['']);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const validateForm = () => {
     let errors = {};
@@ -22,6 +25,7 @@ export default function SignUpForm() {
     if (!username) errors.username = "*Username is required";
     if (!email) errors.email = "*Email is required";
     if (!password) errors.password = "*Password is required";
+    if (!profileImg) errors.profileImg = "*Profile picture is required"
     if (!location) errors.location = "*Location is required";
 
     setErrorMsg(errors);
@@ -40,22 +44,67 @@ export default function SignUpForm() {
 
    const handleSubmit = () => {
     if (validateForm()) {
-      console.log("Submited", name, username, email, password, location, instruments, about, isSetup)
-      setName("");
-      setUsername("");
-      setEmail("");
-      setPassword("");
-      setLocation("");
-      setInstruments([""]);
-      setAbout("");
-      setIsSetup("");
+      
+      createUser({
+        username: username,
+        full_name: name,
+        user_email: email,
+        user_password: password,
+        user_image_url: profileImg,
+        user_location: location,
+        user_about_me: about,
+        instruments: instruments
+      })
+      .then(() => {
+        setIsModalVisible(true)
+      })
+      .then(() => {
+        setName("");
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        setProfileImg("");
+        setLocation("");
+        setInstruments([""]);
+        setAbout("");
+        setIsSetup("");
+      }) 
     }
-  };
+   };
+  
+  const handleNavigation = () => {
+    setIsModalVisible(false);
+    navigation.navigate("Busks")
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {/* Existing Form Fields */}
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+              <Text style={styles.successMessage}>Your profile has been successfully created!</Text>
+               <View >
+                <Image
+                      style={styles.modalImg}
+                      source={require("../assets/check-circle.png")}
+                    />
+            </View>
+            <TouchableOpacity
+              onPress={() => handleNavigation()}
+              style={styles.modalButton}
+            >
+                <Text style={styles.modalButtonText}>Go to Busks                  
+                </Text>
+            </TouchableOpacity>            
+          </View>
+        </View>
+      </Modal>       
         <Text style={styles.label}>Name:</Text>
         <TextInput style={styles.input} 
           placeholder="Enter your name"
@@ -100,6 +149,17 @@ export default function SignUpForm() {
           secureTextEntry
         />
         {errorMsg.password && <Text style={styles.errorText}>{errorMsg.password}</Text>}
+
+        <Text style={styles.label}>Upload your profile picture:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Share your image link"
+          value={profileImg}
+          onChangeText={setProfileImg}
+          autoCorrect={false}
+          autoCapitalize='none'
+        />
+        {errorMsg.profileImg && <Text style={styles.errorText}>{errorMsg.profileImg}</Text>}
         
         <Text style={styles.label}>Where are you based?</Text>
         <TextInput
@@ -126,7 +186,6 @@ export default function SignUpForm() {
           <Text style={styles.addButtonText}>Add another instrument</Text>
         </TouchableOpacity>
 
-        {/* Existing Form Fields Continue */}
         <Text style={styles.label}>Tell us a bit about yourself:</Text>
         <TextInput
           style={styles.textArea}
@@ -213,4 +272,40 @@ const styles = StyleSheet.create({
   submitText: {
     color: colours.lightText,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    paddingVertical: 55,
+    backgroundColor: colours.primaryBackground,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  successMessage: {
+    fontSize: 16,
+    marginBottom: 30,
+    textAlign: "center",
+    lineHeight: 25
+  },
+  modalButton: {
+    width: 200,
+    padding: 20,
+    backgroundColor:colours.secondaryHighlight,
+    paddingHorizontal: 50,
+    borderRadius: 5,
+  },
+  modalButtonText: {
+    color: colours.lightText,
+    fontSize: 16,
+  },
+  modalImg: {
+    width: 80,
+    height: 80,
+    marginBottom: 30,
+  }
 });

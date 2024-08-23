@@ -27,3 +27,7 @@ export const fetchSingleBusker = (id) => {
 		return response.data;
 	});
 };
+
+export const createUser = (body) => {
+	return busksAPI.post('/users', body)
+};

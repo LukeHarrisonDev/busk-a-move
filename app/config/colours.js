@@ -22,6 +22,8 @@ export default {
     // **HIGHLIGHTS**
     // rust
     primaryHighlight: "#be4723",
+    // purple
+    secondaryHighlight: "#008a71",
     // gunmetal
     darkHighlight: "#263d42",
 }
