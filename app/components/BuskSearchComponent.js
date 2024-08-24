@@ -37,7 +37,6 @@ function BuskSearchComponent({setBusksList}) {
     listOfIntruments.forEach((instrument) => {
         selectInstrumentData.push({label: instrument, value: instrument})
     })
-    console.log(selectInstrumentData, "<<<< SID")
 
     return (
         <View style={styles.filterContainer}>
@@ -69,7 +68,6 @@ const styles = StyleSheet.create({
         maxWidth: 200,
     },
     picker: {
-        color: "red",
         fontSize: 16,
         paddingVertical: 12,
         paddingHorizontal: 10,

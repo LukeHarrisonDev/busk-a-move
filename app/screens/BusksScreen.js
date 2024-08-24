@@ -8,12 +8,16 @@ import {
 	FlatList,
 	StatusBar,
 	StyleSheet,
+	TouchableWithoutFeedback,
+	Image
 } from "react-native";
 import { fetchAllBusks } from "../api";
 import { PROVIDER_GOOGLE } from "react-native-maps";
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
 import BuskSearchComponent from "../components/BuskSearchComponent";
+import colours from "../config/colours";
+import { formatDate, formatTime } from "../assets/utils/date-and-time";
 
 function BusksScreen({ navigation }) {
 	const [busksList, setBusksList] = useState([]);
@@ -60,7 +64,9 @@ function BusksScreen({ navigation }) {
 						navigation.navigate("CreateABusk");
 					}}
 				/>
-				<BuskSearchComponent setBusksList={setBusksList}/>
+				<View style={styles.filterContainer}>
+					<BuskSearchComponent setBusksList={setBusksList}/>
+				</View>
 				<MapView
 					style={styles.map}
 					provider={PROVIDER_GOOGLE}
@@ -88,18 +94,23 @@ function BusksScreen({ navigation }) {
 				<FlatList
 					data={busksList}
 					renderItem={({ item }) => {
+						const instruments = item.busk_selected_instruments.join(", ")
+
 						return (
-							<View style={styles.card}>
-								<Text
-									onPress={() => {
-										navigation.navigate("SingleBusk", { id: item.busk_id });
-									}}
-									style={styles.titleText}
-								>
-									{item.busk_location_name}
-								</Text>
-								<Text style={styles.bodyText}>{item.busk_about_me}</Text>
-							</View>
+							<TouchableWithoutFeedback onPress={() => {
+								navigation.navigate("SingleBusk", { id: item.busk_id });
+							}}>
+								<View style={styles.card}>
+								<Image style={styles.cardImage}source={{uri: item.user_image_url}}/>
+										<Text style={styles.titleText}>
+											{item.username} @ {item.busk_location_name} @ {formatTime(item.busk_time_date)} on {formatDate(item.busk_time_date)}
+										</Text>
+										<View style={styles.bodyContainer}>
+
+										<Text style={styles.bodyText}>Intruments: {`\n`} {instruments} {`\n`}{`\n`} Buskers Setup: {`\n`} {item.busk_setup}</Text>
+										</View>
+								</View>
+							</TouchableWithoutFeedback>
 						);
 					}}
 					ItemSeparatorComponent={() => (
@@ -110,12 +121,12 @@ function BusksScreen({ navigation }) {
 						></View>
 					)}
 					ListEmptyComponent={<Text>No Busks Found</Text>}
-					ListHeaderComponent={
-						<Text style={styles.headerText}>Busks List</Text>
-					}
-					ListFooterComponent={
-						<Text style={styles.footerText}>End of list</Text>
-					}
+					// ListHeaderComponent={
+					// 	<Text style={styles.headerText}>Busks List</Text>
+					// }
+					// ListFooterComponent={
+					// 	<Text style={styles.footerText}>End of list</Text>
+					// }
 					refreshing={refreshing}
 					onRefresh={handleRefresh}
 				/>
@@ -129,23 +140,47 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: "#f5f5f5",
 		paddingTop: StatusBar.currentHeight,
+		flexDirection: "column",
+		alignItems: "center"
 	},
-	listContainer: {
-		flex: 1,
-		paddingHorizontal: 16,
+	filterContainer: {
+		backgroundColor: "lightblue"
 	},
 	card: {
-		backgroundColor: "white",
+		width: "95%",
+		aspectRatio: 1/1,
+		backgroundColor: colours.secondaryBackground,
 		padding: 16,
-		borderRadius: 8,
-		borderWidth: 1,
+		borderRadius: 15,
+		borderWidth: 5,
+		borderColor: colours.primaryHighlight,
+	},
+	cardImage: {
+		margin: 16,
+		opacity: 0.4,
+		width: "100%",
+		aspectRatio: 1/1,
+		position: "absolute",
 	},
 	titleText: {
-		fontSize: 30,
+		fontSize: 25,
 	},
 	bodyText: {
-		fontSize: 24,
+		fontSize: 20,
 		color: "#666666",
+		textAlign: "right",
+
+	},
+	bodyContainer: {
+		// backgroundColor: "red",
+		margin: 16,
+		width: "100%",
+		aspectRatio: 1/1,
+		position: "absolute",
+		// backgroundColor: "lightblue",
+		alignItems: "flex-end",
+		justifyContent: "flex-end"
+
 	},
 	headerText: {
 		fontSize: 24,
