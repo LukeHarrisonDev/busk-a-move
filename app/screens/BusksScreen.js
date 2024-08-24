@@ -67,7 +67,7 @@ function BusksScreen({ navigation }) {
 				<View style={styles.filterContainer}>
 					<BuskSearchComponent setBusksList={setBusksList}/>
 				</View>
-				<MapView
+				{/* <MapView
 					style={styles.map}
 					provider={PROVIDER_GOOGLE}
 					initialRegion={{
@@ -90,7 +90,7 @@ function BusksScreen({ navigation }) {
 							/>
 						);
 					})}
-				</MapView>
+				</MapView> */}
 				<FlatList
 					data={busksList}
 					renderItem={({ item }) => {

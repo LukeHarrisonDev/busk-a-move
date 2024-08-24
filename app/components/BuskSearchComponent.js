@@ -37,16 +37,30 @@ function BuskSearchComponent({setBusksList}) {
     listOfIntruments.forEach((instrument) => {
         selectInstrumentData.push({label: instrument, value: instrument})
     })
+    console.log(selectInstrumentData, "<<< LOI")
 
     return (
         <View style={styles.filterContainer}>
             <RNPickerSelect
                 style={styles.picker}
                 onValueChange={handleInstrumentChange}
-                placeholder={{label: "Select an Instrument...", value: null}}
+                placeholder={{label: "Instrument Filter", value: null}}
                 items={
                     selectInstrumentData
             }
+            />
+            <RNPickerSelect
+                style={styles.picker}
+                onValueChange={handleInstrumentChange}
+                placeholder={{label: "Sort By", value: null}}
+                items={[
+                    {label: "Time: Newest - Oldest (Default)", value: "?sort_by=busk_time_date&order=desc"}, //// Is this right? ////
+                    {label: "Time: Oldest - Newest", value: "?sort_by=busk_time_date&order=asc"},
+                    {label: "Location: A-Z", value: "?sort_by=busk_location_name&order=asc"},
+                    {label: "Location: Z-A", value: "?sort_by=busk_location_name&order=desc"},
+                    {label: "Username: A-Z", value: "?sort_by=username&order=asc"},
+                    {label: "Username: Z-A", value: "?sort_by=username&order=desc"},
+                ]}
             />
         </View>
     );
