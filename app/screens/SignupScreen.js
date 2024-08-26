@@ -24,7 +24,7 @@ export default function SignUpForm({ navigation }) {
 	const [about, setAbout] = useState('');
 	const [isSetup, setIsSetup] = useState(false);
 	const [errorMsg, setErrorMsg] = useState({});
-	const [instrumentErrors, setInstrumentErrors] = useState(''); // New state for instrument errors
+	const [instrumentErrors, setInstrumentErrors] = useState('');
 	const [instruments, setInstruments] = useState(['']);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
@@ -98,7 +98,7 @@ export default function SignUpForm({ navigation }) {
 					setLocation('');
 					setInstruments(['']);
 					setAbout('');
-					setIsSetup('');
+					setIsSetup(false);
 				});
 		}
 	};
@@ -145,6 +145,7 @@ export default function SignUpForm({ navigation }) {
 					onChangeText={setName}
 					autoCorrect={false}
 					autoCapitalize='words'
+					onFocus={handleInstrumentFocus}
 				/>
 				{errorMsg.name && <Text style={styles.errorText}>{errorMsg.name}</Text>}
 
@@ -156,6 +157,7 @@ export default function SignUpForm({ navigation }) {
 					onChangeText={setUsername}
 					autoCorrect={false}
 					autoCapitalize='none'
+					onFocus={handleInstrumentFocus}
 				/>
 				{errorMsg.username && (
 					<Text style={styles.errorText}>{errorMsg.username}</Text>
@@ -170,6 +172,7 @@ export default function SignUpForm({ navigation }) {
 					keyboardType='email-address'
 					autoCorrect={false}
 					autoCapitalize='none'
+					onFocus={handleInstrumentFocus}
 				/>
 				{errorMsg.email && (
 					<Text style={styles.errorText}>{errorMsg.email}</Text>
@@ -185,6 +188,7 @@ export default function SignUpForm({ navigation }) {
 						autoCorrect={false}
 						autoCapitalize='none'
 						secureTextEntry={!showPassword}
+						onFocus={handleInstrumentFocus}
 					/>
 					<TouchableOpacity
 						style={styles.iconContainer}
@@ -213,6 +217,7 @@ export default function SignUpForm({ navigation }) {
 					onChangeText={setProfileImg}
 					autoCorrect={false}
 					autoCapitalize='none'
+					onFocus={handleInstrumentFocus}
 				/>
 				{errorMsg.profileImg && (
 					<Text style={styles.errorText}>{errorMsg.profileImg}</Text>
@@ -225,6 +230,7 @@ export default function SignUpForm({ navigation }) {
 					value={location}
 					autoCapitalize='none'
 					onChangeText={setLocation}
+					onFocus={handleInstrumentFocus}
 				/>
 				{errorMsg.location && (
 					<Text style={styles.errorText}>{errorMsg.location}</Text>
@@ -275,6 +281,7 @@ export default function SignUpForm({ navigation }) {
 					onChangeText={setAbout}
 					autoCapitalize='sentences'
 					multiline
+					onFocus={handleInstrumentFocus}
 				/>
 
 				<Text style={styles.label}>Do you require an additional setup?</Text>
