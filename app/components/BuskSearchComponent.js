@@ -6,98 +6,108 @@ import { StyleSheet, Text, View } from 'react-native';
 import { fetchAllBusks } from '../api';
 import colours from '../config/colours';
 
-function BuskSearchComponent({setBusksList}) {
-    const [isLoading, setIsLoading] = useState(true)
-    const [listOfIntruments, setListOfInstruments] = useState([])
+function BuskSearchComponent({ setBusksList }) {
+	const [isLoading, setIsLoading] = useState(true);
+	const [listOfIntruments, setListOfInstruments] = useState([]);
 
-    function handleInstrumentChange(value) {
-        fetchAllBusks(value).then((response) => {
-            setIsLoading(true)
-            const busks = response.busks
-            setBusksList(busks)
-        })
-    }
+	function handleInstrumentChange(value) {
+		fetchAllBusks(value).then((response) => {
+			setIsLoading(true);
+			const busks = response.busks;
+			setBusksList(busks);
+		});
+	}
 
-    useEffect(() => {
+	useEffect(() => {
 		fetchAllBusks().then((response) => {
-            setIsLoading(true)
-            const busks = response.busks
-            let listOfIntruments =[]
-            busks.forEach((busk) => {
-                listOfIntruments.push(busk.busk_selected_instruments)
-            })
-            const uniqueInstruments = [...new Set(listOfIntruments.flat().sort())]
-            setListOfInstruments(uniqueInstruments)
+			setIsLoading(true);
+			const busks = response.busks;
+			let listOfIntruments = [];
+			busks.forEach((busk) => {
+				listOfIntruments.push(busk.busk_selected_instruments);
+			});
+			const uniqueInstruments = [...new Set(listOfIntruments.flat().sort())];
+			setListOfInstruments(uniqueInstruments);
 			setIsLoading(false);
 		});
 	}, []);
 
-    const selectInstrumentData = []
+	const selectInstrumentData = [];
 
-    listOfIntruments.forEach((instrument) => {
-        selectInstrumentData.push({label: instrument, value: instrument})
-    })
-    console.log(selectInstrumentData, "<<< LOI")
+	listOfIntruments.forEach((instrument) => {
+		selectInstrumentData.push({ label: instrument, value: instrument });
+	});
+	console.log(selectInstrumentData, '<<< LOI');
 
-    return (
-        <View style={styles.filterContainer}>
-            <RNPickerSelect
-                style={styles.picker}
-                onValueChange={handleInstrumentChange}
-                placeholder={{label: "Instrument Filter", value: null}}
-                items={
-                    selectInstrumentData
-            }
-            />
-            <RNPickerSelect
-                style={styles.picker}
-                onValueChange={handleInstrumentChange}
-                placeholder={{label: "Sort By", value: null}}
-                items={[
-                    {label: "Time: Newest - Oldest (Default)", value: "?sort_by=busk_time_date&order=desc"}, //// Is this right? ////
-                    {label: "Time: Oldest - Newest", value: "?sort_by=busk_time_date&order=asc"},
-                    {label: "Location: A-Z", value: "?sort_by=busk_location_name&order=asc"},
-                    {label: "Location: Z-A", value: "?sort_by=busk_location_name&order=desc"},
-                    {label: "Username: A-Z", value: "?sort_by=username&order=asc"},
-                    {label: "Username: Z-A", value: "?sort_by=username&order=desc"},
-                ]}
-            />
-        </View>
-    );
+	return (
+		<View style={styles.filterContainer}>
+			<RNPickerSelect
+				style={styles.picker}
+				onValueChange={handleInstrumentChange}
+				placeholder={{ label: 'Instrument Filter', value: null }}
+				items={selectInstrumentData}
+			/>
+			<RNPickerSelect
+				style={styles.picker}
+				onValueChange={handleInstrumentChange}
+				placeholder={{ label: 'Sort By', value: null }}
+				items={[
+					{
+						label: 'Time: Newest - Oldest (Default)',
+						value: '?sort_by=busk_time_date&order=desc',
+					}, //// Is this right? ////
+					{
+						label: 'Time: Oldest - Newest',
+						value: '?sort_by=busk_time_date&order=asc',
+					},
+					{
+						label: 'Location: A-Z',
+						value: '?sort_by=busk_location_name&order=asc',
+					},
+					{
+						label: 'Location: Z-A',
+						value: '?sort_by=busk_location_name&order=desc',
+					},
+					{ label: 'Username: A-Z', value: '?sort_by=username&order=asc' },
+					{ label: 'Username: Z-A', value: '?sort_by=username&order=desc' },
+				]}
+			/>
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f5f5f5",
+		backgroundColor: '#f5f5f5',
 		paddingTop: StatusBar.currentHeight,
 	},
-    filterContainer: {
-        padding: 5,
-        backgroundColor: colours.secondaryBackground,
-        borderWidth: 3,
-        borderColor: colours.primaryHighlight,
+	filterContainer: {
+		padding: 5,
+		backgroundColor: colours.secondaryBackground,
+		borderWidth: 3,
+		borderColor: colours.primaryHighlight,
 
-        marginHorizontal: 90, //Temporary, since the thing will not go to the centre.
-        maxWidth: 200,
-    },
-    picker: {
-        fontSize: 16,
-        paddingVertical: 12,
-        paddingHorizontal: 10,
-        borderWidth: 3,
-        borderColor: 'gray',
-        borderRadius: 4,
-        color: 'black',
-        paddingRight: 30
-    },
-    loadingContainer: {
-        flex: 1,
-        backgroundColor: "F5F5F5",
-        paddingTop: StatusBar.currentHeight,
-        justifyContent: "center",
-        alignItems: "center",
-    }
+		marginHorizontal: 90, //Temporary, since the thing will not go to the centre.
+		maxWidth: 200,
+	},
+	picker: {
+		fontSize: 16,
+		paddingVertical: 12,
+		paddingHorizontal: 10,
+		borderWidth: 3,
+		borderColor: 'gray',
+		borderRadius: 4,
+		color: 'black',
+		paddingRight: 30,
+	},
+	loadingContainer: {
+		flex: 1,
+		backgroundColor: 'F5F5F5',
+		paddingTop: StatusBar.currentHeight,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 });
 
 export default BuskSearchComponent;
