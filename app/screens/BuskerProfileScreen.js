@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { fetchSingleBusker } from "../api";
 import {
 	Text,
+	Image,
 	View,
 	SafeAreaView,
 	ActivityIndicator,
 	StatusBar,
 	StyleSheet,
 } from "react-native";
-import { PROVIDER_GOOGLE } from "react-native-maps";
-import MapView from "react-native-maps";
 
 function BuskerProfileScreen({ route }) {
 	const { id } = route.params;
@@ -47,17 +46,18 @@ function BuskerProfileScreen({ route }) {
 		>
 			<View style={styles.card}>
 				<Text style={styles.titleText}>{singleBusker.username}</Text>
+				<Text style={styles.titleText}>{singleBusker.full_name}</Text>
 				<Text style={styles.bodyText}>{singleBusker.user_location}</Text>
-				<MapView
-					style={styles.map}
-					provider={PROVIDER_GOOGLE}
-					initialRegion={{
-						latitude: 53.8008,
-						longitude: -1.5491,
-						latitudeDelta: 0.0922,
-						longitudeDelta: 0.0421,
-					}}
-				></MapView>
+				<Image
+					style={styles.userImage}
+					source={{ uri: singleBusker.user_image_url }}
+				/>
+				<Text style={styles.titleText}>
+					About Me: {singleBusker.user_about_me}
+				</Text>
+				<Text style={styles.titleText}>
+					Instruments: {singleBusker.instruments}
+				</Text>
 			</View>
 		</SafeAreaView>
 	);
@@ -89,9 +89,9 @@ const styles = StyleSheet.create({
 		fontSize: 24,
 		color: "#666666",
 	},
-	map: {
-		width: "100%",
-		height: "100%",
+	userImage: {
+		width: 100,
+		height: 100,
 	},
 });
 
