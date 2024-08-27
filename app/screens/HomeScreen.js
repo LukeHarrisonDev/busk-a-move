@@ -6,13 +6,43 @@ import {
 	ScrollView,
 	Image,
 	SafeAreaView,
-	Pressable,
 	ImageBackground,
+	FlatList,
+	Dimensions,
+	Pressable,
 } from 'react-native';
-
+import BuskerCard from '../components/BuskerCard';
 import colours from '../config/colours';
 
+const { width } = Dimensions.get('window');
+
 function HomeScreen({ navigation }) {
+	const buskers = [
+		{
+			name: 'John Doe',
+			image: require('../assets/add-circle.png'),
+			description: 'A soulful singer with a passion for street performances.',
+		},
+		{
+			name: 'Jane Smith',
+			image: require('../assets/add-circle.png'),
+			description: 'An energetic drummer who loves to entertain crowds.',
+		},
+		{
+			name: 'Bob Johnson',
+			image: require('../assets/add-circle.png'),
+			description: 'A talented guitarist with a unique style. ',
+		},
+	];
+
+	const renderBusker = ({ item }) => (
+		<BuskerCard
+			name={item.name}
+			image={item.image}
+			description={item.description}
+		/>
+	);
+
 	return (
 		<SafeAreaView style={styles.homeContainer}>
 			<ImageBackground
@@ -41,7 +71,7 @@ function HomeScreen({ navigation }) {
 						</Text>
 						<Text style={styles.happyText}>Happy busking!</Text>
 					</View>
-					<View style={styles.buskersImgContainer}>
+					{/* <View style={styles.buskersImgContainer}> 
 						<Image
 							source={require('../assets/buskers-homepage-cold.png')}
 							style={styles.buskersImg}
@@ -65,6 +95,29 @@ function HomeScreen({ navigation }) {
 						>
 							<Text style={styles.logInText}>LOG IN</Text>
 						</Pressable>
+					</View>*/}
+					<View style={styles.carouselContainer}>
+						<Text style={styles.carouselHeader}>- Discover Busks -</Text>
+						<View style={styles.carouselWrapper}>
+							<View style={styles.carouselTextContainer}>
+								<Pressable
+									style={styles.linkContainer}
+									onPress={() => navigation.navigate('Busks')}
+								>
+									<Text style={styles.linkText}>See more</Text>
+								</Pressable>
+							</View>
+							<FlatList
+								data={buskers}
+								renderItem={renderBusker}
+								keyExtractor={(item, index) => index.toString()}
+								horizontal
+								showsHorizontalScrollIndicator={false}
+								snapToInterval={width * 0.8 + 20}
+								decelerationRate='fast'
+								bounces={false}
+							/>
+						</View>
 					</View>
 				</ScrollView>
 			</ImageBackground>
@@ -179,5 +232,43 @@ const styles = StyleSheet.create({
 	logInText: {
 		color: colours.reverseLightText,
 		fontWeight: 'bold',
+	},
+	carouselContainer: {
+		minHeight: 380,
+		marginVertical: 40,
+	},
+	carouselHeader: {
+		fontSize: 19,
+		fontWeight: '600',
+		alignSelf: 'center',
+	},
+	carouselWrapper: {
+		height: 350,
+		paddingTop: 10,
+		paddingBottom: 20,
+		marginVertical: 20,
+		backgroundColor: colours.primaryBackground,
+	},
+	carouselTextContainer: {
+		width: '100%',
+		height: 50,
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
+	},
+	linkContainer: {
+		width: 100,
+		height: 40,
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
+		marginRight: 5,
+	},
+	linkText: {
+		textDecorationLine: 'underline',
+		textDecorationColor: colours.darkText,
+		fontSize: 16,
 	},
 });
