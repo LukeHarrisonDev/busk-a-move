@@ -1,5 +1,5 @@
 import react, { useEffect, useState } from 'react';
-import { Text, View, ScrollView, StyleSheet, Image, } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { fetchSingleUser } from '../api';
 import { ActivityIndicator, Button, Modal, SafeAreaView, TextInput, TouchableOpacity } from 'react-native-web';
@@ -7,11 +7,15 @@ import { height } from '@fortawesome/free-solid-svg-icons/fa0';
 import { text } from '@fortawesome/fontawesome-svg-core';
 // import * as ImagePicker from 'expo-image-picker'
 
+import { useRoute } from '@react-navigation/native';
+
 
 import colours from '../config/colours'
 
 function MyProfileScreen(props) {
-    const about = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ullamcorper a lacus vestibulum sed. Scelerisque eleifend donec pretium vulputate sapien.'
+  const route = useRoute()
+  const {userId} = route.params
+
     const navigation = useNavigation()
     
     const [name, setName] = useState('')
@@ -29,20 +33,19 @@ function MyProfileScreen(props) {
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-    fetchProfileData()    
-    },[])
+    fetchProfileData(userId)    
+    },[userId])
 
-    const fetchProfileData = () => {
-        const userId = 1;
+    const fetchProfileData = (userId) => {
+    
         setLoading(true)
-
         fetchSingleUser(userId)
         .then((data) => {
             console.log(data, '<<<<log from fetch single user')
-            setName(data.name)
-             setAboutMe(about)
-             setLocation(data.address.city)
-             setAvatar(data.user_image_url || 'https://i.pravatar.cc/150?img=38')
+            setName(data.full_name)
+             setAboutMe(data.user_about_me)
+             setLocation(data.user_location)
+             setAvatar(data.user_image_url)
              setLoading(false)
         })
         .catch((err)=> {
@@ -64,6 +67,12 @@ function MyProfileScreen(props) {
     const handleViewPress = () => {
         setEnlargedImage(avatar)
         setModalVisile(true)
+    }
+
+    const handleLogout = () =>{
+      navigation.navigate('Login')
+      Alert.alert('You have successfully logged out')
+      
     }
 
     // const handleImagePicker = () => {
@@ -129,6 +138,7 @@ function MyProfileScreen(props) {
               </View>
 
               <View style={styles.buttonContainer}>
+                <Button title='Logout' onPress={handleLogout} color={colours.primaryHighlight}/>
                 <Button title='Delete Account' color='red' onPress={() => {}}/>
 
               </View>
@@ -189,7 +199,7 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         marginRight: 20,
         borderWidth: 1,
-        borderColor: colours.rust
+        borderColor: colours.primaryHighlight
         
       },
       infoContainer: {
@@ -204,7 +214,7 @@ const styles = StyleSheet.create({
     },
     smallButton: {
         backgroundColor: '#fff',
-        borderColor: colours.rust,
+        borderColor: colours.primaryHighlight,
         borderWidth: 1,
         paddingVertical: 5,
         paddingHorizontal: 10,
@@ -214,11 +224,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     smallButtonText: {
-        color: colours.rust,
+        color: colours.primaryHighlight,
         fontSize: 14,
     },
     buttonText: {
-        color: colours.rust,
+        color: colours.primaryHighlight,
     },
       location: {
         marginTop: 30,

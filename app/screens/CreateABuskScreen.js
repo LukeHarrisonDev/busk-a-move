@@ -160,7 +160,7 @@ export default function CreateABuskScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
         <Text style={styles.label}>Event Name:</Text>
         <TextInput
           style={styles.input}
