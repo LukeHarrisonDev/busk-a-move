@@ -3,15 +3,21 @@ import { fetchSingleBusk } from "../api";
 import {
 	Text,
 	View,
-	SafeAreaView,
+	Image,
 	ActivityIndicator,
 	StatusBar,
 	StyleSheet,
+	SafeAreaView,
 } from "react-native";
-import { PROVIDER_GOOGLE } from "react-native-maps";
+import { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import MapView from "react-native-maps";
+import { formatDate, formatTime } from "../assets/utils/date-and-time";
+import colours from "../config/colours";
+import * as Location from "expo-location";
 
 function SingleBusk({ route }) {
+	const [currentLocation, setCurrentLocation] = useState(null);
+	const [initialRegion, setInitialRegion] = useState(null);
 	const { id } = route.params;
 	const [singleBusk, setSingleBusk] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -28,6 +34,22 @@ function SingleBusk({ route }) {
 			setSingleBusk(response);
 			setIsLoading(false);
 		});
+		const getLocation = async () => {
+			let { status } = await Location.requestForegroundPermissionsAsync();
+			if (status !== "granted") {
+				console.log("Permission to access location was denied");
+				return;
+			}
+			let location = await Location.getCurrentPositionAsync({});
+			setCurrentLocation(location.coords);
+			setInitialRegion({
+				latitude: location.coords.latitude,
+				longitude: location.coords.longitude,
+				latitudeDelta: 0.0922,
+				longitudeDelta: 0.0421,
+			});
+		};
+		getLocation();
 	}, []);
 
 	if (isLoading) {
@@ -47,17 +69,58 @@ function SingleBusk({ route }) {
 		>
 			<View style={styles.card}>
 				<Text style={styles.titleText}>{singleBusk.busk_location_name}</Text>
-				<Text style={styles.bodyText}>{singleBusk.busk_about_me}</Text>
-				<MapView
+				<Text style={styles.bodyText}>
+					{formatTime(singleBusk.busk_time_date)} on{" "}
+					{formatDate(singleBusk.busk_time_date)}
+				</Text>
+				<Text style={styles.bodyText}>{singleBusk.username}</Text>
+				<Image
+					style={styles.userImage}
+					source={{ uri: singleBusk.user_image_url }}
+				/>
+				<Text style={styles.bodyText}>Setup: {singleBusk.busk_setup}</Text>
+				<Text style={styles.bodyText}>
+					Instruments: {singleBusk.busk_selected_instruments}
+				</Text>
+				<Text style={styles.bodyText}>
+					About Me: {singleBusk.busk_about_me}
+				</Text>
+				{initialRegion && (
+					<MapView
+						style={styles.map}
+						initialRegion={initialRegion}
+						showsUserLocation
+					>
+						{currentLocation && (
+							<Marker
+								coordinate={{
+									latitude: currentLocation.latitude,
+									longitude: currentLocation.longitude,
+								}}
+								title="Your Location"
+							/>
+						)}
+					</MapView>
+				)}
+				{/* <MapView
 					style={styles.map}
 					provider={PROVIDER_GOOGLE}
 					initialRegion={{
-						latitude: singleBusk.busk_location.latitude,
-						longitude: singleBusk.busk_location.longitude,
+						latitude: Number(singleBusk.busk_location.latitude),
+						longitude: Number(singleBusk.busk_location.longitude),
 						latitudeDelta: 0.0922,
 						longitudeDelta: 0.0421,
 					}}
-				/>
+				>
+					<Marker
+						coordinate={{
+							latitude: Number(singleBusk.busk_location.latitude),
+							longitude: Number(singleBusk.busk_location.longitude),
+						}}
+						title={singleBusk.busk_location_name}
+						description="Busk location"
+					/>
+				</MapView> */}
 			</View>
 		</SafeAreaView>
 	);
@@ -66,14 +129,16 @@ function SingleBusk({ route }) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f5f5f5",
+		backgroundColor: colours.primaryBackground,
 		paddingTop: StatusBar.currentHeight,
 	},
 	card: {
-		backgroundColor: "white",
+		backgroundColor: colours.secondaryBackground,
 		padding: 16,
 		borderRadius: 8,
 		borderWidth: 1,
+		alignItems: "center",
+		justifyContent: "center",
 	},
 	loadingContainer: {
 		flex: 1,
@@ -87,11 +152,15 @@ const styles = StyleSheet.create({
 	},
 	bodyText: {
 		fontSize: 24,
-		color: "#666666",
+		color: colours.darkText,
 	},
 	map: {
-		width: "100%",
-		height: "100%",
+		width: "70%",
+		height: "50%",
+	},
+	userImage: {
+		width: 80,
+		height: 80,
 	},
 });
 export default SingleBusk;
