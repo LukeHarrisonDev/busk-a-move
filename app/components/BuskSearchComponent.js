@@ -26,24 +26,26 @@ function BuskSearchComponent({ setBusksList }) {
 		});
 	}, []);
     
-    function handlePickerSelector(value) {
-        console.log(value)
-        setCurrentInstrument(value)
-    }
+    // function handlePickerSelector(value) {
+    //     console.log(value)
+    //     setCurrentInstrument(value)
+    // }
 
     function handleInstrumentChange(value) {
         fetchAllBusks(value).then((response) => {
             setIsLoading(true);
             const busks = response.busks;
             setBusksList(busks);
+            setCurrentInstrument(value)
+
         });
     }
 
-	const selectInstrumentData = [];
+	// const selectInstrumentData = [];
 
-	listOfIntruments.forEach((instrument) => {
-		selectInstrumentData.push({ label: instrument, value: instrument });
-	});
+	// listOfIntruments.forEach((instrument) => {
+	// 	selectInstrumentData.push({ label: instrument, value: instrument });
+	// });
 	// console.log(selectInstrumentData, '<<< LOI');
 
 	return (
@@ -54,17 +56,22 @@ function BuskSearchComponent({ setBusksList }) {
 				placeholder={{ label: 'Instrument Filter', value: null }}
 				items={selectInstrumentData}
 			/> */}
-            <Picker selectedValue={currentInstrument} onValueChange={handlePickerSelector}>
+            <Picker 
+                selectedValue={currentInstrument}
+                onValueChange={handleInstrumentChange}>
+                    <Picker.Item label="All"
+					    value=""/>
                 {listOfIntruments.map((instrument) => {
-                    {console.log(instrument.toLowerCase())}
-                    <Picker.Item label={instrument.toLowerCase()} value={instrument.toLowerCase()}/>
+                    return <Picker.Item 
+                        key={instrument}
+                        label={instrument}
+					    value={instrument} />
                 })}
                 {/* <Picker.Item
-                    // {listOfIntruments.map}
                     label='Time: Newest - Oldest (Default)'
 					value='?sort_by=busk_time_date&order=desc'/>
                      <Picker.Item
-                    label='Time: 2'
+                     label='Hello'
 					value='?sort_by=busk_time_date&order=asc'/>
                      <Picker.Item
                     label='Time: 3'
