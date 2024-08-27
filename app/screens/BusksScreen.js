@@ -26,6 +26,7 @@ function BusksScreen({ navigation }) {
 	const [instrumentFilter, setInstrumentFilter] = useState("")
 	const [isLoading, setIsLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
+	const [mapLocations, setMapLocations] = useState([])
 	const [fakeLocations, setFakeLocations] = useState([
 		{
 			latitude: 53.801468,
@@ -45,6 +46,13 @@ function BusksScreen({ navigation }) {
 	useEffect(() => {
 		fetchAllBusks(instrumentFilter, sortBy).then((response) => {
 			setBusksList(response.busks);
+			const listOfMapLocations = []
+			busksList.forEach((busk) => {
+				locationAndNameObject = busk.busk_location
+				locationAndNameObject.locationName = busk.busk_location_name
+				listOfMapLocations.push(locationAndNameObject)
+			})
+			setMapLocations(listOfMapLocations)
 			setIsLoading(false);
 		});
 	}, [instrumentFilter, sortBy]);
@@ -79,9 +87,22 @@ function BusksScreen({ navigation }) {
 							longitude: Number(-1.549067),
 							latitudeDelta: 0.0102,
 							longitudeDelta: 0.0101,
-						}}
-					>
-						{fakeLocations.map((marker, index) => {
+						}}>
+
+						{mapLocations.map((marker, index) => {
+							return (
+								<Marker
+									key={index}
+									coordinate={{
+										latitude: marker.latitude,
+										longitude: marker.longitude,
+									}}
+									title={marker.locationName}
+									description="Busk location"/>
+							)
+						})}
+
+						{/* {fakeLocations.map((marker, index) => {
 							return (
 								<Marker
 									key={index}
@@ -93,7 +114,7 @@ function BusksScreen({ navigation }) {
 									description="Busk location"
 								/>
 							);
-						})}
+						})} */}
 					</MapView>
 				</View>
 				<FlatList
