@@ -22,6 +22,12 @@ export const fetchAllUsers = () => {
 	});
 };
 
+export const fetchSingleUser = (user_id) => {
+	return busksAPI.get(`/users/${user_id}`).then((response) => {
+		return response.data
+	})
+}
+
 export const fetchSingleBusk = (id) => {
 	return busksAPI.get(`/busks/${id}`).then((response) => {
 		return response.data.busk;
