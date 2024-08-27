@@ -4,12 +4,12 @@ import {
 	View,
 	SafeAreaView,
 	ActivityIndicator,
-	Button,
 	FlatList,
 	StatusBar,
 	StyleSheet,
 	TouchableWithoutFeedback,
-	Image
+	Image,
+	ScrollView
 } from "react-native";
 import { fetchAllBusks } from "../api";
 import { PROVIDER_GOOGLE } from "react-native-maps";
@@ -21,17 +21,11 @@ import { formatDate, formatTime } from "../assets/utils/date-and-time";
 
 function BusksScreen({ navigation }) {
 	const [busksList, setBusksList] = useState([]);
+	const [sortBy, setSortBy] = useState("")
+	const [instrumentFilter, setInstrumentFilter] = useState("")
 	const [isLoading, setIsLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
-	const [fakeLocations, setFakeLocations] = useState([
-		{
-			latitude: 53.801468,
-			longitude: Number(-1.549067),
-			title: "Calverley Street",
-		},
-		{ latitude: 53.799168, longitude: Number(-1.551856), title: "Park Square" },
-		{ latitude: 53.798826, longitude: Number(-1.547062), title: "Park Row" },
-	]);
+	const [mapLocations, setMapLocations] = useState([])
 
 	const handleRefresh = () => {
 		setRefreshing(true);
@@ -40,11 +34,18 @@ function BusksScreen({ navigation }) {
 	};
 
 	useEffect(() => {
-		fetchAllBusks().then((response) => {
+		fetchAllBusks(instrumentFilter, sortBy).then((response) => {
 			setBusksList(response.busks);
-			setIsLoading(false);
+			const listOfMapLocations = []
+			busksList.forEach((busk) => {
+				locationAndNameObject = busk.busk_location
+				locationAndNameObject.locationName = busk.busk_location_name
+				listOfMapLocations.push(locationAndNameObject)
+			})
+			setMapLocations(listOfMapLocations)
+			setIsLoading(false)
 		});
-	}, []);
+	}, [instrumentFilter, sortBy]);
 
 	if (isLoading) {
 		return (
@@ -57,40 +58,35 @@ function BusksScreen({ navigation }) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={styles.listContainer}>
-				<Button
-					title="Create Busk"
-					onPress={() => {
-						navigation.navigate("CreateABusk");
-					}}
-				/>
+			<ScrollView style={styles.listContainer}>
 				<View style={styles.filterContainer}>
-					<BuskSearchComponent setBusksList={setBusksList}/>
+					<BuskSearchComponent sortBy={sortBy} setSortBy={setSortBy} instrumentFilter={instrumentFilter} setInstrumentFilter={setInstrumentFilter}/>
 				</View>
-				{/* <MapView
-					style={styles.map}
-					provider={PROVIDER_GOOGLE}
-					initialRegion={{
-						latitude: 53.801468,
-						longitude: Number(-1.549067),
-						latitudeDelta: 0.0102,
-						longitudeDelta: 0.0101,
-					}}
-				>
-					{fakeLocations.map((marker, index) => {
-						return (
-							<Marker
-								key={index}
-								coordinate={{
-									latitude: marker.latitude,
-									longitude: marker.longitude,
-								}}
-								title={marker.title}
-								description="Busk location"
-							/>
-						);
-					})}
-				</MapView> */}
+				<View style={styles.mapContainer}>
+					<MapView
+						style={styles.map}
+						provider={PROVIDER_GOOGLE}
+						initialRegion={{
+							latitude: 53.801468,
+							longitude: Number(-1.549067),
+							latitudeDelta: 0.0102,
+							longitudeDelta: 0.0101,
+						}}>
+
+							{mapLocations.map((marker, index) => {
+								return (
+									<Marker
+										key={index}
+										coordinate={{
+											latitude: marker.latitude,
+											longitude: marker.longitude,
+										}}
+										title={marker.locationName}
+										description="Busk location"/>
+								)
+							})}
+					</MapView>
+				</View>
 				<FlatList
 					data={busksList}
 					renderItem={({ item }) => {
@@ -106,7 +102,6 @@ function BusksScreen({ navigation }) {
 											{item.username} @ {item.busk_location_name} @ {formatTime(item.busk_time_date)} on {formatDate(item.busk_time_date)}
 										</Text>
 										<View style={styles.bodyContainer}>
-
 										<Text style={styles.bodyText}>Intruments: {`\n`} {instruments} {`\n`}{`\n`} Buskers Setup: {`\n`} {item.busk_setup}</Text>
 										</View>
 								</View>
@@ -121,16 +116,10 @@ function BusksScreen({ navigation }) {
 						></View>
 					)}
 					ListEmptyComponent={<Text>No Busks Found</Text>}
-					// ListHeaderComponent={
-					// 	<Text style={styles.headerText}>Busks List</Text>
-					// }
-					// ListFooterComponent={
-					// 	<Text style={styles.footerText}>End of list</Text>
-					// }
 					refreshing={refreshing}
 					onRefresh={handleRefresh}
 				/>
-			</View>
+			</ScrollView>
 		</SafeAreaView>
 	);
 }
@@ -144,7 +133,8 @@ const styles = StyleSheet.create({
 		alignItems: "center"
 	},
 	filterContainer: {
-		backgroundColor: "lightblue"
+		flexDirection: "column",
+		alignItems: "center"
 	},
 	card: {
 		width: "95%",
@@ -157,7 +147,7 @@ const styles = StyleSheet.create({
 	},
 	cardImage: {
 		margin: 16,
-		opacity: 0.4,
+		opacity: 0.2,
 		width: "100%",
 		aspectRatio: 1/1,
 		position: "absolute",
@@ -167,17 +157,15 @@ const styles = StyleSheet.create({
 	},
 	bodyText: {
 		fontSize: 20,
-		color: "#666666",
+		color: colours.darkHighlight,
 		textAlign: "right",
 
 	},
 	bodyContainer: {
-		// backgroundColor: "red",
 		margin: 16,
 		width: "100%",
 		aspectRatio: 1/1,
 		position: "absolute",
-		// backgroundColor: "lightblue",
 		alignItems: "flex-end",
 		justifyContent: "flex-end"
 
@@ -200,9 +188,16 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
+	mapContainer: {
+		flexDirection: "column",
+		alignItems: "center",
+		margin: 10,
+		border: colours.darkTabBar,
+		borderWidth: 5,
+	},
 	map: {
-		width: "100%",
-		height: "50%",
+		width: 364,
+		height: 250
 	},
 });
 

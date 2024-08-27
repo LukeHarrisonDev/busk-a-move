@@ -8,115 +8,145 @@ import {
   ActivityIndicator,
   StatusBar,
   StyleSheet,
+  ScrollView,
+  Pressable
 } from "react-native";
 import colours from "../config/colours";
 
-function BuskerProfileScreen({ route }) {
+function BuskerProfileScreen({ route, navigation }) {
   const { id } = route.params;
   const [singleBusker, setSingleBusker] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const handleRefresh = () => {
-    setRefreshing(true);
-    fetchSingleBusker();
-    setRefreshing(false);
-  };
 
   useEffect(() => {
     fetchSingleBusker(id).then((response) => {
       setSingleBusker(response);
       setIsLoading(false);
     });
-  }, []);
+  }, [id]);
 
   if (isLoading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="0000ff" />
+        <ActivityIndicator size="large" color="#0000ff" />
         <Text>Loading...</Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView
-      style={styles.container}
-      refreshing={refreshing}
-      onRefresh={handleRefresh}
-    >
-      <View style={styles.listContainer}>
-        <Pressable
-          style={styles.button}
-          title="Create Busk"
-          onPress={() => {
-            navigation.navigate("CreateABusk", { data: singleBusker });
-          }}
-        >
-          <Text>Create New Busk</Text>
-        </Pressable>
-        <View style={styles.card}>
-          <Text style={styles.titleText}>{singleBusker.username}</Text>
-          <Text style={styles.titleText}>{singleBusker.full_name}</Text>
-          <Text style={styles.bodyText}>{singleBusker.user_location}</Text>
-          <Image
-            style={styles.userImage}
-            source={{ uri: singleBusker.user_image_url }}
-          />
-          <Text style={styles.titleText}>
-            About Me: {singleBusker.user_about_me}
-          </Text>
-          <Text style={styles.titleText}>
-            Instruments: {singleBusker.instruments}
-          </Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <Pressable
+            style={styles.buskButton}
+            title="Create Busk"
+            onPress={() => {
+              navigation.navigate("CreateABusk", { data: singleBusker });
+            }}
+          >
+            <Text style={styles.buskButtonText}>Create New Busk</Text>
+          </Pressable>
+        <View style={styles.container}>
+          <Text style={styles.headerText}></Text>
+          <Text style={styles.name}>{singleBusker.full_name}</Text>
+          <View style={styles.profileInfo}>
+            <Image
+              style={styles.avatar}
+              source={{ uri: singleBusker.user_image_url }}
+            />
+            <View style={styles.infoContainer}>
+              <Text style={styles.location}>
+                Location: {singleBusker.user_location}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>About Me: </Text>
+            <Text style={styles.bodyText}>{singleBusker.user_about_me}</Text>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>My Setup:</Text>
+            <Text style={styles.bodyText}>{singleBusker.instruments}</Text>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    paddingBottom: 20,
+  },
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    paddingTop: StatusBar.currentHeight,
+    padding: 20,
+    backgroundColor: "#fff",
   },
-  listContainer: {
-    flex: 1,
-    justifyContent: "center",
+  headerText: {
+    fontSize: 24,
+    color: colours.primaryHighlight,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  name: {
+    fontSize: 22,
+    textAlign: "center",
+    marginBottom: 10,
+    fontWeight: "bold",
+  },
+  profileInfo: {
+    flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
+    marginBottom: 20,
   },
-  card: {
-    backgroundColor: "white",
-    padding: 16,
-    borderRadius: 8,
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginRight: 20,
     borderWidth: 1,
+    borderColor: colours.primaryHighlight,
+  },
+  infoContainer: {
+    flex: 1,
+  },
+  location: {
+    marginTop: 30,
+    fontSize: 16,
+    color: "#555",
+  },
+  section: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  bodyText: {
+    fontSize: 16,
+    color: "#333",
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "F5F5F5",
-    paddingTop: StatusBar.currentHeight,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#f5f5f5",
   },
-  titleText: {
-    fontSize: 30,
-  },
-  bodyText: {
-    fontSize: 24,
-    color: "#666666",
-  },
-  userImage: {
-    width: 100,
-    height: 100,
-  },
-  button: {
+  buskButton: {
     backgroundColor: colours.primaryHighlight,
+    color: colours.lightText,
     padding: 15,
     alignItems: "center",
     borderRadius: 5,
+    marginTop: 36,
   },
+  buskButtonText: {
+    color: colours.lightText,
+  }
 });
 
 export default BuskerProfileScreen;

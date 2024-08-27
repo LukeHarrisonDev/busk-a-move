@@ -5,22 +5,27 @@ import {
 	TextInput,
 	Pressable,
 	StyleSheet,
-	ScrollView,
 	Switch,
 	ActivityIndicator,
 	Alert,
+	ScrollView,
+	Modal,
+	Image,
 } from 'react-native';
 import { fetchSingleBusker, addBusk } from '../api';
 import colours from '../config/colours';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 export default function CreateABuskScreen({ route, navigation }) {
 	const data = route.params;
 
 	const [form, setForm] = useState({
 		busk_location_name: '',
-		busk_date: '',
-		busk_time: '',
+		busk_date: new Date(),
+		busk_time: new Date(),
 		busk_latitude: '',
 		busk_longitude: '',
 		busk_about_me: '',
@@ -31,10 +36,25 @@ export default function CreateABuskScreen({ route, navigation }) {
 	const [availableInstruments, setAvailableInstruments] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [submitting, setSubmitting] = useState(false);
+	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [error, setError] = useState(null);
 
+	const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+	const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
+	const [isMapModalVisible, setIsMapModalVisible] = useState(false);
+	const [region, setRegion] = useState({
+		latitude: 51.5074,
+		longitude: -0.1278,
+		latitudeDelta: 0.0922,
+		longitudeDelta: 0.0421,
+	});
+	const [selectedLocation, setSelectedLocation] = useState({
+		latitude: null,
+		longitude: null,
+	});
+
 	useEffect(() => {
-		fetchSingleBusker(data.data.users_id)
+		fetchSingleBusker(data.data.user_id)
 			.then((user) => {
 				const instruments = user.instruments || [];
 				setAvailableInstruments(instruments || []);
@@ -52,10 +72,25 @@ export default function CreateABuskScreen({ route, navigation }) {
 				setError('Failed to fetch user data');
 				setLoading(false);
 			});
-	}, [data.data.users_id]);
+	}, [data.data.user_id]);
 
 	const handleInputChange = (name, value) => {
-		setForm((prevForm) => ({ ...prevForm, [name]: value }));
+		setForm((prevForm) => {
+			const newForm = { ...prevForm, [name]: value };
+			if (name === 'busk_latitude' || name === 'busk_longitude') {
+				const latitude = parseFloat(newForm.busk_latitude);
+				const longitude = parseFloat(newForm.busk_longitude);
+				if (!isNaN(latitude) && !isNaN(longitude)) {
+					setSelectedLocation({ latitude, longitude });
+					setRegion({
+						...region,
+						latitude,
+						longitude,
+					});
+				}
+			}
+			return newForm;
+		});
 	};
 
 	const handleSwitchChange = (instrument) => {
@@ -112,9 +147,35 @@ export default function CreateABuskScreen({ route, navigation }) {
 
 			addBusk(buskData)
 				.then(() => {
+					setForm({
+						busk_location_name: '',
+						busk_date: new Date(),
+						busk_time: new Date(),
+						busk_latitude: '',
+						busk_longitude: '',
+						busk_about_me: '',
+						busk_setup: '',
+						busk_selected_instruments: availableInstruments.reduce(
+							(acc, instrument) => {
+								acc[instrument] = false;
+								return acc;
+							},
+							{}
+						),
+					});
+					setSelectedLocation({
+						latitude: null,
+						longitude: null,
+					});
+					setRegion({
+						latitude: 51.5074,
+						longitude: -0.1278,
+						latitudeDelta: 0.0922,
+						longitudeDelta: 0.0421,
+					});
+
 					setSubmitting(false);
-					Alert.alert('Success', 'Your busk event has been created!');
-					navigation.goBack();
+					setIsModalVisible(true);
 				})
 				.catch((error) => {
 					setSubmitting(false);
@@ -131,15 +192,66 @@ export default function CreateABuskScreen({ route, navigation }) {
 
 	const convertToISO = (date, time) => {
 		try {
-			const [year, month, day] = date.split('-');
+			const combinedDateTime = new Date(date);
+			combinedDateTime.setHours(time.getHours());
+			combinedDateTime.setMinutes(time.getMinutes());
 
-			const [hours, minutes] = time.split(':').map(Number);
-
-			return `${year}-${month}-${day}T${hours}:${minutes}:00.000Z`;
+			return combinedDateTime.toISOString();
 		} catch (error) {
 			console.error('Failed to convert date/time:', error);
 			return null;
 		}
+	};
+
+	const showDatePicker = () => {
+		setDatePickerVisibility(true);
+	};
+
+	const hideDatePicker = () => {
+		setDatePickerVisibility(false);
+	};
+
+	const handleConfirmDate = (selectedDate) => {
+		hideDatePicker();
+		setForm((prevForm) => ({ ...prevForm, busk_date: selectedDate }));
+	};
+
+	const showTimePicker = () => {
+		setTimePickerVisibility(true);
+	};
+
+	const hideTimePicker = () => {
+		setTimePickerVisibility(false);
+	};
+
+	const handleConfirmTime = (selectedTime) => {
+		hideTimePicker();
+		setForm((prevForm) => ({ ...prevForm, busk_time: selectedTime }));
+	};
+
+	const handleMapSelect = (e) => {
+		const { latitude, longitude } = e.nativeEvent.coordinate;
+		setSelectedLocation({ latitude, longitude });
+		setRegion({ ...region, latitude, longitude });
+		setForm((prevForm) => ({
+			...prevForm,
+			busk_latitude: latitude.toString(),
+			busk_longitude: longitude.toString(),
+		}));
+	};
+
+	const handleSelectLocation = () => {
+		setForm((prevForm) => ({
+			...prevForm,
+			busk_latitude: selectedLocation.latitude.toString(),
+			busk_longitude: selectedLocation.longitude.toString(),
+		}));
+		setIsMapModalVisible(false);
+	};
+
+	const handleNavigation = () => {
+		setIsModalVisible(false);
+		navigation.navigate('Busks');
 	};
 
 	if (loading) {
@@ -161,6 +273,55 @@ export default function CreateABuskScreen({ route, navigation }) {
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView contentContainerStyle={styles.scrollView}>
+				<Modal
+					animationType='slide'
+					transparent={true}
+					visible={isModalVisible}
+					onRequestClose={() => setIsModalVisible(false)}
+				>
+					<View style={styles.modalContainer}>
+						<View style={styles.modalContent}>
+							<Text style={styles.successMessage}>
+								Success, Your busk event has been created!
+							</Text>
+							<View>
+								<Image
+									style={styles.modalImg}
+									source={require('../assets/check-circle.png')}
+								/>
+							</View>
+							<Pressable onPress={handleNavigation} style={styles.modalButton}>
+								<Text style={styles.modalButtonText}>Go to Busks</Text>
+							</Pressable>
+						</View>
+					</View>
+				</Modal>
+
+				<Modal
+					animationType='slide'
+					transparent={false}
+					visible={isMapModalVisible}
+					onRequestClose={() => setIsMapModalVisible(false)}
+				>
+					<View style={styles.mapModalContainer}>
+						<MapView
+							style={styles.map}
+							region={region}
+							onPress={handleMapSelect}
+						>
+							{selectedLocation.latitude && (
+								<Marker coordinate={selectedLocation} />
+							)}
+						</MapView>
+						<Pressable
+							style={styles.selectLocationButton}
+							onPress={handleSelectLocation}
+						>
+							<Text style={styles.selectLocationText}>Select Location</Text>
+						</Pressable>
+					</View>
+				</Modal>
+
 				<Text style={styles.label}>Event Name:</Text>
 				<TextInput
 					style={styles.input}
@@ -170,20 +331,49 @@ export default function CreateABuskScreen({ route, navigation }) {
 				/>
 
 				<Text style={styles.label}>Event Date:</Text>
-				<TextInput
-					style={styles.input}
-					placeholder='Enter event date (e.g., 2024-08-14)'
-					value={form.busk_date}
-					onChangeText={(text) => handleInputChange('busk_date', text)}
+				<Pressable onPress={showDatePicker}>
+					<TextInput
+						style={styles.input}
+						placeholder='Select event date'
+						value={form.busk_date.toDateString()}
+						editable={false}
+					/>
+				</Pressable>
+
+				<DateTimePickerModal
+					isVisible={isDatePickerVisible}
+					mode='date'
+					onConfirm={handleConfirmDate}
+					onCancel={hideDatePicker}
 				/>
 
 				<Text style={styles.label}>Event Time:</Text>
-				<TextInput
-					style={styles.input}
-					placeholder='Enter event time (e.g., 20:45)'
-					value={form.busk_time}
-					onChangeText={(text) => handleInputChange('busk_time', text)}
+				<Pressable onPress={showTimePicker}>
+					<TextInput
+						style={styles.input}
+						placeholder='Select event time'
+						value={form.busk_time.toLocaleTimeString([], {
+							hour: '2-digit',
+							minute: '2-digit',
+						})}
+						editable={false}
+					/>
+				</Pressable>
+
+				<DateTimePickerModal
+					isVisible={isTimePickerVisible}
+					mode='time'
+					onConfirm={handleConfirmTime}
+					onCancel={hideTimePicker}
 				/>
+
+				<Text style={styles.label}>Location:</Text>
+				<Pressable
+					style={styles.mapButton}
+					onPress={() => setIsMapModalVisible(true)}
+				>
+					<Text style={styles.mapButtonText}>Pick Location on Map</Text>
+				</Pressable>
 
 				<Text style={styles.label}>Latitude:</Text>
 				<TextInput
@@ -262,24 +452,27 @@ const styles = StyleSheet.create({
 		overflow: 'scroll',
 	},
 	label: {
-		fontSize: 16,
-		marginVertical: 8,
+		marginVertical: 10,
 	},
 	input: {
 		borderWidth: 1,
 		borderColor: colours.darkHighlight,
-		borderRadius: 4,
 		padding: 10,
-		fontSize: 16,
+		marginBottom: 10,
+		borderRadius: 5,
+		backgroundColor: colours.lightText,
+		paddingRight: 50,
+		color: 'black',
 	},
 	textArea: {
 		minHeight: 100,
 		borderWidth: 1,
 		borderColor: colours.darkHighlight,
-		borderRadius: 4,
 		padding: 10,
-		fontSize: 16,
-		textAlign: 'top',
+		marginBottom: 15,
+		borderRadius: 5,
+		backgroundColor: colours.lightText,
+		textAlignVertical: 'top',
 	},
 	checkboxRow: {
 		flexDirection: 'row',
@@ -294,9 +487,77 @@ const styles = StyleSheet.create({
 		backgroundColor: colours.primaryHighlight,
 		padding: 15,
 		alignItems: 'center',
+		marginTop: 20,
 		borderRadius: 5,
 	},
 	submitText: {
 		color: colours.lightText,
+	},
+	modalContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+	},
+	modalContent: {
+		width: 300,
+		padding: 20,
+		paddingVertical: 55,
+		backgroundColor: colours.primaryBackground,
+		borderRadius: 5,
+		alignItems: 'center',
+	},
+	successMessage: {
+		fontSize: 16,
+		marginBottom: 30,
+		textAlign: 'center',
+		lineHeight: 25,
+	},
+	modalButton: {
+		width: 200,
+		padding: 20,
+		backgroundColor: colours.secondaryHighlight,
+		paddingHorizontal: 50,
+		borderRadius: 5,
+	},
+	modalButtonText: {
+		color: colours.lightText,
+		fontSize: 16,
+	},
+	modalImg: {
+		width: 80,
+		height: 80,
+		marginBottom: 30,
+	},
+	mapModalContainer: {
+		flex: 1,
+	},
+	map: {
+		flex: 1,
+	},
+	mapButton: {
+		backgroundColor: colours.primaryHighlight,
+		padding: 10,
+		alignItems: 'center',
+		marginTop: 15,
+		marginBottom: 15,
+		borderRadius: 5,
+	},
+	mapButtonText: {
+		color: colours.lightText,
+		fontSize: 16,
+	},
+	selectLocationButton: {
+		padding: 15,
+		alignItems: 'center',
+		backgroundColor: colours.primaryHighlight,
+		borderRadius: 5,
+		marginTop: 20,
+		marginBottom: 20,
+		marginHorizontal: 50,
+	},
+	selectLocationText: {
+		color: colours.lightText,
+		fontSize: 16,
 	},
 });
