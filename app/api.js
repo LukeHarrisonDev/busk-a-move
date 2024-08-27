@@ -4,10 +4,24 @@ const busksAPI = axios.create({
   baseURL: "https://be-busk-a-move.onrender.com/api/",
 });
 
-export const fetchAllBusks = (instrumentFilter) => {
-  if (instrumentFilter) {
+export const fetchAllBusks = (instrumentFilter, sortBy) => {
+
+  if (instrumentFilter && !sortBy) {
     return busksAPI
       .get(`/busks?instruments=${instrumentFilter}`)
+      .then((response) => {
+        return response.data;
+      });
+  } else if (!instrumentFilter && sortBy) {
+    return busksAPI
+      .get(`/busks${sortBy}`)
+      .then((response) => {
+        return response.data;
+      });
+
+  } else if (instrumentFilter && sortBy) {
+    return busksAPI
+      .get(`/busks${sortBy}&instruments=${instrumentFilter}`)
       .then((response) => {
         return response.data;
       });
