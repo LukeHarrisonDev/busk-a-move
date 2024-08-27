@@ -8,10 +8,13 @@ import {
   ActivityIndicator,
   StatusBar,
   StyleSheet,
+  Pressable,
+  ScrollView,
 } from "react-native";
 import colours from "../config/colours";
+// import { ScrollView } from "react-native-gesture-handler";
 
-function BuskerProfileScreen({ route }) {
+function BuskerProfileScreen({ route, navigation }) {
   const { id } = route.params;
   const [singleBusker, setSingleBusker] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,32 +48,35 @@ function BuskerProfileScreen({ route }) {
       refreshing={refreshing}
       onRefresh={handleRefresh}
     >
-      <View style={styles.listContainer}>
-        <Pressable
-          style={styles.button}
-          title="Create Busk"
-          onPress={() => {
-            navigation.navigate("CreateABusk", { data: singleBusker });
-          }}
-        >
-          <Text>Create New Busk</Text>
-        </Pressable>
-        <View style={styles.card}>
-          <Text style={styles.titleText}>{singleBusker.username}</Text>
-          <Text style={styles.titleText}>{singleBusker.full_name}</Text>
-          <Text style={styles.bodyText}>{singleBusker.user_location}</Text>
-          <Image
-            style={styles.userImage}
-            source={{ uri: singleBusker.user_image_url }}
-          />
-          <Text style={styles.titleText}>
-            About Me: {singleBusker.user_about_me}
-          </Text>
-          <Text style={styles.titleText}>
-            Instruments: {singleBusker.instruments}
-          </Text>
+      <ScrollView>
+        <View style={styles.listContainer}>
+          <Pressable
+            style={styles.button}
+            title="Create Busk"
+            onPress={() => {
+              navigation.navigate("CreateABusk", { data: singleBusker });
+            }}
+          >
+            <Text style={styles.buttonText}>Create New Busk</Text>
+          </Pressable>
+
+          <View style={styles.card}>
+            <Text style={styles.titleText}>{singleBusker.username}</Text>
+            <Text style={styles.titleText}>{singleBusker.full_name}</Text>
+            <Text style={styles.bodyText}>{singleBusker.user_location}</Text>
+            <Image
+              style={styles.userImage}
+              source={{ uri: singleBusker.user_image_url }}
+            />
+            <Text style={styles.titleText}>
+              About Me: {singleBusker.user_about_me}
+            </Text>
+            <Text style={styles.titleText}>
+              Instruments: {singleBusker.instruments}
+            </Text>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -81,6 +87,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     paddingTop: StatusBar.currentHeight,
   },
+  scrollView: {
+    flexGrow: 1,
+    overflow: "scroll",
+  },
   listContainer: {
     flex: 1,
     justifyContent: "center",
@@ -89,9 +99,12 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "white",
-    padding: 16,
+    padding: 36,
     borderRadius: 8,
     borderWidth: 1,
+    marginTop: 36,
+    marginBottom: 36,
+    width: "100%",
   },
   loadingContainer: {
     flex: 1,
@@ -101,10 +114,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   titleText: {
-    fontSize: 30,
+    fontSize: 20,
   },
   bodyText: {
-    fontSize: 24,
+    fontSize: 18,
     color: "#666666",
   },
   userImage: {
@@ -113,9 +126,14 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: colours.primaryHighlight,
+    color: colours.lightText,
     padding: 15,
     alignItems: "center",
     borderRadius: 5,
+    marginTop: 36,
+  },
+  buttonText: {
+    color: colours.lightText,
   },
 });
 

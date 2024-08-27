@@ -5,10 +5,10 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
-  ScrollView,
   Switch,
   ActivityIndicator,
   Alert,
+  ScrollView,
 } from "react-native";
 import { fetchSingleBusker, addBusk } from "../api";
 import colours from "../config/colours";
@@ -34,7 +34,7 @@ export default function CreateABuskScreen({ route, navigation }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchSingleBusker(data.data.users_id)
+    fetchSingleBusker(data.data.user_id)
       .then((user) => {
         const instruments = user.instruments || [];
         setAvailableInstruments(instruments || []);
@@ -252,7 +252,7 @@ export default function CreateABuskScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     minHeight: "100%",
     padding: 20,
     backgroundColor: colours.primaryBackground,
@@ -295,6 +295,7 @@ const styles = StyleSheet.create({
     padding: 15,
     alignItems: "center",
     borderRadius: 5,
+    marginTop: 16,
   },
   submitText: {
     color: colours.lightText,
