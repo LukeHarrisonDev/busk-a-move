@@ -43,11 +43,11 @@ function BusksScreen({ navigation }) {
 	};
 
 	useEffect(() => {
-		fetchAllBusks(instrumentFilter).then((response) => {
+		fetchAllBusks(instrumentFilter, sortBy).then((response) => {
 			setBusksList(response.busks);
 			setIsLoading(false);
 		});
-	}, [instrumentFilter]);
+	}, [instrumentFilter, sortBy]);
 
 	if (isLoading) {
 		return (
