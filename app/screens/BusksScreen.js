@@ -27,15 +27,6 @@ function BusksScreen({ navigation }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
 	const [mapLocations, setMapLocations] = useState([])
-	const [fakeLocations, setFakeLocations] = useState([
-		{
-			latitude: 53.801468,
-			longitude: Number(-1.549067),
-			title: "Calverley Street",
-		},
-		{ latitude: 53.799168, longitude: Number(-1.551856), title: "Park Square" },
-		{ latitude: 53.798826, longitude: Number(-1.547062), title: "Park Row" },
-	]);
 
 	const handleRefresh = () => {
 		setRefreshing(true);
@@ -53,7 +44,7 @@ function BusksScreen({ navigation }) {
 				listOfMapLocations.push(locationAndNameObject)
 			})
 			setMapLocations(listOfMapLocations)
-			setIsLoading(false);
+			setIsLoading(false)
 		});
 	}, [instrumentFilter, sortBy]);
 
@@ -81,7 +72,7 @@ function BusksScreen({ navigation }) {
 				<View style={styles.mapContainer}>
 					<MapView
 						style={styles.map}
-						// provider={PROVIDER_GOOGLE}
+						provider={PROVIDER_GOOGLE}
 						initialRegion={{
 							latitude: 53.801468,
 							longitude: Number(-1.549067),
@@ -89,32 +80,18 @@ function BusksScreen({ navigation }) {
 							longitudeDelta: 0.0101,
 						}}>
 
-						{mapLocations.map((marker, index) => {
-							return (
-								<Marker
-									key={index}
-									coordinate={{
-										latitude: marker.latitude,
-										longitude: marker.longitude,
-									}}
-									title={marker.locationName}
-									description="Busk location"/>
-							)
-						})}
-
-						{/* {fakeLocations.map((marker, index) => {
-							return (
-								<Marker
-									key={index}
-									coordinate={{
-										latitude: marker.latitude,
-										longitude: marker.longitude,
-									}}
-									title={marker.title}
-									description="Busk location"
-								/>
-							);
-						})} */}
+							{mapLocations.map((marker, index) => {
+								return (
+									<Marker
+										key={index}
+										coordinate={{
+											latitude: marker.latitude,
+											longitude: marker.longitude,
+										}}
+										title={marker.locationName}
+										description="Busk location"/>
+								)
+							})}
 					</MapView>
 				</View>
 				<FlatList
