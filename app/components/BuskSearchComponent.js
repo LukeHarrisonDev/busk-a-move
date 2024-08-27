@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import RNPickerSelect from 'react-native-picker-select';
+// import RNPickerSelect from 'react-native-picker-select';
+import {Picker} from '@react-native-picker/picker';
 
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
@@ -9,15 +10,8 @@ import colours from '../config/colours';
 function BuskSearchComponent({ setBusksList }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [listOfIntruments, setListOfInstruments] = useState([]);
-
-	function handleInstrumentChange(value) {
-		fetchAllBusks(value).then((response) => {
-			setIsLoading(true);
-			const busks = response.busks;
-			setBusksList(busks);
-		});
-	}
-
+    const [currentInstrument, setCurrentInstrument] = useState([])
+    
 	useEffect(() => {
 		fetchAllBusks().then((response) => {
 			setIsLoading(true);
@@ -31,23 +25,52 @@ function BuskSearchComponent({ setBusksList }) {
 			setIsLoading(false);
 		});
 	}, []);
+    
+    function handlePickerSelector(value) {
+        console.log(value)
+        setCurrentInstrument(value)
+    }
+
+    function handleInstrumentChange(value) {
+        fetchAllBusks(value).then((response) => {
+            setIsLoading(true);
+            const busks = response.busks;
+            setBusksList(busks);
+        });
+    }
 
 	const selectInstrumentData = [];
 
 	listOfIntruments.forEach((instrument) => {
 		selectInstrumentData.push({ label: instrument, value: instrument });
 	});
-	console.log(selectInstrumentData, '<<< LOI');
+	// console.log(selectInstrumentData, '<<< LOI');
 
 	return (
 		<View style={styles.filterContainer}>
-			<RNPickerSelect
+			{/* <RNPickerSelect
 				style={styles.picker}
 				onValueChange={handleInstrumentChange}
 				placeholder={{ label: 'Instrument Filter', value: null }}
 				items={selectInstrumentData}
-			/>
-			<RNPickerSelect
+			/> */}
+            <Picker selectedValue={currentInstrument} onValueChange={handlePickerSelector}>
+                {listOfIntruments.map((instrument) => {
+                    {console.log(instrument.toLowerCase())}
+                    <Picker.Item label={instrument.toLowerCase()} value={instrument.toLowerCase()}/>
+                })}
+                {/* <Picker.Item
+                    // {listOfIntruments.map}
+                    label='Time: Newest - Oldest (Default)'
+					value='?sort_by=busk_time_date&order=desc'/>
+                     <Picker.Item
+                    label='Time: 2'
+					value='?sort_by=busk_time_date&order=asc'/>
+                     <Picker.Item
+                    label='Time: 3'
+					value='?sortjhg'/> */}
+            </Picker>
+			{/* <RNPickerSelect
 				style={styles.picker}
 				onValueChange={handleInstrumentChange}
 				placeholder={{ label: 'Sort By', value: null }}
@@ -71,7 +94,7 @@ function BuskSearchComponent({ setBusksList }) {
 					{ label: 'Username: A-Z', value: '?sort_by=username&order=asc' },
 					{ label: 'Username: Z-A', value: '?sort_by=username&order=desc' },
 				]}
-			/>
+			/> */}
 		</View>
 	);
 }
