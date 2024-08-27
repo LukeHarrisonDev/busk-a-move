@@ -68,7 +68,7 @@ function BusksScreen({ navigation }) {
 				<View style={styles.filterContainer}>
 					<BuskSearchComponent setBusksList={setBusksList}/>
 				</View>
-				{/* <MapView
+				<MapView
 					style={styles.map}
 					provider={PROVIDER_GOOGLE}
 					initialRegion={{
@@ -91,7 +91,7 @@ function BusksScreen({ navigation }) {
 							/>
 						);
 					})}
-				</MapView> */}
+				</MapView>
 				<FlatList
 					data={busksList}
 					renderItem={({ item }) => {
@@ -167,12 +167,10 @@ const styles = StyleSheet.create({
 
 	},
 	bodyContainer: {
-		// backgroundColor: "red",
 		margin: 16,
 		width: "100%",
 		aspectRatio: 1/1,
 		position: "absolute",
-		// backgroundColor: "lightblue",
 		alignItems: "flex-end",
 		justifyContent: "flex-end"
 

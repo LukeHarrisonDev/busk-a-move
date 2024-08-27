@@ -51,7 +51,7 @@ function BuskSearchComponent({ setBusksList }) {
             </Picker>
             <Picker
 			selectedValue={currentSortBy}
-			onValueChange={handleSortByChange}
+			// onValueChange={handleSortByChange}
 			>
                 <Picker.Item label="Time: Newest - Oldest (Default)" value="?sort_by=busk_time_date&order=desc"/>
                 <Picker.Item label="Time: Oldest - Newest" value="?sort_by=busk_time_date&order=asc"/>
@@ -77,7 +77,6 @@ const styles = StyleSheet.create({
         margin: 10,
 		borderColor: colours.primaryHighlight,
         width: 350,
-		// marginHorizontal: 30, //Temporary, since the thing will not go to the centre.
 		maxWidth: "100%",
 	},
 	picker: {
