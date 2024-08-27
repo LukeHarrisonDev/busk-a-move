@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import RNPickerSelect from 'react-native-picker-select';
+import {Picker} from '@react-native-picker/picker';
 
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
@@ -9,15 +9,9 @@ import colours from '../config/colours';
 function BuskSearchComponent({ setBusksList }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [listOfIntruments, setListOfInstruments] = useState([]);
-
-	function handleInstrumentChange(value) {
-		fetchAllBusks(value).then((response) => {
-			setIsLoading(true);
-			const busks = response.busks;
-			setBusksList(busks);
-		});
-	}
-
+    const [currentInstrument, setCurrentInstrument] = useState("")
+	const [currentSortBy, setCurrentSortBy] = useState("")
+    
 	useEffect(() => {
 		fetchAllBusks().then((response) => {
 			setIsLoading(true);
@@ -32,47 +26,41 @@ function BuskSearchComponent({ setBusksList }) {
 		});
 	}, []);
 
-	const selectInstrumentData = [];
-
-	listOfIntruments.forEach((instrument) => {
-		selectInstrumentData.push({ label: instrument, value: instrument });
-	});
-	console.log(selectInstrumentData, '<<< LOI');
+    function handleInstrumentChange(value) {
+        fetchAllBusks(value).then((response) => {
+            setIsLoading(true);
+            const busks = response.busks;
+            setBusksList(busks);
+            setCurrentInstrument(value)
+        });
+    }
 
 	return (
 		<View style={styles.filterContainer}>
-			<RNPickerSelect
-				style={styles.picker}
-				onValueChange={handleInstrumentChange}
-				placeholder={{ label: 'Instrument Filter', value: null }}
-				items={selectInstrumentData}
-			/>
-			<RNPickerSelect
-				style={styles.picker}
-				onValueChange={handleInstrumentChange}
-				placeholder={{ label: 'Sort By', value: null }}
-				items={[
-					{
-						label: 'Time: Newest - Oldest (Default)',
-						value: '?sort_by=busk_time_date&order=desc',
-					}, //// Is this right? ////
-					{
-						label: 'Time: Oldest - Newest',
-						value: '?sort_by=busk_time_date&order=asc',
-					},
-					{
-						label: 'Location: A-Z',
-						value: '?sort_by=busk_location_name&order=asc',
-					},
-					{
-						label: 'Location: Z-A',
-						value: '?sort_by=busk_location_name&order=desc',
-					},
-					{ label: 'Username: A-Z', value: '?sort_by=username&order=asc' },
-					{ label: 'Username: Z-A', value: '?sort_by=username&order=desc' },
-				]}
-			/>
-		</View>
+            <Picker 
+                selectedValue={currentInstrument}
+                onValueChange={handleInstrumentChange}>
+                    <Picker.Item label="All"
+					    value=""/>
+                {listOfIntruments.map((instrument) => {
+                    return <Picker.Item 
+                        key={instrument}
+                        label={instrument}
+					    value={instrument} />
+                })}
+            </Picker>
+            <Picker
+			selectedValue={currentSortBy}
+			// onValueChange={handleSortByChange}
+			>
+                <Picker.Item label="Time: Newest - Oldest (Default)" value="?sort_by=busk_time_date&order=desc"/>
+                <Picker.Item label="Time: Oldest - Newest" value="?sort_by=busk_time_date&order=asc"/>
+                <Picker.Item label="Location: A-Z" value="?sort_by=busk_location_name&order=asc"/>
+                <Picker.Item label="Location: Z-A" value="?sort_by=busk_location_name&order=desc"/>
+                <Picker.Item label="Username: A-Z" value="?sort_by=username&order=asc"/>
+                <Picker.Item label="Username: Z-A" value="?sort_by=username&order=desc"/>
+            </Picker>
+        </View>
 	);
 }
 
@@ -85,11 +73,11 @@ const styles = StyleSheet.create({
 	filterContainer: {
 		padding: 5,
 		backgroundColor: colours.secondaryBackground,
-		borderWidth: 3,
+		borderWidth: 5,
+        margin: 10,
 		borderColor: colours.primaryHighlight,
-
-		marginHorizontal: 90, //Temporary, since the thing will not go to the centre.
-		maxWidth: 200,
+        width: 350,
+		maxWidth: "100%",
 	},
 	picker: {
 		fontSize: 16,

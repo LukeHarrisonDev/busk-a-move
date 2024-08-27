@@ -9,7 +9,8 @@ import {
 	StatusBar,
 	StyleSheet,
 	TouchableWithoutFeedback,
-	Image
+	Image,
+	ScrollView
 } from "react-native";
 import { fetchAllBusks } from "../api";
 import { PROVIDER_GOOGLE } from "react-native-maps";
@@ -57,7 +58,7 @@ function BusksScreen({ navigation }) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={styles.listContainer}>
+			<ScrollView style={styles.listContainer}>
 				<Button
 					title="Create Busk"
 					onPress={() => {
@@ -67,7 +68,7 @@ function BusksScreen({ navigation }) {
 				<View style={styles.filterContainer}>
 					<BuskSearchComponent setBusksList={setBusksList}/>
 				</View>
-				{/* <MapView
+				<MapView
 					style={styles.map}
 					provider={PROVIDER_GOOGLE}
 					initialRegion={{
@@ -90,7 +91,7 @@ function BusksScreen({ navigation }) {
 							/>
 						);
 					})}
-				</MapView> */}
+				</MapView>
 				<FlatList
 					data={busksList}
 					renderItem={({ item }) => {
@@ -106,7 +107,6 @@ function BusksScreen({ navigation }) {
 											{item.username} @ {item.busk_location_name} @ {formatTime(item.busk_time_date)} on {formatDate(item.busk_time_date)}
 										</Text>
 										<View style={styles.bodyContainer}>
-
 										<Text style={styles.bodyText}>Intruments: {`\n`} {instruments} {`\n`}{`\n`} Buskers Setup: {`\n`} {item.busk_setup}</Text>
 										</View>
 								</View>
@@ -121,16 +121,10 @@ function BusksScreen({ navigation }) {
 						></View>
 					)}
 					ListEmptyComponent={<Text>No Busks Found</Text>}
-					// ListHeaderComponent={
-					// 	<Text style={styles.headerText}>Busks List</Text>
-					// }
-					// ListFooterComponent={
-					// 	<Text style={styles.footerText}>End of list</Text>
-					// }
 					refreshing={refreshing}
 					onRefresh={handleRefresh}
 				/>
-			</View>
+			</ScrollView>
 		</SafeAreaView>
 	);
 }
@@ -144,7 +138,8 @@ const styles = StyleSheet.create({
 		alignItems: "center"
 	},
 	filterContainer: {
-		backgroundColor: "lightblue"
+		flexDirection: "column",
+		alignItems: "center"
 	},
 	card: {
 		width: "95%",
@@ -172,12 +167,10 @@ const styles = StyleSheet.create({
 
 	},
 	bodyContainer: {
-		// backgroundColor: "red",
 		margin: 16,
 		width: "100%",
 		aspectRatio: 1/1,
 		position: "absolute",
-		// backgroundColor: "lightblue",
 		alignItems: "flex-end",
 		justifyContent: "flex-end"
 
