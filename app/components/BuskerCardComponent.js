@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
-const BuskerCard = ({ name, image, description }) => {
+function BuskerCardComponent({ name, image, description }) {
 	return (
 		<View style={styles.cardContainer}>
 			<Image source={image} style={styles.cardImage} />
@@ -9,9 +9,9 @@ const BuskerCard = ({ name, image, description }) => {
 			<Text style={styles.cardDescription}>{description}</Text>
 		</View>
 	);
-};
+}
 
-export default BuskerCard;
+export default BuskerCardComponent;
 
 const styles = StyleSheet.create({
 	cardContainer: {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Text,
 	View,
@@ -11,35 +12,26 @@ import {
 	Dimensions,
 	Pressable,
 } from 'react-native';
-import BuskerCard from '../components/BuskerCard';
+import BuskerCardComponent from '../components/BuskerCardComponent';
+import { fetchAllBusks } from '../api';
 import colours from '../config/colours';
 
 const { width } = Dimensions.get('window');
 
 function HomeScreen({ navigation }) {
-	const buskers = [
-		{
-			name: 'John Doe',
-			image: require('../assets/add-circle.png'),
-			description: 'A soulful singer with a passion for street performances.',
-		},
-		{
-			name: 'Jane Smith',
-			image: require('../assets/add-circle.png'),
-			description: 'An energetic drummer who loves to entertain crowds.',
-		},
-		{
-			name: 'Bob Johnson',
-			image: require('../assets/add-circle.png'),
-			description: 'A talented guitarist with a unique style. ',
-		},
-	];
+	const [busks, setBusks] = useState([]);
+
+	useEffect(() => {
+		fetchAllBusks().then((res) => {
+			setBusks(res.busks);
+		});
+	}, []);
 
 	const renderBusker = ({ item }) => (
-		<BuskerCard
-			name={item.name}
-			image={item.image}
-			description={item.description}
+		<BuskerCardComponent
+			name={item.username}
+			image={{ uri: item.user_image_url }}
+			description={item.busk_about_me}
 		/>
 	);
 
@@ -108,7 +100,7 @@ function HomeScreen({ navigation }) {
 								</Pressable>
 							</View>
 							<FlatList
-								data={buskers}
+								data={busks}
 								renderItem={renderBusker}
 								keyExtractor={(item, index) => index.toString()}
 								horizontal
