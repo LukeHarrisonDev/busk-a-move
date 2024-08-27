@@ -48,7 +48,7 @@ function AllBuskersScreen({ navigation }) {
 							<View style={styles.card}>
 								<Text
 									onPress={() => {
-										navigation.navigate("BuskerProfile", { id: item.users_id });
+										navigation.navigate("BuskerProfile", { id: item.user_id });
 									}}
 									style={styles.titleText}
 								>
