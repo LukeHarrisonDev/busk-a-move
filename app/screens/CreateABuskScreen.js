@@ -16,6 +16,8 @@ import { fetchSingleBusker, addBusk } from "../api";
 import colours from "../config/colours";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
 
 export default function CreateABuskScreen({ route, navigation }) {
   const data = route.params;
@@ -39,6 +41,17 @@ export default function CreateABuskScreen({ route, navigation }) {
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
+  const [isMapModalVisible, setIsMapModalVisible] = useState(false);
+  const [region, setRegion] = useState({
+    latitude: 51.5074,
+    longitude: -0.1278,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+  const [selectedLocation, setSelectedLocation] = useState({
+    latitude: null,
+    longitude: null,
+  });
 
   useEffect(() => {
     fetchSingleBusker(data.data.user_id)
@@ -62,7 +75,22 @@ export default function CreateABuskScreen({ route, navigation }) {
   }, [data.data.user_id]);
 
   const handleInputChange = (name, value) => {
-    setForm((prevForm) => ({ ...prevForm, [name]: value }));
+    setForm((prevForm) => {
+      const newForm = { ...prevForm, [name]: value };
+      if (name === "busk_latitude" || name === "busk_longitude") {
+        const latitude = parseFloat(newForm.busk_latitude);
+        const longitude = parseFloat(newForm.busk_longitude);
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+          setSelectedLocation({ latitude, longitude });
+          setRegion({
+            ...region,
+            latitude,
+            longitude,
+          });
+        }
+      }
+      return newForm;
+    });
   };
 
   const handleSwitchChange = (instrument) => {
@@ -119,6 +147,33 @@ export default function CreateABuskScreen({ route, navigation }) {
 
       addBusk(buskData)
         .then(() => {
+          setForm({
+            busk_location_name: "",
+            busk_date: new Date(),
+            busk_time: new Date(),
+            busk_latitude: "",
+            busk_longitude: "",
+            busk_about_me: "",
+            busk_setup: "",
+            busk_selected_instruments: availableInstruments.reduce(
+              (acc, instrument) => {
+                acc[instrument] = false;
+                return acc;
+              },
+              {}
+            ),
+          });
+          setSelectedLocation({
+            latitude: null,
+            longitude: null,
+          });
+          setRegion({
+            latitude: 51.5074,
+            longitude: -0.1278,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+
           setSubmitting(false);
           setIsModalVisible(true);
         })
@@ -174,6 +229,26 @@ export default function CreateABuskScreen({ route, navigation }) {
     setForm((prevForm) => ({ ...prevForm, busk_time: selectedTime }));
   };
 
+  const handleMapSelect = (e) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    setSelectedLocation({ latitude, longitude });
+    setRegion({ ...region, latitude, longitude });
+    setForm((prevForm) => ({
+      ...prevForm,
+      busk_latitude: latitude.toString(),
+      busk_longitude: longitude.toString(),
+    }));
+  };
+
+  const handleSelectLocation = () => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      busk_latitude: selectedLocation.latitude.toString(),
+      busk_longitude: selectedLocation.longitude.toString(),
+    }));
+    setIsMapModalVisible(false);
+  };
+
   const handleNavigation = () => {
     setIsModalVisible(false);
     navigation.navigate("Busks");
@@ -215,13 +290,35 @@ export default function CreateABuskScreen({ route, navigation }) {
                   source={require("../assets/check-circle.png")}
                 />
               </View>
-              <Pressable
-                onPress={() => handleNavigation()}
-                style={styles.modalButton}
-              >
+              <Pressable onPress={handleNavigation} style={styles.modalButton}>
                 <Text style={styles.modalButtonText}>Go to Busks</Text>
               </Pressable>
             </View>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={isMapModalVisible}
+          onRequestClose={() => setIsMapModalVisible(false)}
+        >
+          <View style={styles.mapModalContainer}>
+            <MapView
+              style={styles.map}
+              region={region}
+              onPress={handleMapSelect}
+            >
+              {selectedLocation.latitude && (
+                <Marker coordinate={selectedLocation} />
+              )}
+            </MapView>
+            <Pressable
+              style={styles.selectLocationButton}
+              onPress={handleSelectLocation}
+            >
+              <Text style={styles.selectLocationText}>Select Location</Text>
+            </Pressable>
           </View>
         </Modal>
 
@@ -270,6 +367,14 @@ export default function CreateABuskScreen({ route, navigation }) {
           onCancel={hideTimePicker}
         />
 
+        <Text style={styles.label}>Location:</Text>
+        <Pressable
+          style={styles.mapButton}
+          onPress={() => setIsMapModalVisible(true)}
+        >
+          <Text style={styles.mapButtonText}>Pick Location on Map</Text>
+        </Pressable>
+
         <Text style={styles.label}>Latitude:</Text>
         <TextInput
           style={styles.input}
@@ -287,6 +392,7 @@ export default function CreateABuskScreen({ route, navigation }) {
           onChangeText={(text) => handleInputChange("busk_longitude", text)}
           keyboardType="numeric"
         />
+
         <Text style={styles.label}>Instruments:</Text>
         {availableInstruments.map((instrument) => (
           <View key={instrument} style={styles.checkboxRow}>
@@ -344,10 +450,6 @@ const styles = StyleSheet.create({
   scrollView: {
     flexGrow: 1,
     overflow: "scroll",
-  },
-  errorText: {
-    color: colours.errorText,
-    marginBottom: 15,
   },
   label: {
     marginVertical: 10,
@@ -426,5 +528,36 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     marginBottom: 30,
+  },
+  mapModalContainer: {
+    flex: 1,
+  },
+  map: {
+    flex: 1,
+  },
+  mapButton: {
+    backgroundColor: colours.primaryHighlight,
+    padding: 10,
+    alignItems: "center",
+    marginTop: 15,
+    marginBottom: 15,
+    borderRadius: 5,
+  },
+  mapButtonText: {
+    color: colours.lightText,
+    fontSize: 16,
+  },
+  selectLocationButton: {
+    padding: 15,
+    alignItems: "center",
+    backgroundColor: colours.primaryHighlight,
+    borderRadius: 5,
+    marginTop: 20,
+    marginBottom: 20,
+    marginHorizontal: 50,
+  },
+  selectLocationText: {
+    color: colours.lightText,
+    fontSize: 16,
   },
 });

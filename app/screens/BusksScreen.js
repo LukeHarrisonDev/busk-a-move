@@ -4,7 +4,6 @@ import {
 	View,
 	SafeAreaView,
 	ActivityIndicator,
-	Button,
 	FlatList,
 	StatusBar,
 	StyleSheet,
@@ -60,12 +59,6 @@ function BusksScreen({ navigation }) {
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView style={styles.listContainer}>
-				<Button
-					title="Create Busk"
-					onPress={() => {
-						navigation.navigate("CreateABusk");
-					}}
-				/>
 				<View style={styles.filterContainer}>
 					<BuskSearchComponent sortBy={sortBy} setSortBy={setSortBy} instrumentFilter={instrumentFilter} setInstrumentFilter={setInstrumentFilter}/>
 				</View>
