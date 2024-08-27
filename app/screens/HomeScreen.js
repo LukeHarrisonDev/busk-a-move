@@ -1,88 +1,183 @@
-import { Text, View, StyleSheet, ScrollView, Image, Button, SafeAreaView, TouchableOpacity } from 'react-native';
+import React from 'react';
+import {
+	Text,
+	View,
+	StyleSheet,
+	ScrollView,
+	Image,
+	SafeAreaView,
+	Pressable,
+	ImageBackground,
+} from 'react-native';
 
 import colours from '../config/colours';
-import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
 
-function HomeScreen({navigation}) {
-    return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView >
-                <View style={styles.headerContainer}>
-                    <Image
-                      style={styles.headerImg}
-                      source={require("../assets/busk-a-move-header.png")}
-                    />
-                </View>
-                <View style={styles.pictures}>
-                    <Image style={styles.image} source={{uri: "https://images.unsplash.com/photo-1532959801411-cf28447984f9?q=80&w=1890&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}}/>
-                    <Image style={styles.image} source={{uri: "https://images.unsplash.com/photo-1483069125343-4ef290c07840?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}}/>
-                </View>           
-                <Text style={styles.blurb}>Welcome, it seems you've stumbled upon the Busk-A-Move app, a collaboration app for busking musicians at any level. Whether you've never busked before and want to get started, or you're a veteran Busker wanting to spread your music upon fellow musicians and passers-by, this app can help organise your busks and collaborate with local Buskers, get started by making an account, then you can peruse Busks created by other Buskers, check the Buskers out, or start your Busking journey by creating your own Busks. Happy Busking!!!</Text>
-                <TouchableOpacity style={styles.signUpButton} onPress={() =>
-                {
-                    navigation.navigate("SignUp")
-                }}>
-                    <Text style={styles.signUpText}>SIGN UP</Text>
-                </TouchableOpacity>
-            </ScrollView>
-        </SafeAreaView>
-    );
+function HomeScreen({ navigation }) {
+	return (
+		<SafeAreaView style={styles.homeContainer}>
+			<ImageBackground
+				source={require('../assets/busk-bck.png')}
+				style={styles.homeBckImg}
+			>
+				<ScrollView contentContainerStyle={styles.homeWrapper}>
+					<View style={styles.headerContainer}>
+						<Image
+							style={styles.headerImg}
+							source={require('../assets/busk-a-move-header.png')}
+						/>
+					</View>
+					<View style={styles.homeBlurbContainer}>
+						<Text style={styles.homeBlurbText}>
+							<Text>Welcome! </Text>
+							Busk-A-Move app is a fun space for <Text>Buskers</Text> of all
+							levels to connect and collaborate. Whether you are{' '}
+							<Text>new to busking</Text> and eager to start, or a{' '}
+							<Text>veteran Busker</Text> looking to share your music with
+							fellow performers and passers-by, this app has you covered.
+						</Text>
+						<Text style={styles.paragraphText}>
+							Just create an account to explore local busks, connect with other
+							musicians, or kick off your own busking adventures.
+						</Text>
+						<Text style={styles.happyText}>Happy busking!</Text>
+					</View>
+					<View style={styles.buskersImgContainer}>
+						<Image
+							source={require('../assets/buskers-homepage-cold.png')}
+							style={styles.buskersImg}
+							resizeMode='contain'
+						/>
+					</View>
+					<View style={styles.sessionButtonsContainer}>
+						<Pressable
+							style={styles.signUpButton}
+							onPress={() => {
+								navigation.navigate('SignUp');
+							}}
+						>
+							<Text style={styles.signUpText}>SIGN UP</Text>
+						</Pressable>
+						<Pressable
+							style={styles.logInButton}
+							onPress={() => {
+								navigation.navigate('Login');
+							}}
+						>
+							<Text style={styles.logInText}>LOG IN</Text>
+						</Pressable>
+					</View>
+				</ScrollView>
+			</ImageBackground>
+		</SafeAreaView>
+	);
 }
 
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-        paddingTop: 30,
-        flex: 1,
-        backgroundColor: colours.secondaryBackground,
-    },
-    header: {
-        // fontSize: "55%",
-        fontFamily: "ChelseaMarketRegular",
-        alignSelf: "center",
-        color: colours.primaryHighlight,
-    },
-    headerContainer: {
-        width: "100%",
-        height: 90,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    headerImg: {
-        width: 280
-    },
-    text: {
-        // fontSize: 40,
-        alignSelf: "center",
-    },
-    pictures: {
-        flexDirection: "row",
-        alignSelf: "center",
-        margin: 30
-    },
-    image: {
-        marginHorizontal: 20,
-        width: 140,
-        height: 110
-    },
-    blurb: {
-        textAlign: "justify",
-        color: colours.primaryHighlight,
-        marginHorizontal: 35,
-        marginVertical: 20,
-        // fontSize: 20
-    },
-    signUpButton: {
-        backgroundColor: colours.primaryHighlight,
-        padding: 15,
-        alignItems: 'center',
-        borderRadius: 5,
-        marginVertical: 20,
-    },
-    signUpText: {
-        color: colours.lightText,
-  },
+	homeContainer: {
+		width: '100%',
+		height: '100vh',
+		paddingTop: 30,
+		flex: 1,
+		backgroundColor: colours.secondaryBackground,
+	},
+	homeBckImg: {
+		flex: 1,
+		resizeMode: 'contain',
+	},
+	homeWrapper: {
+		alignItems: 'center',
+	},
+	headerContainer: {
+		width: '100%',
+		height: 90,
+		marginTop: 10,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	headerImg: {
+		width: 280,
+		height: 45,
+	},
+	homeBlurbContainer: {
+		width: '92%',
+		backgroundColor: colours.primaryBackground,
+		borderRadius: 30,
+		marginVertical: 8,
+		paddingVertical: 22,
+		paddingHorizontal: 22,
+		alignSelf: 'center',
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.3,
+		shadowRadius: 6,
+		elevation: 8,
+	},
+	homeBlurbText: {
+		marginBottom: 5,
+		lineHeight: 24,
+		color: colours.darkText,
+		fontSize: 16,
+	},
+	paragraphText: {
+		marginTop: 5,
+		lineHeight: 24,
+		color: colours.darkText,
+		fontSize: 16,
+	},
+	happyText: {
+		marginTop: 5,
+		lineHeight: 24,
+		color: colours.darkText,
+		fontSize: 16,
+	},
+	buskersImgContainer: {
+		width: '100%',
+		height: 320,
+		alignItems: 'center',
+		position: 'relative',
+	},
+	buskersImg: {
+		width: '100%',
+		maxHeight: 320,
+		aspectRatio: 1.7,
+	},
+	sessionButtonsContainer: {
+		width: '95%',
+		height: 110,
+		display: 'flex',
+		justifyContent: 'space-evenly',
+		alignItems: 'center',
+		position: 'absolute',
+		bottom: 80,
+	},
+	signUpButton: {
+		width: '95%',
+		backgroundColor: colours.primaryHighlight,
+		padding: 15,
+		alignSelf: 'center',
+		alignItems: 'center',
+		borderRadius: 5,
+		marginVertical: 15,
+	},
+	signUpText: {
+		color: colours.lightText,
+		fontWeight: 'bold',
+	},
+	logInButton: {
+		width: '95%',
+		backgroundColor: colours.reversePrimaryHiglight,
+		padding: 15,
+		alignSelf: 'center',
+		alignItems: 'center',
+		borderRadius: 5,
+		marginVertical: 15,
+		borderWidth: 2,
+		borderColor: colours.primaryHighlight,
+	},
+	logInText: {
+		color: colours.reverseLightText,
+		fontWeight: 'bold',
+	},
 });
