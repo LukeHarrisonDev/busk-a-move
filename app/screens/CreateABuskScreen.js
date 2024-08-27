@@ -9,18 +9,21 @@ import {
   ActivityIndicator,
   Alert,
   ScrollView,
+  Modal,
+  Image,
 } from "react-native";
 import { fetchSingleBusker, addBusk } from "../api";
 import colours from "../config/colours";
 import { SafeAreaView } from "react-native-safe-area-context";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 export default function CreateABuskScreen({ route, navigation }) {
   const data = route.params;
 
   const [form, setForm] = useState({
     busk_location_name: "",
-    busk_date: "",
-    busk_time: "",
+    busk_date: new Date(),
+    busk_time: new Date(),
     busk_latitude: "",
     busk_longitude: "",
     busk_about_me: "",
@@ -31,7 +34,11 @@ export default function CreateABuskScreen({ route, navigation }) {
   const [availableInstruments, setAvailableInstruments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [error, setError] = useState(null);
+
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
 
   useEffect(() => {
     fetchSingleBusker(data.data.user_id)
@@ -52,7 +59,7 @@ export default function CreateABuskScreen({ route, navigation }) {
         setError("Failed to fetch user data");
         setLoading(false);
       });
-  }, [data.data.users_id]);
+  }, [data.data.user_id]);
 
   const handleInputChange = (name, value) => {
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
@@ -113,8 +120,7 @@ export default function CreateABuskScreen({ route, navigation }) {
       addBusk(buskData)
         .then(() => {
           setSubmitting(false);
-          Alert.alert("Success", "Your busk event has been created!");
-          navigation.goBack();
+          setIsModalVisible(true);
         })
         .catch((error) => {
           setSubmitting(false);
@@ -131,15 +137,46 @@ export default function CreateABuskScreen({ route, navigation }) {
 
   const convertToISO = (date, time) => {
     try {
-      const [year, month, day] = date.split("-");
+      const combinedDateTime = new Date(date);
+      combinedDateTime.setHours(time.getHours());
+      combinedDateTime.setMinutes(time.getMinutes());
 
-      const [hours, minutes] = time.split(":").map(Number);
-
-      return `${year}-${month}-${day}T${hours}:${minutes}:00.000Z`;
+      return combinedDateTime.toISOString();
     } catch (error) {
       console.error("Failed to convert date/time:", error);
       return null;
     }
+  };
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirmDate = (selectedDate) => {
+    hideDatePicker();
+    setForm((prevForm) => ({ ...prevForm, busk_date: selectedDate }));
+  };
+
+  const showTimePicker = () => {
+    setTimePickerVisibility(true);
+  };
+
+  const hideTimePicker = () => {
+    setTimePickerVisibility(false);
+  };
+
+  const handleConfirmTime = (selectedTime) => {
+    hideTimePicker();
+    setForm((prevForm) => ({ ...prevForm, busk_time: selectedTime }));
+  };
+
+  const handleNavigation = () => {
+    setIsModalVisible(false);
+    navigation.navigate("Busks");
   };
 
   if (loading) {
@@ -161,6 +198,33 @@ export default function CreateABuskScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollView}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.successMessage}>
+                Success, Your busk event has been created!
+              </Text>
+              <View>
+                <Image
+                  style={styles.modalImg}
+                  source={require("../assets/check-circle.png")}
+                />
+              </View>
+              <Pressable
+                onPress={() => handleNavigation()}
+                style={styles.modalButton}
+              >
+                <Text style={styles.modalButtonText}>Go to Busks</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+
         <Text style={styles.label}>Event Name:</Text>
         <TextInput
           style={styles.input}
@@ -170,19 +234,40 @@ export default function CreateABuskScreen({ route, navigation }) {
         />
 
         <Text style={styles.label}>Event Date:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter event date (e.g., 2024-08-14)"
-          value={form.busk_date}
-          onChangeText={(text) => handleInputChange("busk_date", text)}
+        <Pressable onPress={showDatePicker}>
+          <TextInput
+            style={styles.input}
+            placeholder="Select event date"
+            value={form.busk_date.toDateString()}
+            editable={false}
+          />
+        </Pressable>
+
+        <DateTimePickerModal
+          isVisible={isDatePickerVisible}
+          mode="date"
+          onConfirm={handleConfirmDate}
+          onCancel={hideDatePicker}
         />
 
         <Text style={styles.label}>Event Time:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter event time (e.g., 20:45)"
-          value={form.busk_time}
-          onChangeText={(text) => handleInputChange("busk_time", text)}
+        <Pressable onPress={showTimePicker}>
+          <TextInput
+            style={styles.input}
+            placeholder="Select event time"
+            value={form.busk_time.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+            editable={false}
+          />
+        </Pressable>
+
+        <DateTimePickerModal
+          isVisible={isTimePickerVisible}
+          mode="time"
+          onConfirm={handleConfirmTime}
+          onCancel={hideTimePicker}
         />
 
         <Text style={styles.label}>Latitude:</Text>
@@ -202,7 +287,6 @@ export default function CreateABuskScreen({ route, navigation }) {
           onChangeText={(text) => handleInputChange("busk_longitude", text)}
           keyboardType="numeric"
         />
-
         <Text style={styles.label}>Instruments:</Text>
         {availableInstruments.map((instrument) => (
           <View key={instrument} style={styles.checkboxRow}>
@@ -252,7 +336,7 @@ export default function CreateABuskScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    flex: 1,
     minHeight: "100%",
     padding: 20,
     backgroundColor: colours.primaryBackground,
@@ -261,25 +345,32 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     overflow: "scroll",
   },
+  errorText: {
+    color: colours.errorText,
+    marginBottom: 15,
+  },
   label: {
-    fontSize: 16,
-    marginVertical: 8,
+    marginVertical: 10,
   },
   input: {
     borderWidth: 1,
     borderColor: colours.darkHighlight,
-    borderRadius: 4,
     padding: 10,
-    fontSize: 16,
+    marginBottom: 10,
+    borderRadius: 5,
+    backgroundColor: colours.lightText,
+    paddingRight: 50,
+    color: "black",
   },
   textArea: {
     minHeight: 100,
     borderWidth: 1,
     borderColor: colours.darkHighlight,
-    borderRadius: 4,
     padding: 10,
-    fontSize: 16,
-    textAlign: "top",
+    marginBottom: 15,
+    borderRadius: 5,
+    backgroundColor: colours.lightText,
+    textAlignVertical: "top",
   },
   checkboxRow: {
     flexDirection: "row",
@@ -294,10 +385,46 @@ const styles = StyleSheet.create({
     backgroundColor: colours.primaryHighlight,
     padding: 15,
     alignItems: "center",
+    marginTop: 20,
     borderRadius: 5,
-    marginTop: 16,
   },
   submitText: {
     color: colours.lightText,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    paddingVertical: 55,
+    backgroundColor: colours.primaryBackground,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  successMessage: {
+    fontSize: 16,
+    marginBottom: 30,
+    textAlign: "center",
+    lineHeight: 25,
+  },
+  modalButton: {
+    width: 200,
+    padding: 20,
+    backgroundColor: colours.secondaryHighlight,
+    paddingHorizontal: 50,
+    borderRadius: 5,
+  },
+  modalButtonText: {
+    color: colours.lightText,
+    fontSize: 16,
+  },
+  modalImg: {
+    width: 80,
+    height: 80,
+    marginBottom: 30,
   },
 });
