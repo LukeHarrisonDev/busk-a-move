@@ -10,6 +10,7 @@ import {
 	StatusBar,
 	StyleSheet,
 } from "react-native";
+import colours from "../config/colours";
 
 function AllBuskersScreen({ navigation }) {
 	const [buskersList, setBuskersList] = useState([]);
@@ -44,6 +45,7 @@ function AllBuskersScreen({ navigation }) {
 				<FlatList
 					data={buskersList}
 					renderItem={({ item }) => {
+						const instruments = item.instruments.join(", ");
 						return (
 							<View style={styles.card}>
 								<Text
@@ -54,16 +56,14 @@ function AllBuskersScreen({ navigation }) {
 								>
 									{item.username}
 								</Text>
-								<Text style={styles.titleText}>{item.username}</Text>
-								<Text style={styles.titleText}>{item.full_name}</Text>
-								<Text style={styles.titleText}>{item.user_location}</Text>
+								<Text style={styles.bodyText}>{item.full_name}</Text>
+								<Text style={styles.bodyText}>{item.user_location}</Text>
 								<Image
 									style={styles.userImage}
 									source={{ uri: item.user_image_url }}
 								/>
-								<Text style={styles.titleText}>
-									Instruments: {item.instruments}
-								</Text>
+								<Text style={styles.titleText}>Instruments:</Text>
+								<Text style={styles.bodyText}>{instruments}</Text>
 							</View>
 						);
 					}}
@@ -92,7 +92,7 @@ function AllBuskersScreen({ navigation }) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f5f5f5",
+		backgroundColor: colours.secondaryBackground,
 		paddingTop: StatusBar.currentHeight,
 	},
 	listContainer: {
@@ -104,13 +104,16 @@ const styles = StyleSheet.create({
 		padding: 16,
 		borderRadius: 8,
 		borderWidth: 1,
+		alignItems: "center",
 	},
 	titleText: {
-		fontSize: 30,
+		fontSize: 20,
+		color: colours.primaryHighlight,
+		fontWeight: "bold",
 	},
 	bodyText: {
-		fontSize: 24,
-		color: "#666666",
+		fontSize: 18,
+		color: colours.primaryHighlight,
 	},
 	headerText: {
 		fontSize: 24,
@@ -131,8 +134,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	userImage: {
-		width: 40,
-		height: 40,
+		width: 80,
+		height: 80,
 	},
 });
 
