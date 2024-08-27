@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { Text, TextInput, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { View, Button } from 'react-native-web';
+import React, { useState } from 'react';
+import { Text, TextInput, ScrollView, StyleSheet,View, Button, Alert, } from 'react-native';
+import {TouchableOpacity} from 'react-native-web'
+import { useFocusEffect } from '@react-navigation/native';
+
 import colours from '../config/colours'; 
 
 function LoginScreen({ navigation }) {
@@ -9,6 +11,14 @@ function LoginScreen({ navigation }) {
     password: ''
   });
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setForm({
+        emailOrUsername:'',
+        password:''
+      })
+    },[])
+  )
   const handleInputChange = (name, value) => {
     setForm({
       ...form,
@@ -16,13 +26,50 @@ function LoginScreen({ navigation }) {
     });
   };
 
+  const fetchUsers = () => {
+    return fetch('https://be-busk-a-move.onrender.com/api/users')
+    .then((response) => {
+      if(!response.ok){
+        throw new Error ('unable to fetch users')
+      }
+      return response.json()
+    })
+      .then((data) => data.users)
+  }
+
+  const authenticateUser = (emailOrUsername, password) => {
+    return fetchUsers()
+    .then((users) => {
+      const foundUser = users.find((user) =>
+         (user.user_email === emailOrUsername || user.username === emailOrUsername) && user.user_password === password)
+
+      
+      if (foundUser) {
+        return foundUser
+      } else { throw new Error ('invalid username/email or password')
+
+      }
+    })
+    .catch((error) => {
+      console.error('error during authentication:' , error.message)
+      throw error
+    })
+  }
   const handleSubmit = () => {
 
-    //Logic for authentication to be added here if we get to that stage..
+  const {emailOrUsername, password} = form
    
-    console.log(form);
-    navigation.navigate("MyProfile");
+  authenticateUser(emailOrUsername, password)
+  .then((user) => {
+    navigation.navigate("MyProfile", {userId : user.user_id});
+  })
+  .catch((error) => {
+    Alert.alert('login failed', error.message)
+  })
+    
   };
+
+  
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -68,7 +115,7 @@ const styles = StyleSheet.create({
     backgroundColor: colours.white,
   },
   submitButton: {
-    backgroundColor: colours.rust,
+    backgroundColor: colours.primaryHighlight,
     padding: 15,
     alignItems: 'center',
     borderRadius: 5,
