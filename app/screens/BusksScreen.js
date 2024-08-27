@@ -70,30 +70,32 @@ function BusksScreen({ navigation }) {
 				<View style={styles.filterContainer}>
 					<BuskSearchComponent sortBy={sortBy} setSortBy={setSortBy} instrumentFilter={instrumentFilter} setInstrumentFilter={setInstrumentFilter}/>
 				</View>
-				<MapView
-					style={styles.map}
-					// provider={PROVIDER_GOOGLE}
-					initialRegion={{
-						latitude: 53.801468,
-						longitude: Number(-1.549067),
-						latitudeDelta: 0.0102,
-						longitudeDelta: 0.0101,
-					}}
-				>
-					{fakeLocations.map((marker, index) => {
-						return (
-							<Marker
-								key={index}
-								coordinate={{
-									latitude: marker.latitude,
-									longitude: marker.longitude,
-								}}
-								title={marker.title}
-								description="Busk location"
-							/>
-						);
-					})}
-				</MapView>
+				<View style={styles.mapContainer}>
+					<MapView
+						style={styles.map}
+						// provider={PROVIDER_GOOGLE}
+						initialRegion={{
+							latitude: 53.801468,
+							longitude: Number(-1.549067),
+							latitudeDelta: 0.0102,
+							longitudeDelta: 0.0101,
+						}}
+					>
+						{fakeLocations.map((marker, index) => {
+							return (
+								<Marker
+									key={index}
+									coordinate={{
+										latitude: marker.latitude,
+										longitude: marker.longitude,
+									}}
+									title={marker.title}
+									description="Busk location"
+								/>
+							);
+						})}
+					</MapView>
+				</View>
 				<FlatList
 					data={busksList}
 					renderItem={({ item }) => {
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
 	},
 	cardImage: {
 		margin: 16,
-		opacity: 0.4,
+		opacity: 0.2,
 		width: "100%",
 		aspectRatio: 1/1,
 		position: "absolute",
@@ -164,7 +166,7 @@ const styles = StyleSheet.create({
 	},
 	bodyText: {
 		fontSize: 20,
-		color: "#666666",
+		color: colours.darkHighlight,
 		textAlign: "right",
 
 	},
@@ -195,9 +197,16 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
+	mapContainer: {
+		flexDirection: "column",
+		alignItems: "center",
+		margin: 10,
+		border: colours.darkTabBar,
+		borderWidth: 5,
+	},
 	map: {
-		width: 250,
-		aspectRatio: 1/1,
+		width: 364,
+		height: 250
 	},
 });
 
