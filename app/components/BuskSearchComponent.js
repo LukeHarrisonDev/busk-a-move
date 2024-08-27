@@ -6,11 +6,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import { fetchAllBusks } from '../api';
 import colours from '../config/colours';
 
-function BuskSearchComponent({ setBusksList }) {
+function BuskSearchComponent({ setBusksList, sortBy, setSortBy, instrumentFilter, setInstrumentFilter }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [listOfIntruments, setListOfInstruments] = useState([]);
-    const [currentInstrument, setCurrentInstrument] = useState("")
-	const [currentSortBy, setCurrentSortBy] = useState("")
+    // const [currentInstrument, setCurrentInstrument] = useState("")
     
 	useEffect(() => {
 		fetchAllBusks().then((response) => {
@@ -27,18 +26,18 @@ function BuskSearchComponent({ setBusksList }) {
 	}, []);
 
     function handleInstrumentChange(value) {
-        fetchAllBusks(value).then((response) => {
-            setIsLoading(true);
-            const busks = response.busks;
-            setBusksList(busks);
-            setCurrentInstrument(value)
-        });
+        // fetchAllBusks(value).then((response) => {
+        //     setIsLoading(true);
+        //     const busks = response.busks;
+        //     setBusksList(busks);
+            setInstrumentFilter(value)
+        // });
     }
 
 	return (
 		<View style={styles.filterContainer}>
             <Picker 
-                selectedValue={currentInstrument}
+                selectedValue={instrumentFilter}
                 onValueChange={handleInstrumentChange}>
                     <Picker.Item label="All"
 					    value=""/>
@@ -50,7 +49,7 @@ function BuskSearchComponent({ setBusksList }) {
                 })}
             </Picker>
             <Picker
-			selectedValue={currentSortBy}
+			selectedValue={sortBy}
 			// onValueChange={handleSortByChange}
 			>
                 <Picker.Item label="Time: Newest - Oldest (Default)" value="?sort_by=busk_time_date&order=desc"/>

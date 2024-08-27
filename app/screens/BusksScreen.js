@@ -22,6 +22,8 @@ import { formatDate, formatTime } from "../assets/utils/date-and-time";
 
 function BusksScreen({ navigation }) {
 	const [busksList, setBusksList] = useState([]);
+	const [sortBy, setSortBy] = useState("")
+	const [instrumentFilter, setInstrumentFilter] = useState("")
 	const [isLoading, setIsLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
 	const [fakeLocations, setFakeLocations] = useState([
@@ -41,11 +43,11 @@ function BusksScreen({ navigation }) {
 	};
 
 	useEffect(() => {
-		fetchAllBusks().then((response) => {
+		fetchAllBusks(instrumentFilter).then((response) => {
 			setBusksList(response.busks);
 			setIsLoading(false);
 		});
-	}, []);
+	}, [instrumentFilter]);
 
 	if (isLoading) {
 		return (
@@ -66,11 +68,11 @@ function BusksScreen({ navigation }) {
 					}}
 				/>
 				<View style={styles.filterContainer}>
-					<BuskSearchComponent setBusksList={setBusksList}/>
+					<BuskSearchComponent sortBy={sortBy} setSortBy={setSortBy} instrumentFilter={instrumentFilter} setInstrumentFilter={setInstrumentFilter}/>
 				</View>
 				<MapView
 					style={styles.map}
-					provider={PROVIDER_GOOGLE}
+					// provider={PROVIDER_GOOGLE}
 					initialRegion={{
 						latitude: 53.801468,
 						longitude: Number(-1.549067),
@@ -194,8 +196,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	map: {
-		width: "100%",
-		height: "50%",
+		width: 250,
+		aspectRatio: 1/1,
 	},
 });
 
