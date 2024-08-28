@@ -58,84 +58,86 @@ function BusksScreen({ navigation }) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView style={styles.listContainer}>
-				<View style={styles.filterContainer}>
-					<BuskSearchComponent
-						sortBy={sortBy}
-						setSortBy={setSortBy}
-						instrumentFilter={instrumentFilter}
-						setInstrumentFilter={setInstrumentFilter}
-					/>
-				</View>
-				<View style={styles.mapContainer}>
-					<MapView
-						style={styles.map}
-						provider={PROVIDER_GOOGLE}
-						initialRegion={{
-							latitude: 53.801468,
-							longitude: Number(-1.549067),
-							latitudeDelta: 0.0102,
-							longitudeDelta: 0.0101,
-						}}
-					>
-						{mapLocations.map((marker, index) => {
-							return (
-								<Marker
-									key={index}
-									coordinate={{
-										latitude: marker.latitude,
-										longitude: marker.longitude,
-									}}
-									title={marker.locationName}
-									description='Busk location'
-								/>
-							);
-						})}
-					</MapView>
-				</View>
-				<FlatList
-					data={busksList}
-					renderItem={({ item }) => {
-						const instruments = item.busk_selected_instruments.join(', ');
-
-						return (
-							<TouchableWithoutFeedback
-								onPress={() => {
-									navigation.navigate('SingleBusk', { id: item.busk_id });
+			<FlatList
+				ListHeaderComponent={
+					<View>
+						<View style={styles.filterContainer}>
+							<BuskSearchComponent
+								sortBy={sortBy}
+								setSortBy={setSortBy}
+								instrumentFilter={instrumentFilter}
+								setInstrumentFilter={setInstrumentFilter}
+							/>
+						</View>
+						<View style={styles.mapContainer}>
+							<MapView
+								style={styles.map}
+								provider={PROVIDER_GOOGLE}
+								initialRegion={{
+									latitude: 53.801468,
+									longitude: Number(-1.549067),
+									latitudeDelta: 0.0102,
+									longitudeDelta: 0.0101,
 								}}
 							>
-								<View style={styles.card}>
-									<Image
-										style={styles.cardImage}
-										source={{ uri: item.user_image_url }}
-									/>
-									<Text style={styles.titleText}>
-										{item.username} @ {item.busk_location_name} @{' '}
-										{formatTime(item.busk_time_date)} on{' '}
-										{formatDate(item.busk_time_date)}
-									</Text>
-									<View style={styles.bodyContainer}>
-										<Text style={styles.bodyText}>
-											Intruments: {`\n`} {instruments} {`\n`}
-											{`\n`} Buskers Setup: {`\n`} {item.busk_setup}
-										</Text>
-									</View>
-								</View>
-							</TouchableWithoutFeedback>
-						);
-					}}
-					ItemSeparatorComponent={() => (
-						<View
-							style={{
-								height: 16,
+								{mapLocations.map((marker, index) => {
+									return (
+										<Marker
+											key={index}
+											coordinate={{
+												latitude: marker.latitude,
+												longitude: marker.longitude,
+											}}
+											title={marker.locationName}
+											description='Busk location'
+										/>
+									);
+								})}
+							</MapView>
+						</View>
+					</View>
+				}
+				data={busksList}
+				renderItem={({ item }) => {
+					const instruments = item.busk_selected_instruments.join(', ');
+
+					return (
+						<TouchableWithoutFeedback
+							onPress={() => {
+								navigation.navigate('SingleBusk', { id: item.busk_id });
 							}}
-						></View>
-					)}
-					ListEmptyComponent={<Text>No Busks Found</Text>}
-					refreshing={refreshing}
-					onRefresh={handleRefresh}
-				/>
-			</ScrollView>
+						>
+							<View style={styles.card}>
+								<Image
+									style={styles.cardImage}
+									source={{ uri: item.user_image_url }}
+								/>
+								<Text style={styles.titleText}>
+									{item.username} @ {item.busk_location_name} @{' '}
+									{formatTime(item.busk_time_date)} on{' '}
+									{formatDate(item.busk_time_date)}
+								</Text>
+								<View style={styles.bodyContainer}>
+									<Text style={styles.bodyText}>
+										Intruments: {`\n`} {instruments} {`\n`}
+										{`\n`} Buskers Setup: {`\n`} {item.busk_setup}
+									</Text>
+								</View>
+							</View>
+						</TouchableWithoutFeedback>
+					);
+				}}
+				ItemSeparatorComponent={() => (
+					<View
+						style={{
+							height: 16,
+						}}
+					></View>
+				)}
+				ListEmptyComponent={<Text>No Busks Found</Text>}
+				refreshing={refreshing}
+				onRefresh={handleRefresh}
+			/>
 		</SafeAreaView>
 	);
 }
