@@ -30,8 +30,10 @@ function HomeScreen({ navigation }) {
 	const renderBusker = ({ item }) => (
 		<BuskerCardComponent
 			name={item.username}
+			location={item.busk_location_name}
 			image={{ uri: item.user_image_url }}
 			description={item.busk_about_me}
+			instruments={item.busk_selected_instruments}
 		/>
 	);
 

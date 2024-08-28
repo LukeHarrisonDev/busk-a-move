@@ -1,12 +1,20 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
-function BuskerCardComponent({ name, image, description }) {
+function BuskerCardComponent({
+	name,
+	image,
+	description,
+	location,
+	instruments,
+}) {
 	return (
 		<View style={styles.cardContainer}>
 			<Image source={image} style={styles.cardImage} />
 			<Text style={styles.cardName}>{name}</Text>
+			<Text style={styles.cardDescription}>{location}</Text>
 			<Text style={styles.cardDescription}>{description}</Text>
+			<Text style={styles.cardDescription}>{instruments}</Text>
 		</View>
 	);
 }
@@ -16,7 +24,6 @@ export default BuskerCardComponent;
 const styles = StyleSheet.create({
 	cardContainer: {
 		backgroundColor: '#fff',
-		borderRadius: 10,
 		padding: 15,
 		marginLeft: 25,
 		marginRight: 25,
@@ -27,9 +34,8 @@ const styles = StyleSheet.create({
 		elevation: 8,
 	},
 	cardImage: {
-		width: '100%',
+		width: 200,
 		height: 150,
-		borderRadius: 10,
 	},
 	cardName: {
 		marginTop: 10,
