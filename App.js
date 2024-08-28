@@ -25,20 +25,22 @@ export default function App() {
                 <Tab.Screen name="Home" component={HomeStack} 
                     options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faHouse} size={23} color={color} />, headerShown: false}}
                 />
-                {/* //dynamic? */}
-                <Tab.Screen name="User" component={UserStack} 
-                    options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faUser} size={23} color={color} />}}
-                />
+
                 <Tab.Screen name="Busks" component={BusksStack} 
-                    options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faGuitar} size={23} color={color} />}}
+                    options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faGuitar} size={23} color={color} />, headerShown: false}}
                 />
                 <Tab.Screen name="Buskers" component={BuskersStack} 
-                    options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faUsers} size={23} color={color}/>}}
+                    options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faUsers} size={23} color={color}/>, headerShown: false}}
                 />
-                <Tab.Screen name="Chats" component={ChatsStack} 
+                {/* <Tab.Screen name="Chats" component={ChatsStack} 
                     options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faComment} size={23} color={color} />,
                     tabBarBadge: 1
                 }}
+                /> */}
+                
+                {/* //dynamic? */}
+                <Tab.Screen name="User" component={UserStack} 
+                    options={{tabBarIcon: ({color}) => <FontAwesomeIcon icon={faUser} size={23} color={color} />, title: "My Profile", headerShown: false}}
                 />
             </Tab.Navigator>
       </NavigationContainer>
