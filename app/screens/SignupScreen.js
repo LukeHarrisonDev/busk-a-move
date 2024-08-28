@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
 	View,
 	Text,
@@ -6,38 +6,41 @@ import {
 	TouchableOpacity,
 	StyleSheet,
 	ScrollView,
+	StatusBar,
 	Modal,
 	Image,
-} from 'react-native';
-import { Switch } from 'react-native';
-import colours from '../config/colours';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { createUser } from '../api';
+	ActivityIndicator,
+} from "react-native";
+import { Switch } from "react-native";
+import colours from "../config/colours";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { createUser } from "../api";
 
 export default function SignUpForm({ navigation }) {
-	const [name, setName] = useState('');
-	const [username, setUsername] = useState('');
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const [profileImg, setProfileImg] = useState('');
-	const [location, setLocation] = useState('');
-	const [about, setAbout] = useState('');
+	const [name, setName] = useState("");
+	const [username, setUsername] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [profileImg, setProfileImg] = useState("");
+	const [location, setLocation] = useState("");
+	const [about, setAbout] = useState("");
 	const [isSetup, setIsSetup] = useState(false);
 	const [errorMsg, setErrorMsg] = useState({});
-	const [instrumentErrors, setInstrumentErrors] = useState('');
-	const [instruments, setInstruments] = useState(['']);
+	const [instrumentErrors, setInstrumentErrors] = useState("");
+	const [instruments, setInstruments] = useState([""]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const validateForm = () => {
 		let errors = {};
 
-		if (!name) errors.name = '*Name is required';
-		if (!username) errors.username = '*Username is required';
-		if (!email) errors.email = '*Email is required';
-		if (!password) errors.password = '*Password is required';
-		if (!profileImg) errors.profileImg = '*Profile picture is required';
-		if (!location) errors.location = '*Location is required';
+		if (!name) errors.name = "*Name is required";
+		if (!username) errors.username = "*Username is required";
+		if (!email) errors.email = "*Email is required";
+		if (!password) errors.password = "*Password is required";
+		if (!profileImg) errors.profileImg = "*Profile picture is required";
+		if (!location) errors.location = "*Location is required";
 
 		setErrorMsg(errors);
 		return Object.keys(errors).length === 0;
@@ -47,20 +50,20 @@ export default function SignUpForm({ navigation }) {
 		const updatedInstruments = [...instruments];
 		updatedInstruments[index] = value;
 		setInstruments(updatedInstruments);
-		setInstrumentErrors('');
+		setInstrumentErrors("");
 	};
 
 	const handleInstrumentFocus = () => {
-		setInstrumentErrors('');
+		setInstrumentErrors("");
 	};
 
 	const addInstrumentInput = () => {
-		if (instruments[instruments.length - 1].trim() !== '') {
-			setInstruments([...instruments, '']);
-			setInstrumentErrors('');
+		if (instruments[instruments.length - 1].trim() !== "") {
+			setInstruments([...instruments, ""]);
+			setInstrumentErrors("");
 		} else {
 			setInstrumentErrors(
-				'*Please fill in the current instrument before adding another.'
+				"*Please fill in the current instrument before adding another."
 			);
 		}
 	};
@@ -71,8 +74,9 @@ export default function SignUpForm({ navigation }) {
 	};
 
 	const handleSubmit = () => {
+		setIsLoading(true);
 		const filteredInstruments = instruments.filter(
-			(instrument) => instrument.trim() !== ''
+			(instrument) => instrument.trim() !== ""
 		);
 
 		if (validateForm() && filteredInstruments.length > 0) {
@@ -87,17 +91,18 @@ export default function SignUpForm({ navigation }) {
 				instruments: filteredInstruments,
 			})
 				.then(() => {
+					setIsLoading(false);
 					setIsModalVisible(true);
 				})
 				.then(() => {
-					setName('');
-					setUsername('');
-					setEmail('');
-					setPassword('');
-					setProfileImg('');
-					setLocation('');
-					setInstruments(['']);
-					setAbout('');
+					setName("");
+					setUsername("");
+					setEmail("");
+					setPassword("");
+					setProfileImg("");
+					setLocation("");
+					setInstruments([""]);
+					setAbout("");
 					setIsSetup(false);
 				});
 		}
@@ -105,14 +110,23 @@ export default function SignUpForm({ navigation }) {
 
 	const handleNavigation = () => {
 		setIsModalVisible(false);
-		navigation.navigate('Busks');
+		navigation.navigate("Busks");
 	};
+
+	if (isLoading) {
+		return (
+			<SafeAreaView style={styles.loadingContainer}>
+				<ActivityIndicator size="large" color="0000ff" />
+				<Text>Loading...</Text>
+			</SafeAreaView>
+		);
+	}
 
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView>
 				<Modal
-					animationType='slide'
+					animationType="slide"
 					transparent={true}
 					visible={isModalVisible}
 					onRequestClose={() => setIsModalVisible(false)}
@@ -125,7 +139,7 @@ export default function SignUpForm({ navigation }) {
 							<View>
 								<Image
 									style={styles.modalImg}
-									source={require('../assets/check-circle.png')}
+									source={require("../assets/check-circle.png")}
 								/>
 							</View>
 							<TouchableOpacity
@@ -140,11 +154,11 @@ export default function SignUpForm({ navigation }) {
 				<Text style={styles.label}>Name:</Text>
 				<TextInput
 					style={styles.input}
-					placeholder='Enter your name'
+					placeholder="Enter your name"
 					value={name}
 					onChangeText={setName}
 					autoCorrect={false}
-					autoCapitalize='words'
+					autoCapitalize="words"
 					onFocus={handleInstrumentFocus}
 				/>
 				{errorMsg.name && <Text style={styles.errorText}>{errorMsg.name}</Text>}
@@ -152,11 +166,11 @@ export default function SignUpForm({ navigation }) {
 				<Text style={styles.label}>Username:</Text>
 				<TextInput
 					style={styles.input}
-					placeholder='Enter your username'
+					placeholder="Enter your username"
 					value={username}
 					onChangeText={setUsername}
 					autoCorrect={false}
-					autoCapitalize='none'
+					autoCapitalize="none"
 					onFocus={handleInstrumentFocus}
 				/>
 				{errorMsg.username && (
@@ -166,12 +180,12 @@ export default function SignUpForm({ navigation }) {
 				<Text style={styles.label}>Email:</Text>
 				<TextInput
 					style={styles.input}
-					placeholder='email@example.com'
+					placeholder="email@example.com"
 					value={email}
 					onChangeText={setEmail}
-					keyboardType='email-address'
+					keyboardType="email-address"
 					autoCorrect={false}
-					autoCapitalize='none'
+					autoCapitalize="none"
 					onFocus={handleInstrumentFocus}
 				/>
 				{errorMsg.email && (
@@ -182,11 +196,11 @@ export default function SignUpForm({ navigation }) {
 				<View style={styles.inputContainer}>
 					<TextInput
 						style={styles.input}
-						placeholder='Create password'
+						placeholder="Create password"
 						value={password}
 						onChangeText={setPassword}
 						autoCorrect={false}
-						autoCapitalize='none'
+						autoCapitalize="none"
 						secureTextEntry={!showPassword}
 						onFocus={handleInstrumentFocus}
 					/>
@@ -198,8 +212,8 @@ export default function SignUpForm({ navigation }) {
 							style={styles.eyeIcon}
 							source={
 								!showPassword
-									? require('../assets/visibility-off.png')
-									: require('../assets/visibility-on.png')
+									? require("../assets/visibility-off.png")
+									: require("../assets/visibility-on.png")
 							}
 						/>
 					</TouchableOpacity>
@@ -212,11 +226,11 @@ export default function SignUpForm({ navigation }) {
 				<Text style={styles.label}>Upload your profile picture:</Text>
 				<TextInput
 					style={styles.input}
-					placeholder='Share your image link'
+					placeholder="Share your image link"
 					value={profileImg}
 					onChangeText={setProfileImg}
 					autoCorrect={false}
-					autoCapitalize='none'
+					autoCapitalize="none"
 					onFocus={handleInstrumentFocus}
 				/>
 				{errorMsg.profileImg && (
@@ -226,9 +240,9 @@ export default function SignUpForm({ navigation }) {
 				<Text style={styles.label}>Where are you based?</Text>
 				<TextInput
 					style={styles.input}
-					placeholder='Enter your location'
+					placeholder="Enter your location"
 					value={location}
-					autoCapitalize='none'
+					autoCapitalize="none"
 					onChangeText={setLocation}
 					onFocus={handleInstrumentFocus}
 				/>
@@ -255,7 +269,7 @@ export default function SignUpForm({ navigation }) {
 							>
 								<Image
 									style={styles.removeInstrumentIcon}
-									source={require('../assets/remove-circle.png')}
+									source={require("../assets/remove-circle.png")}
 								/>
 							</TouchableOpacity>
 						)}
@@ -268,7 +282,7 @@ export default function SignUpForm({ navigation }) {
 				<TouchableOpacity style={styles.addButton} onPress={addInstrumentInput}>
 					<Image
 						style={styles.circleIcon}
-						source={require('../assets/add-circle.png')}
+						source={require("../assets/add-circle.png")}
 					/>
 					<Text style={styles.addButtonText}>Add another instrument</Text>
 				</TouchableOpacity>
@@ -276,10 +290,10 @@ export default function SignUpForm({ navigation }) {
 				<Text style={styles.label}>Tell us a bit about yourself:</Text>
 				<TextInput
 					style={styles.textArea}
-					placeholder='i.e., are you a beginner or a seasoned pro? What styles do you love to play?'
+					placeholder="i.e., are you a beginner or a seasoned pro? What styles do you love to play?"
 					value={about}
 					onChangeText={setAbout}
-					autoCapitalize='sentences'
+					autoCapitalize="sentences"
 					multiline
 					onFocus={handleInstrumentFocus}
 				/>
@@ -304,7 +318,7 @@ export default function SignUpForm({ navigation }) {
 
 const styles = StyleSheet.create({
 	container: {
-		minHeight: '100%',
+		minHeight: "100%",
 		padding: 20,
 		backgroundColor: colours.primaryBackground,
 	},
@@ -325,8 +339,8 @@ const styles = StyleSheet.create({
 		paddingRight: 50,
 	},
 	addButton: {
-		flexDirection: 'row',
-		alignItems: 'center',
+		flexDirection: "row",
+		alignItems: "center",
 		padding: 10,
 		borderRadius: 5,
 		marginBottom: 15,
@@ -339,8 +353,8 @@ const styles = StyleSheet.create({
 		marginBottom: 15,
 	},
 	checkboxRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
+		flexDirection: "row",
+		alignItems: "center",
 		marginBottom: 10,
 	},
 	textArea: {
@@ -351,12 +365,12 @@ const styles = StyleSheet.create({
 		marginBottom: 15,
 		borderRadius: 5,
 		backgroundColor: colours.lightText,
-		textAlignVertical: 'top',
+		textAlignVertical: "top",
 	},
 	submitButton: {
 		backgroundColor: colours.primaryHighlight,
 		padding: 15,
-		alignItems: 'center',
+		alignItems: "center",
 		borderRadius: 5,
 	},
 	submitText: {
@@ -364,9 +378,9 @@ const styles = StyleSheet.create({
 	},
 	modalContainer: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
 	},
 	modalContent: {
 		width: 300,
@@ -374,12 +388,12 @@ const styles = StyleSheet.create({
 		paddingVertical: 55,
 		backgroundColor: colours.primaryBackground,
 		borderRadius: 5,
-		alignItems: 'center',
+		alignItems: "center",
 	},
 	successMessage: {
 		fontSize: 16,
 		marginBottom: 30,
-		textAlign: 'center',
+		textAlign: "center",
 		lineHeight: 25,
 	},
 	modalButton: {
@@ -399,13 +413,13 @@ const styles = StyleSheet.create({
 		marginBottom: 30,
 	},
 	inputContainer: {
-		position: 'relative',
-		width: '100%',
+		position: "relative",
+		width: "100%",
 	},
 	iconContainer: {
-		position: 'absolute',
+		position: "absolute",
 		right: 15,
-		top: '50%',
+		top: "50%",
 		transform: [{ translateY: -16 }],
 	},
 	circleIcon: {
@@ -415,11 +429,11 @@ const styles = StyleSheet.create({
 	eyeIcon: {
 		width: 25,
 		height: 25,
-		tintColor: '#777',
+		tintColor: "#777",
 	},
 	instrumentRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
+		flexDirection: "row",
+		alignItems: "center",
 	},
 	removeButton: {
 		marginLeft: 10,
@@ -434,18 +448,25 @@ const styles = StyleSheet.create({
 		paddingRight: 40,
 	},
 	addInstrumentContainer: {
-		position: 'relative',
-		width: '100%',
+		position: "relative",
+		width: "100%",
 	},
 	removeIconContainer: {
-		position: 'absolute',
+		position: "absolute",
 		right: 10,
-		top: '50%',
+		top: "50%",
 		transform: [{ translateY: -15 }],
 	},
 	removeInstrumentIcon: {
 		width: 25,
 		height: 25,
-		tintColor: '#777',
+		tintColor: "#777",
+	},
+	loadingContainer: {
+		flex: 1,
+		backgroundColor: "F5F5F5",
+		paddingTop: StatusBar.currentHeight,
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });
