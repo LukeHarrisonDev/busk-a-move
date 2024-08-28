@@ -1,15 +1,20 @@
 import { useEffect, useState } from 'react';
-import {Picker} from '@react-native-picker/picker';
-
+import { Picker } from '@react-native-picker/picker';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { fetchAllBusks } from '../api';
 import colours from '../config/colours';
+import { Text } from 'react-native';
 
-function BuskSearchComponent({ sortBy, setSortBy, instrumentFilter, setInstrumentFilter }) {
+function BuskSearchComponent({
+	sortBy,
+	setSortBy,
+	instrumentFilter,
+	setInstrumentFilter,
+}) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [listOfIntruments, setListOfInstruments] = useState([]);
-    
+
 	// This is to populate the list with existing instruments
 	useEffect(() => {
 		fetchAllBusks().then((response) => {
@@ -25,73 +30,99 @@ function BuskSearchComponent({ sortBy, setSortBy, instrumentFilter, setInstrumen
 		});
 	}, []);
 
-    function handleInstrumentChange(value) {
-        setInstrumentFilter(value)
-    }
+	function handleInstrumentChange(value) {
+		setInstrumentFilter(value);
+	}
 
 	function handleSortByChange(value) {
-		setSortBy(value)
+		setSortBy(value);
 	}
 
 	return (
 		<View style={styles.filterContainer}>
-            <Picker 
-                selectedValue={instrumentFilter}
-                onValueChange={handleInstrumentChange}>
-                    <Picker.Item label="All"
-					    value=""/>
-                {listOfIntruments.map((instrument) => {
-                    return <Picker.Item 
-                        key={instrument}
-                        label={instrument}
-					    value={instrument} />
-                })}
-            </Picker>
-            <Picker
-				selectedValue={sortBy}
-				onValueChange={handleSortByChange}>
-                <Picker.Item label="Time: Newest - Oldest (Default)" value="?sort_by=busk_time_date&order=desc"/>
-                <Picker.Item label="Time: Oldest - Newest" value="?sort_by=busk_time_date&order=asc"/>
-                <Picker.Item label="Location: A-Z" value="?sort_by=busk_location_name&order=asc"/>
-                <Picker.Item label="Location: Z-A" value="?sort_by=busk_location_name&order=desc"/>
-                <Picker.Item label="Username: A-Z" value="?sort_by=username&order=asc"/>
-                <Picker.Item label="Username: Z-A" value="?sort_by=username&order=desc"/>
-            </Picker>
-        </View>
+			<Text style={styles.label}>Filter by instrument: </Text>
+			<View style={styles.pickerContainer}>
+				<Picker
+					selectedValue={instrumentFilter}
+					onValueChange={handleInstrumentChange}
+					style={styles.picker}
+					mode='dropdown'
+				>
+					<Picker.Item label='All' value='' />
+					{listOfIntruments.map((instrument) => (
+						<Picker.Item
+							key={instrument}
+							label={instrument}
+							value={instrument}
+						/>
+					))}
+				</Picker>
+			</View>
+			<Text style={styles.label}>Sort by: </Text>
+			<View style={styles.pickerContainer}>
+				<Picker
+					selectedValue={sortBy}
+					onValueChange={handleSortByChange}
+					style={styles.picker}
+					mode='dropdown'
+				>
+					<Picker.Item
+						label='Time: Newest - Oldest (Default)'
+						value='?sort_by=busk_time_date&order=desc'
+					/>
+					<Picker.Item
+						label='Time: Oldest - Newest'
+						value='?sort_by=busk_time_date&order=asc'
+					/>
+					<Picker.Item
+						label='Location: A-Z'
+						value='?sort_by=busk_location_name&order=asc'
+					/>
+					<Picker.Item
+						label='Location: Z-A'
+						value='?sort_by=busk_location_name&order=desc'
+					/>
+					<Picker.Item
+						label='Username: A-Z'
+						value='?sort_by=username&order=asc'
+					/>
+					<Picker.Item
+						label='Username: Z-A'
+						value='?sort_by=username&order=desc'
+					/>
+				</Picker>
+			</View>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#f5f5f5',
-		paddingTop: StatusBar.currentHeight,
-	},
 	filterContainer: {
-		padding: 5,
-		backgroundColor: colours.secondaryBackground,
-		borderWidth: 5,
-        margin: 10,
-		borderColor: colours.primaryHighlight,
-        width: 350,
-		maxWidth: "100%",
+		width: 395,
+		padding: 15,
+	},
+	pickerContainer: {
+		marginBottom: 15,
+		backgroundColor: colours.lightText,
+		borderRadius: 8,
+		borderWidth: 2,
+		borderColor: colours.darkText,
 	},
 	picker: {
 		fontSize: 16,
-		paddingVertical: 12,
-		paddingHorizontal: 10,
-		borderWidth: 3,
-		borderColor: 'gray',
-		borderRadius: 4,
-		color: 'black',
-		paddingRight: 30,
+		color: colours.primaryText,
+		paddingVertical: 10,
+		paddingHorizontal: 15,
 	},
 	loadingContainer: {
 		flex: 1,
-		backgroundColor: 'F5F5F5',
+		backgroundColor: '#F5F5F5',
 		paddingTop: StatusBar.currentHeight,
 		justifyContent: 'center',
 		alignItems: 'center',
+	},
+	label: {
+		marginBottom: 10,
 	},
 });
 
