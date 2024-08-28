@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchSingleBusk, deleteBusk } from "../api";
+import { fetchSingleBusk, deleteBusk, updateBusk } from "../api";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import {
   Text,
@@ -12,6 +12,8 @@ import {
   ScrollView,
   Button,
   Alert,
+  Pressable,
+  TextInput
 } from "react-native";
 import { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import MapView from "react-native-maps";
@@ -20,16 +22,31 @@ import colours from "../config/colours";
 import * as Location from "expo-location";
 
 function SingleBusk({ route }) {
+  const { id } = route.params;
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null);
-  const { id } = route.params;
   const [singleBusk, setSingleBusk] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [instruments, setInstruments] = useState([]);
 
+  const [isTitleEditing, setIsTitleEditing] = useState(false)
+  const [titleName, setTitleName] = useState("")
+  const [optimisticTitleName, setOptimisticTitleName] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
+
   const isFocused = useIsFocused();
   const navigation = useNavigation();
+
+  const handleTitleSubmit = () => { 
+    setOptimisticTitleName(titleName)
+    setIsTitleEditing(false)
+    updateBusk(singleBusk.busk_id, titleName)
+    .catch((err) => {
+      setOptimisticTitleName(singleBusk.busk_location_name)
+      setErrorMessage("Busk location name unsuccessful, please try again in a moment")
+    })
+  }      
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -46,11 +63,10 @@ function SingleBusk({ route }) {
         } else {
           setSingleBusk(response);
           setInstruments(response.busk_selected_instruments.join(", "));
+          setOptimisticTitleName(response.busk_location_name)
           setInitialRegion({
             latitude: response.busk_location.latitude,
             longitude: response.busk_location.longitude,
-            // latitude: location.coords.latitude,
-            // longitude: location.coords.longitude,
             latitudeDelta: 0.0422,
             longitudeDelta: 0.0221,
           });
@@ -82,7 +98,7 @@ function SingleBusk({ route }) {
     };
     getLocation();
   }, []);
-
+  
   const handleDelete = () => {
     Alert.alert(
       "Confirm Delete",
@@ -139,9 +155,42 @@ function SingleBusk({ route }) {
       >
         <View style={styles.card}>
           <ScrollView contentContainerStyle={styles.scrollView}>
+            <View style={styles.titleContainer}>
+
+            {isTitleEditing ? 
+            <View>
+              <TextInput
+                style={styles.input}
+                placeholder={singleBusk.busk_location_name}
+                value={titleName}
+                onChangeText={setTitleName}
+                autoCorrect={false}
+                autoCapitalize='none'
+              /> 
+              <Button
+                title="Submit"
+                onPress={handleTitleSubmit}/>
+               
+            </View>
+            :   
             <Text style={styles.titleText}>
-              {singleBusk.busk_location_name}
-            </Text>
+            {optimisticTitleName} {" "}
+
+            <Pressable
+            style={styles.pressable}
+              onPress={() => {
+                setIsTitleEditing(true)
+              }}
+              >
+              <Image
+                source={require('../assets/edit.png')}
+                style={styles.editPencil} 
+              />
+            </Pressable>
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          </Text>
+            }
+            </View>
             <Text style={styles.bodyText}>
               {formatTime(singleBusk.busk_time_date)} on{" "}
               {formatDate(singleBusk.busk_time_date)}
@@ -159,7 +208,6 @@ function SingleBusk({ route }) {
             <Text style={styles.bodyTextBold}>Instruments:</Text>
             <Text style={styles.bodyText}>
               {instruments}
-              {/* {singleBusk.busk_selected_instruments} */}
             </Text>
             <Text style={styles.bodyTextBold}>About Me: </Text>
             <Text style={styles.bodyText}>{singleBusk.busk_about_me}</Text>
@@ -178,37 +226,9 @@ function SingleBusk({ route }) {
                     }}
                     title={singleBusk.busk_location_name}
                   />
-                  {/* {currentLocation && (
-							<Marker
-								coordinate={{
-									latitude: currentLocation.latitude,
-									longitude: currentLocation.longitude,
-								}}
-								title="Your Location"
-							/>
-						)} */}
                 </MapView>
               )}
             </View>
-            {/* <MapView
-					style={styles.map}
-					provider={PROVIDER_GOOGLE}
-					initialRegion={{
-						latitude: Number(singleBusk.busk_location.latitude),
-						longitude: Number(singleBusk.busk_location.longitude),
-						latitudeDelta: 0.0922,
-						longitudeDelta: 0.0421,
-					}}
-				>
-					<Marker
-						coordinate={{
-							latitude: Number(singleBusk.busk_location.latitude),
-							longitude: Number(singleBusk.busk_location.longitude),
-						}}
-						title={singleBusk.busk_location_name}
-						description="Busk location"
-					/>
-				</MapView> */}
             <View style={styles.buttonContainer}>
               <Button
                 title="Delete Busk"
@@ -253,11 +273,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  titleText: {
-    color: colours.primaryHighlight,
-    fontWeight: "bold",
-    fontSize: 30,
-  },
   bodyText: {
     fontSize: 24,
     color: colours.primaryHighlight,
@@ -294,5 +309,36 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "80%",
   },
+  titleContainer: {
+    width: "100%",
+
+  },
+  titleText: {
+    color: colours.primaryHighlight,
+    fontWeight: "bold",
+    fontSize: 30,
+    textAlign: "center"
+  },
+
+  editPencil: {
+    // position: "absolute",
+    flexDirection: "column",
+    alignSelf: "flex-start",
+    width: 30,
+		height: 30,
+  },
+  input: {
+		borderWidth: 1,
+		borderColor: colours.darkHighlight,
+		padding: 10,
+		marginBottom: 10,
+		borderRadius: 5,
+		backgroundColor: colours.lightText,
+		paddingRight: 50,
+	},
+  errorText: {
+		color: colours.errorText,
+		marginBottom: 15,
+	},
 });
 export default SingleBusk;
