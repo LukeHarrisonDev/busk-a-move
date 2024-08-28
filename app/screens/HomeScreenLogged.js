@@ -163,17 +163,6 @@ const styles = StyleSheet.create({
 		color: colours.darkText,
 		fontSize: 16,
 	},
-	buskersImgContainer: {
-		width: '100%',
-		height: 320,
-		alignItems: 'center',
-		position: 'relative',
-	},
-	buskersImg: {
-		width: '100%',
-		maxHeight: 320,
-		aspectRatio: 1.7,
-	},
 	carouselContainer: {
 		minHeight: 380,
 		marginVertical: 40,
