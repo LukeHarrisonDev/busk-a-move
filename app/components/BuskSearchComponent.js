@@ -10,6 +10,7 @@ function BuskSearchComponent({ sortBy, setSortBy, instrumentFilter, setInstrumen
 	const [isLoading, setIsLoading] = useState(true);
 	const [listOfIntruments, setListOfInstruments] = useState([]);
     
+	// This is to populate the list with existing instruments
 	useEffect(() => {
 		fetchAllBusks().then((response) => {
 			setIsLoading(true);
