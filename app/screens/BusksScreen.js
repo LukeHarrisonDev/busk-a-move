@@ -169,14 +169,16 @@ function BusksScreen({ navigation, route }) {
 											{formatDate(item.busk_time_date)}
 										</Text>
 									</View>
-									<View style={styles.instrumentsContainer}>
-										<Text style={styles.instruments}>
-											Instruments: {`\n`} {instruments} {`\n`}
-											{`\n`} Buskers Setup: {`\n`} {item.busk_setup}
-										</Text>
+									<View style={styles.instrumentAndBuskersTextContainer}>
+										<View style={styles.instrumentsContainer}>
+											<Text style={styles.instruments}>
+												{`\n`}<Text style={styles.bold}>Instruments:</Text> {`\n`}{instruments} {`\n`}
+												{`\n`}<Text style={styles.bold}>Buskers Setup:</Text> {`\n`}{item.busk_setup}
+											</Text>
+										</View>
 									</View>
 									<View>
-										<Text>Busk created by {item.username}</Text>
+										<Text>{`\n`}{`\n`}Busk created by <Text style={styles.bold}>{item.username}</Text></Text>
 									</View>
 									<Pressable
 										onPress={() => {
@@ -317,7 +319,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		borderRadius: 5,
 		marginVertical: 15,
-		marginTop: 60,
+		marginTop: 45,
 		borderWidth: 2,
 		borderColor: colours.primaryHighlight,
 	},
@@ -325,6 +327,13 @@ const styles = StyleSheet.create({
 		color: colours.reverseLightText,
 		fontWeight: 'bold',
 	},
+	instrumentAndBuskersTextContainer: {
+		width: "60%",
+		textAlign: "left"
+	},
+	bold: {
+		fontWeight: "bold",
+	}
 });
 
 export default BusksScreen;
