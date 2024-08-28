@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import colours from '../config/colours';
 
-function BuskerCardComponent({
+function CarouselComponent({
 	name,
 	image,
 	description,
@@ -74,7 +74,7 @@ function BuskerCardComponent({
 	);
 }
 
-export default BuskerCardComponent;
+export default CarouselComponent;
 
 const styles = StyleSheet.create({
 	cardContainer: {
