@@ -4,7 +4,8 @@ export default {
 	primaryBackground: '#F7FAFB',
 	// lightOrange
 	secondaryBackground: '#fede00',
-
+	// **SHADES**
+	mediumOpacityShade: 'rgba(241, 247, 247, 0.6)',
 	// **TEXT**
 	// white
 	lightText: '#fefefe',

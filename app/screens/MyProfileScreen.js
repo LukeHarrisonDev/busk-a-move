@@ -11,6 +11,7 @@ import { useRoute } from '@react-navigation/native';
 
 
 import colours from '../config/colours'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function MyProfileScreen(props) {
   const route = useRoute()
@@ -70,10 +71,13 @@ function MyProfileScreen(props) {
     }
 
     const handleLogout = () =>{
-      navigation.navigate('Login')
-      Alert.alert('You have successfully logged out')
-      
-    }
+      AsyncStorage.removeItem('isAuthenticated').then(()=> {
+       navigation.reset({
+        index: 0,
+        routes: [{name: 'Login'}]
+       })
+        })
+     }
 
     // const handleImagePicker = () => {
     //     ImagePicker.launchImageLibraryAsync({

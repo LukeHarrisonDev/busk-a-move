@@ -4,6 +4,7 @@ import {TouchableOpacity} from 'react-native-web'
 import { useFocusEffect } from '@react-navigation/native';
 
 import colours from '../config/colours'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function LoginScreen({ navigation }) {
   const [form, setForm] = useState({
@@ -61,7 +62,12 @@ function LoginScreen({ navigation }) {
    
   authenticateUser(emailOrUsername, password)
   .then((user) => {
-    navigation.navigate("MyProfile", {userId : user.user_id});
+    AsyncStorage.setItem('isAuthenticated', 'true').then(() => {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'MyProfile', params: {userId: user.user_id}}]
+      })
+    })
   })
   .catch((error) => {
     Alert.alert('login failed', error.message)

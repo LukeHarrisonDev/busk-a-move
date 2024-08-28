@@ -21,7 +21,6 @@ import { formatDate, formatTime } from "../assets/utils/date-and-time";
 import * as Location from "expo-location";
 
 function BusksScreen({ navigation }) {
-	const [currentLocation, setCurrentLocation] = useState(null);
 	const [initialRegion, setInitialRegion] = useState(null);
 	const [busksList, setBusksList] = useState([]);
 	const [sortBy, setSortBy] = useState("");
@@ -47,24 +46,25 @@ function BusksScreen({ navigation }) {
 			});
 			setMapLocations(listOfMapLocations);
 			setIsLoading(false);
+			const getLocation = async () => {
+				let { status } = await Location.requestForegroundPermissionsAsync();
+				if (status !== "granted") {
+					console.log("Permission to access location was denied");
+					return;
+				}
+				let location = await Location.getCurrentPositionAsync({});
+				// setCurrentLocation(location.coords);
+				return location.coords;
+			};
+			getLocation().then((response) => {
+				setInitialRegion({
+					latitude: response.latitude,
+					longitude: response.longitude,
+					latitudeDelta: 0.0422,
+					longitudeDelta: 0.0221,
+				});
+			});
 		});
-		const getLocation = async () => {
-			let { status } = await Location.requestForegroundPermissionsAsync();
-			if (status !== "granted") {
-				console.log("Permission to access location was denied");
-				return;
-			}
-			let location = await Location.getCurrentPositionAsync({});
-			setCurrentLocation(location.coords);
-			//
-		};
-		getLocation();
-		// setInitialRegion({
-		// 	latitude: response.busk_location.latitude,
-		// 	longitude: response.busks.busk_location.longitude,
-		// 	latitudeDelta: 0.0422,
-		// 	longitudeDelta: 0.0221,
-		// });
 	}, [instrumentFilter, sortBy]);
 
 	if (isLoading) {
@@ -90,31 +90,33 @@ function BusksScreen({ navigation }) {
 							/>
 						</View>
 						<View style={styles.mapContainer}>
-							<MapView
-								style={styles.map}
-								provider={PROVIDER_GOOGLE}
-								showsUserLocation
-								initialRegion={{
-									latitude: Number(currentLocation.latitude),
-									longitude: Number(currentLocation.longitude),
-									latitudeDelta: 0.0902,
-									longitudeDelta: 0.0901,
-								}}
-							>
-								{mapLocations.map((marker, index) => {
-									return (
-										<Marker
-											key={index}
-											coordinate={{
-												latitude: marker.latitude,
-												longitude: marker.longitude,
-											}}
-											title={marker.locationName}
-											description="Busk location"
-										/>
-									);
-								})}
-							</MapView>
+							{initialRegion && (
+								<MapView
+									style={styles.map}
+									provider={PROVIDER_GOOGLE}
+									showsUserLocation
+									initialRegion={{
+										latitude: Number(initialRegion.latitude),
+										longitude: Number(initialRegion.longitude),
+										latitudeDelta: 0.0902,
+										longitudeDelta: 0.0901,
+									}}
+								>
+									{mapLocations.map((marker, index) => {
+										return (
+											<Marker
+												key={index}
+												coordinate={{
+													latitude: marker.latitude,
+													longitude: marker.longitude,
+												}}
+												title={marker.locationName}
+												description="Busk location"
+											/>
+										);
+									})}
+								</MapView>
+							)}
 						</View>
 					</View>
 				}
