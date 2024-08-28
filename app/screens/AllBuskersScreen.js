@@ -9,8 +9,10 @@ import {
 	FlatList,
 	StatusBar,
 	StyleSheet,
+	Pressable,
 } from "react-native";
 import colours from "../config/colours";
+// import { TouchableWithoutFeedback } from "react-native-web";
 
 function AllBuskersScreen({ navigation }) {
 	const [buskersList, setBuskersList] = useState([]);
@@ -47,24 +49,27 @@ function AllBuskersScreen({ navigation }) {
 					renderItem={({ item }) => {
 						const instruments = item.instruments.join(", ");
 						return (
-							<View style={styles.card}>
-								<Text
-									onPress={() => {
-										navigation.navigate("BuskerProfile", { id: item.user_id });
-									}}
-									style={styles.titleText}
-								>
-									{item.username}
-								</Text>
-								<Text style={styles.bodyText}>{item.full_name}</Text>
-								<Text style={styles.bodyText}>{item.user_location}</Text>
-								<Image
-									style={styles.userImage}
-									source={{ uri: item.user_image_url }}
-								/>
-								<Text style={styles.titleText}>Instruments:</Text>
-								<Text style={styles.bodyText}>{instruments}</Text>
-							</View>
+							<Pressable
+							onPress={() => {
+								navigation.navigate("BuskerProfile", { id: item.user_id });
+							}}>
+								<View style={styles.card} >
+									<Text
+										
+										style={styles.titleText}
+									>
+										{item.username}
+									</Text>
+									<Text style={styles.bodyText}>{item.full_name}</Text>
+									<Text style={styles.bodyText}>{item.user_location}</Text>
+									<Image
+										style={styles.userImage}
+										source={{ uri: item.user_image_url }}
+									/>
+									<Text style={styles.titleText}>Instruments:</Text>
+									<Text style={styles.bodyText}>{instruments}</Text>
+								</View>
+							</Pressable>
 						);
 					}}
 					ItemSeparatorComponent={() => (
@@ -75,7 +80,6 @@ function AllBuskersScreen({ navigation }) {
 						></View>
 					)}
 					ListEmptyComponent={<Text>No Buskers Found</Text>}
-
 					refreshing={refreshing}
 					onRefresh={handleRefresh}
 				/>
