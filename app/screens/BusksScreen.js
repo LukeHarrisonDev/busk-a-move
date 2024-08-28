@@ -18,8 +18,11 @@ import { Marker } from "react-native-maps";
 import BuskSearchComponent from "../components/BuskSearchComponent";
 import colours from "../config/colours";
 import { formatDate, formatTime } from "../assets/utils/date-and-time";
+import * as Location from "expo-location";
 
 function BusksScreen({ navigation }) {
+	const [currentLocation, setCurrentLocation] = useState(null);
+	const [initialRegion, setInitialRegion] = useState(null);
 	const [busksList, setBusksList] = useState([]);
 	const [sortBy, setSortBy] = useState("");
 	const [instrumentFilter, setInstrumentFilter] = useState("");
@@ -45,6 +48,23 @@ function BusksScreen({ navigation }) {
 			setMapLocations(listOfMapLocations);
 			setIsLoading(false);
 		});
+		const getLocation = async () => {
+			let { status } = await Location.requestForegroundPermissionsAsync();
+			if (status !== "granted") {
+				console.log("Permission to access location was denied");
+				return;
+			}
+			let location = await Location.getCurrentPositionAsync({});
+			setCurrentLocation(location.coords);
+			//
+		};
+		getLocation();
+		// setInitialRegion({
+		// 	latitude: response.busk_location.latitude,
+		// 	longitude: response.busks.busk_location.longitude,
+		// 	latitudeDelta: 0.0422,
+		// 	longitudeDelta: 0.0221,
+		// });
 	}, [instrumentFilter, sortBy]);
 
 	if (isLoading) {
@@ -73,11 +93,12 @@ function BusksScreen({ navigation }) {
 							<MapView
 								style={styles.map}
 								provider={PROVIDER_GOOGLE}
+								showsUserLocation
 								initialRegion={{
-									latitude: 53.801468,
-									longitude: Number(-1.549067),
-									latitudeDelta: 0.0102,
-									longitudeDelta: 0.0101,
+									latitude: Number(currentLocation.latitude),
+									longitude: Number(currentLocation.longitude),
+									latitudeDelta: 0.0902,
+									longitudeDelta: 0.0901,
 								}}
 							>
 								{mapLocations.map((marker, index) => {
