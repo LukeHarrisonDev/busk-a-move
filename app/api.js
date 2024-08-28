@@ -5,7 +5,6 @@ const busksAPI = axios.create({
 });
 
 export const fetchAllBusks = (instrumentFilter, sortBy) => {
-
   if (instrumentFilter && !sortBy) {
     return busksAPI
       .get(`/busks?instruments=${instrumentFilter}`)
@@ -13,12 +12,9 @@ export const fetchAllBusks = (instrumentFilter, sortBy) => {
         return response.data;
       });
   } else if (!instrumentFilter && sortBy) {
-    return busksAPI
-      .get(`/busks${sortBy}`)
-      .then((response) => {
-        return response.data;
-      });
-
+    return busksAPI.get(`/busks${sortBy}`).then((response) => {
+      return response.data;
+    });
   } else if (instrumentFilter && sortBy) {
     return busksAPI
       .get(`/busks${sortBy}&instruments=${instrumentFilter}`)
@@ -76,6 +72,27 @@ export const addBusk = (busk) => {
         console.error("Error headers from addBusk:", error.response.headers);
       } else {
         console.error("Error message from addBusk:", error.message);
+      }
+      throw error;
+    });
+};
+
+export const deleteBusk = (id) => {
+  return busksAPI
+    .delete(`/busks/${id}`)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      if (error.response) {
+        console.error(
+          "Error response data from deleteBusk:",
+          error.response.data
+        );
+        console.error("Error status from deleteBusk:", error.response.status);
+        console.error("Error headers from deleteBusk:", error.response.headers);
+      } else {
+        console.error("Error message from deleteBusk:", error.message);
       }
       throw error;
     });
