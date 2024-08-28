@@ -12,8 +12,19 @@ function BuskersStack({ navigation }) {
   return (
     <ErrorBoundary>
       <Stack.Navigator>
-        <Stack.Screen name="AllBuskers" component={AllBuskersScreen} />
-        <Stack.Screen name="BuskerProfile" component={BuskerProfileScreen} />
+        <Stack.Screen name="AllBuskers" component={AllBuskersScreen}
+          options={{
+            title: "Buskers", 
+            headerTitleStyle: {
+              fontWeight: "bold",
+              fontSize: 23
+            }, 
+            headerStyle: {
+              backgroundColor: colours.secondaryBackground
+            }
+          }}/>
+        <Stack.Screen name="BuskerProfile" component={BuskerProfileScreen}
+          options={{headerShown: false, title: "Home"}}/>
         <Stack.Screen
           name="CreateABusk"
           component={CreateABuskScreen}
@@ -21,6 +32,7 @@ function BuskersStack({ navigation }) {
             title: "Create New Busk",
             headerTitleStyle: {
               fontWeight: "bold",
+              fontSize: 23
             },
             headerStyle: {
               backgroundColor: colours.secondaryBackground,
