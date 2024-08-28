@@ -123,6 +123,7 @@ function AllBuskersScreen({ navigation }) {
 
 const styles = StyleSheet.create({
 	buskersListContainer: {
+		backgroundColor: '#FCF8FC',
 		flex: 1,
 		paddingHorizontal: 16,
 	},
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
 	},
 	loadingContainer: {
 		flex: 1,
-		backgroundColor: 'F5F5F5',
+		backgroundColor: '#F5F5F5',
 		paddingTop: StatusBar.currentHeight,
 		justifyContent: 'center',
 		alignItems: 'center',

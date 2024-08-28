@@ -56,6 +56,11 @@ export const createUser = (body) => {
   return busksAPI.post("/users", body);
 };
 
+export const updateBusk = (id, buskLocation) => {
+  console.log(id, "<<< ID", buskLocation, "<<<< Busk Loc")
+  return busksAPI.patch(`/busks/${id}`, { busk_location_name: buskLocation })
+}
+
 export const addBusk = (busk) => {
   return busksAPI
     .post("/busks", busk)

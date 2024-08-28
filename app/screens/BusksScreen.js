@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from 'react';
 import {
 	Text,
 	View,
@@ -9,22 +9,23 @@ import {
 	StyleSheet,
 	TouchableWithoutFeedback,
 	Image,
-} from "react-native";
-import { fetchAllBusks } from "../api";
-import { PROVIDER_GOOGLE } from "react-native-maps";
-import MapView from "react-native-maps";
-import { Marker } from "react-native-maps";
-import BuskSearchComponent from "../components/BuskSearchComponent";
-import colours from "../config/colours";
-import { formatDate, formatTime } from "../assets/utils/date-and-time";
-import { useFocusEffect } from "@react-navigation/native";
-import * as Location from "expo-location";
+	Pressable,
+} from 'react-native';
+import { fetchAllBusks } from '../api';
+import { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView from 'react-native-maps';
+import { Marker } from 'react-native-maps';
+import BuskSearchComponent from '../components/BuskSearchComponent';
+import colours from '../config/colours';
+import { formatDate, formatTime } from '../assets/utils/date-and-time';
+import { useFocusEffect } from '@react-navigation/native';
+import * as Location from 'expo-location';
 
 function BusksScreen({ navigation, route }) {
 	const [initialRegion, setInitialRegion] = useState(null);
 	const [busksList, setBusksList] = useState([]);
-	const [sortBy, setSortBy] = useState("");
-	const [instrumentFilter, setInstrumentFilter] = useState("");
+	const [sortBy, setSortBy] = useState('');
+	const [instrumentFilter, setInstrumentFilter] = useState('');
 	const [isLoading, setIsLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
 	const [mapLocations, setMapLocations] = useState([]);
@@ -46,8 +47,8 @@ function BusksScreen({ navigation, route }) {
 
 	const getLocation = async () => {
 		let { status } = await Location.requestForegroundPermissionsAsync();
-		if (status !== "granted") {
-			console.log("Permission to access location was denied");
+		if (status !== 'granted') {
+			console.log('Permission to access location was denied');
 			return;
 		}
 		let location = await Location.getCurrentPositionAsync({});
@@ -83,14 +84,14 @@ function BusksScreen({ navigation, route }) {
 	if (isLoading) {
 		return (
 			<SafeAreaView style={styles.loadingContainer}>
-				<ActivityIndicator size="large" color="0000ff" />
+				<ActivityIndicator size='large' color='0000ff' />
 				<Text>Loading...</Text>
 			</SafeAreaView>
 		);
 	}
 
 	return (
-		<SafeAreaView style={styles.container}>
+		<SafeAreaView style={styles.busksContainer}>
 			<FlatList
 				ListHeaderComponent={
 					<View>
@@ -124,7 +125,7 @@ function BusksScreen({ navigation, route }) {
 													longitude: marker.longitude,
 												}}
 												title={marker.locationName}
-												description="Busk location"
+												description='Busk location'
 											/>
 										);
 									})}
@@ -135,29 +136,58 @@ function BusksScreen({ navigation, route }) {
 				}
 				data={busksList}
 				renderItem={({ item }) => {
-					const instruments = item.busk_selected_instruments.join(", ");
+					const instruments = item.busk_selected_instruments.join(', ');
 
 					return (
 						<TouchableWithoutFeedback
 							onPress={() => {
-								navigation.navigate("SingleBusk", { id: item.busk_id });
+								navigation.navigate('SingleBusk', { id: item.busk_id });
 							}}
 						>
-							<View style={styles.card}>
-								<Image
-									style={styles.cardImage}
-									source={{ uri: item.user_image_url }}
-								/>
-								<Text style={styles.titleText}>
-									{item.username} @ {item.busk_location_name} @{" "}
-									{formatTime(item.busk_time_date)} on{" "}
-									{formatDate(item.busk_time_date)}
-								</Text>
-								<View style={styles.bodyContainer}>
-									<Text style={styles.bodyText}>
-										Intruments: {`\n`} {instruments} {`\n`}
-										{`\n`} Buskers Setup: {`\n`} {item.busk_setup}
-									</Text>
+							<View style={styles.busksCardsContainer}>
+								<View style={styles.busksCardsWrapper}>
+									<View style={styles.cardImgContainer}>
+										<Image
+											style={styles.cardImage}
+											source={{ uri: item.user_image_url }}
+										/>
+										<Image
+											source={require('../assets/wave.png')}
+											style={styles.wavyBottom}
+											resizeMode='cover'
+										/>
+									</View>
+
+									<View style={styles.locationContainer}>
+										<Text style={styles.location}>
+											{item.busk_location_name}
+										</Text>
+									</View>
+									<View>
+										<Text>
+											{formatTime(item.busk_time_date)} on{' '}
+											{formatDate(item.busk_time_date)}
+										</Text>
+									</View>
+									<View style={styles.instrumentAndBuskersTextContainer}>
+										<View style={styles.instrumentsContainer}>
+											<Text style={styles.instruments}>
+												{`\n`}<Text style={styles.bold}>Instruments:</Text> {`\n`}{instruments} {`\n`}
+												{`\n`}<Text style={styles.bold}>Buskers Setup:</Text> {`\n`}{item.busk_setup}
+											</Text>
+										</View>
+									</View>
+									<View>
+										<Text>{`\n`}{`\n`}Busk created by <Text style={styles.bold}>{item.username}</Text></Text>
+									</View>
+									<Pressable
+										onPress={() => {
+											navigation.navigate('SingleBusk', { id: item.busk_id });
+										}}
+										style={styles.buskProfileButton}
+									>
+										<Text style={styles.buskProfileText}>SEE MORE</Text>
+									</Pressable>
 								</View>
 							</View>
 						</TouchableWithoutFeedback>
@@ -179,78 +209,131 @@ function BusksScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-	container: {
+	busksContainer: {
+		width: '100%',
+		height: 300,
 		flex: 1,
-		backgroundColor: "#f5f5f5",
+		backgroundColor: '#FCF8FC',
 		paddingTop: StatusBar.currentHeight,
-		flexDirection: "column",
-		alignItems: "center",
+		flexDirection: 'column',
+		alignItems: 'center',
+		marginVertical: 20,
 	},
 	filterContainer: {
-		flexDirection: "column",
-		alignItems: "center",
+		flexDirection: 'column',
+		alignItems: 'center',
 	},
-	card: {
-		width: "95%",
-		aspectRatio: 1 / 1,
-		backgroundColor: colours.secondaryBackground,
-		padding: 16,
-		borderRadius: 15,
-		borderWidth: 5,
-		borderColor: colours.primaryHighlight,
+	busksCardsContainer: {
+		width: '100%',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		minHeight: 200,
+		backgroundColor: colours.primaryBackground,
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.2,
+		shadowRadius: 5,
+		elevation: 4,
+	},
+	busksCardsWrapper: {
+		width: '100%',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'space-evenly',
+	},
+	cardImgContainer: {
+		width: '100%',
+		height: 70,
+		backgroundColor: colours.fourthBackground,
+		marginBottom: 100,
+	},
+	cardImgWrapper: {
+		width: '100%',
+		height: 90,
+		position: 'absolute',
+	},
+	wavyBottom: {
+		position: 'absolute',
+		bottom: -90,
+		width: '100%',
+		height: 100,
 	},
 	cardImage: {
-		margin: 16,
-		opacity: 0.2,
-		width: "100%",
-		aspectRatio: 1 / 1,
-		position: "absolute",
-	},
-	titleText: {
-		fontSize: 25,
-	},
-	bodyText: {
-		fontSize: 20,
-		color: colours.darkHighlight,
-		textAlign: "right",
-	},
-	bodyContainer: {
-		margin: 16,
-		width: "100%",
-		aspectRatio: 1 / 1,
-		position: "absolute",
-		alignItems: "flex-end",
-		justifyContent: "flex-end",
+		width: 100,
+		height: 100,
+		borderRadius: 50,
+		borderColor: '#fff',
+		borderWidth: 3,
+		margin: 'auto',
+		position: 'relative',
+		top: 70,
+		zIndex: 100,
 	},
 	headerText: {
 		fontSize: 24,
-		textAlign: "center",
+		textAlign: 'center',
 		marginBottom: 12,
 		paddingTop: 10,
 	},
 	footerText: {
 		fontSize: 24,
-		textAlign: "center",
+		textAlign: 'center',
 		marginTop: 12,
 	},
 	loadingContainer: {
 		flex: 1,
-		backgroundColor: "F5F5F5",
+		backgroundColor: 'F5F5F5',
 		paddingTop: StatusBar.currentHeight,
-		justifyContent: "center",
-		alignItems: "center",
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	mapContainer: {
-		flexDirection: "column",
-		alignItems: "center",
+		flexDirection: 'column',
+		alignItems: 'center',
 		margin: 10,
-		border: colours.darkTabBar,
-		borderWidth: 5,
+		width: '95%',
+		height: 250,
+		borderRadius: 15,
+		overflow: 'hidden',
+		marginBottom: 20,
+		backgroundColor: '#ddd',
+		shadowColor: '#000',
+		shadowOffset: { width: 5, height: 4 },
+		shadowOpacity: 0.3,
+		shadowRadius: 8,
+		elevation: 10,
 	},
 	map: {
-		width: 364,
+		width: 370,
 		height: 250,
 	},
+	location: {
+		fontSize: 25,
+	},
+	buskProfileButton: {
+		width: '95%',
+		backgroundColor: colours.reversePrimaryHiglight,
+		padding: 15,
+		alignSelf: 'center',
+		alignItems: 'center',
+		borderRadius: 5,
+		marginVertical: 15,
+		marginTop: 45,
+		borderWidth: 2,
+		borderColor: colours.primaryHighlight,
+	},
+	buskProfileText: {
+		color: colours.reverseLightText,
+		fontWeight: 'bold',
+	},
+	instrumentAndBuskersTextContainer: {
+		width: "60%",
+		textAlign: "left"
+	},
+	bold: {
+		fontWeight: "bold",
+	}
 });
 
 export default BusksScreen;
