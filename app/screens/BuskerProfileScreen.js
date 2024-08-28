@@ -34,6 +34,8 @@ function BuskerProfileScreen({ route, navigation }) {
     );
   }
 
+  const buksersInstruments = singleBusker.instruments.join(", ")
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -68,7 +70,7 @@ function BuskerProfileScreen({ route, navigation }) {
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>My Setup:</Text>
-            <Text style={styles.bodyText}>{singleBusker.instruments}</Text>
+            <Text style={styles.bodyText}>{buksersInstruments}</Text>
           </View>
         </View>
       </ScrollView>
