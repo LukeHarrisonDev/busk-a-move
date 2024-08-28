@@ -58,36 +58,37 @@ function BusksScreen({ navigation }) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView style={styles.listContainer}>
-				<View style={styles.filterContainer}>
-					<BuskSearchComponent sortBy={sortBy} setSortBy={setSortBy} instrumentFilter={instrumentFilter} setInstrumentFilter={setInstrumentFilter}/>
-				</View>
-				<View style={styles.mapContainer}>
-					<MapView
-						style={styles.map}
-						provider={PROVIDER_GOOGLE}
-						initialRegion={{
-							latitude: 53.801468,
-							longitude: Number(-1.549067),
-							latitudeDelta: 0.0102,
-							longitudeDelta: 0.0101,
-						}}>
-
+				<FlatList
+				ListHeaderComponent={
+				<View>
+					<View style={styles.filterContainer}>
+						<BuskSearchComponent sortBy={sortBy} setSortBy={setSortBy} instrumentFilter={instrumentFilter} setInstrumentFilter={setInstrumentFilter}/>
+					</View>
+					<View style={styles.mapContainer}>
+						<MapView
+							style={styles.map}
+							provider={PROVIDER_GOOGLE}
+							initialRegion={{
+								latitude: 53.801468,
+								longitude: Number(-1.549067),
+								latitudeDelta: 0.0102,
+								longitudeDelta: 0.0101,
+							}}>
 							{mapLocations.map((marker, index) => {
 								return (
 									<Marker
-										key={index}
-										coordinate={{
-											latitude: marker.latitude,
-											longitude: marker.longitude,
-										}}
-										title={marker.locationName}
-										description="Busk location"/>
+									key={index}
+									coordinate={{
+										latitude: marker.latitude,
+										longitude: marker.longitude,
+									}}
+									title={marker.locationName}
+									description="Busk location"/>
 								)
 							})}
-					</MapView>
-				</View>
-				<FlatList
+						</MapView>
+					</View>
+							</View>}
 					data={busksList}
 					renderItem={({ item }) => {
 						const instruments = item.busk_selected_instruments.join(", ")
@@ -119,7 +120,6 @@ function BusksScreen({ navigation }) {
 					refreshing={refreshing}
 					onRefresh={handleRefresh}
 				/>
-			</ScrollView>
 		</SafeAreaView>
 	);
 }
