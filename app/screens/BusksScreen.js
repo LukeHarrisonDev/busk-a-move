@@ -9,7 +9,7 @@ import {
 	StyleSheet,
 	TouchableWithoutFeedback,
 	Image,
-	ScrollView
+	ScrollView,
 } from "react-native";
 import { fetchAllBusks } from "../api";
 import { PROVIDER_GOOGLE } from "react-native-maps";
@@ -21,11 +21,11 @@ import { formatDate, formatTime } from "../assets/utils/date-and-time";
 
 function BusksScreen({ navigation }) {
 	const [busksList, setBusksList] = useState([]);
-	const [sortBy, setSortBy] = useState("")
-	const [instrumentFilter, setInstrumentFilter] = useState("")
+	const [sortBy, setSortBy] = useState("");
+	const [instrumentFilter, setInstrumentFilter] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
-	const [mapLocations, setMapLocations] = useState([])
+	const [mapLocations, setMapLocations] = useState([]);
 
 	const handleRefresh = () => {
 		setRefreshing(true);
@@ -36,14 +36,14 @@ function BusksScreen({ navigation }) {
 	useEffect(() => {
 		fetchAllBusks(instrumentFilter, sortBy).then((response) => {
 			setBusksList(response.busks);
-			const listOfMapLocations = []
-			busksList.forEach((busk) => {
-				locationAndNameObject = busk.busk_location
-				locationAndNameObject.locationName = busk.busk_location_name
-				listOfMapLocations.push(locationAndNameObject)
-			})
-			setMapLocations(listOfMapLocations)
-			setIsLoading(false)
+			const listOfMapLocations = [];
+			response.busks.forEach((busk) => {
+				const locationAndNameObject = busk.busk_location;
+				locationAndNameObject.locationName = busk.busk_location_name;
+				listOfMapLocations.push(locationAndNameObject);
+			});
+			setMapLocations(listOfMapLocations);
+			setIsLoading(false);
 		});
 	}, [instrumentFilter, sortBy]);
 
@@ -58,68 +58,86 @@ function BusksScreen({ navigation }) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-				<FlatList
+			<FlatList
 				ListHeaderComponent={
-				<View>
-					<View style={styles.filterContainer}>
-						<BuskSearchComponent sortBy={sortBy} setSortBy={setSortBy} instrumentFilter={instrumentFilter} setInstrumentFilter={setInstrumentFilter}/>
+					<View>
+						<View style={styles.filterContainer}>
+							<BuskSearchComponent
+								sortBy={sortBy}
+								setSortBy={setSortBy}
+								instrumentFilter={instrumentFilter}
+								setInstrumentFilter={setInstrumentFilter}
+							/>
+						</View>
+						<View style={styles.mapContainer}>
+							<MapView
+								style={styles.map}
+								provider={PROVIDER_GOOGLE}
+								initialRegion={{
+									latitude: 53.801468,
+									longitude: Number(-1.549067),
+									latitudeDelta: 0.0102,
+									longitudeDelta: 0.0101,
+								}}
+							>
+								{mapLocations.map((marker, index) => {
+									return (
+										<Marker
+											key={index}
+											coordinate={{
+												latitude: marker.latitude,
+												longitude: marker.longitude,
+											}}
+											title={marker.locationName}
+											description="Busk location"
+										/>
+									);
+								})}
+							</MapView>
+						</View>
 					</View>
-					<View style={styles.mapContainer}>
-						<MapView
-							style={styles.map}
-							provider={PROVIDER_GOOGLE}
-							initialRegion={{
-								latitude: 53.801468,
-								longitude: Number(-1.549067),
-								latitudeDelta: 0.0102,
-								longitudeDelta: 0.0101,
-							}}>
-							{mapLocations.map((marker, index) => {
-								return (
-									<Marker
-									key={index}
-									coordinate={{
-										latitude: marker.latitude,
-										longitude: marker.longitude,
-									}}
-									title={marker.locationName}
-									description="Busk location"/>
-								)
-							})}
-						</MapView>
-					</View>
-							</View>}
-					data={busksList}
-					renderItem={({ item }) => {
-						const instruments = item.busk_selected_instruments.join(", ")
+				}
+				data={busksList}
+				renderItem={({ item }) => {
+					const instruments = item.busk_selected_instruments.join(", ");
 
-						return (
-							<TouchableWithoutFeedback onPress={() => {
+					return (
+						<TouchableWithoutFeedback
+							onPress={() => {
 								navigation.navigate("SingleBusk", { id: item.busk_id });
-							}}>
-								<View style={styles.card}>
-								<Image style={styles.cardImage}source={{uri: item.user_image_url}}/>
-										<Text style={styles.titleText}>
-											{item.username} @ {item.busk_location_name} @ {formatTime(item.busk_time_date)} on {formatDate(item.busk_time_date)}
-										</Text>
-										<View style={styles.bodyContainer}>
-										<Text style={styles.bodyText}>Intruments: {`\n`} {instruments} {`\n`}{`\n`} Buskers Setup: {`\n`} {item.busk_setup}</Text>
-										</View>
-								</View>
-							</TouchableWithoutFeedback>
-						);
-					}}
-					ItemSeparatorComponent={() => (
-						<View
-							style={{
-								height: 16,
 							}}
-						></View>
-					)}
-					ListEmptyComponent={<Text>No Busks Found</Text>}
-					refreshing={refreshing}
-					onRefresh={handleRefresh}
-				/>
+						>
+							<View style={styles.card}>
+								<Image
+									style={styles.cardImage}
+									source={{ uri: item.user_image_url }}
+								/>
+								<Text style={styles.titleText}>
+									{item.username} @ {item.busk_location_name} @{" "}
+									{formatTime(item.busk_time_date)} on{" "}
+									{formatDate(item.busk_time_date)}
+								</Text>
+								<View style={styles.bodyContainer}>
+									<Text style={styles.bodyText}>
+										Intruments: {`\n`} {instruments} {`\n`}
+										{`\n`} Buskers Setup: {`\n`} {item.busk_setup}
+									</Text>
+								</View>
+							</View>
+						</TouchableWithoutFeedback>
+					);
+				}}
+				ItemSeparatorComponent={() => (
+					<View
+						style={{
+							height: 16,
+						}}
+					></View>
+				)}
+				ListEmptyComponent={<Text>No Busks Found</Text>}
+				refreshing={refreshing}
+				onRefresh={handleRefresh}
+			/>
 		</SafeAreaView>
 	);
 }
@@ -130,15 +148,15 @@ const styles = StyleSheet.create({
 		backgroundColor: "#f5f5f5",
 		paddingTop: StatusBar.currentHeight,
 		flexDirection: "column",
-		alignItems: "center"
+		alignItems: "center",
 	},
 	filterContainer: {
 		flexDirection: "column",
-		alignItems: "center"
+		alignItems: "center",
 	},
 	card: {
 		width: "95%",
-		aspectRatio: 1/1,
+		aspectRatio: 1 / 1,
 		backgroundColor: colours.secondaryBackground,
 		padding: 16,
 		borderRadius: 15,
@@ -149,7 +167,7 @@ const styles = StyleSheet.create({
 		margin: 16,
 		opacity: 0.2,
 		width: "100%",
-		aspectRatio: 1/1,
+		aspectRatio: 1 / 1,
 		position: "absolute",
 	},
 	titleText: {
@@ -159,16 +177,14 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		color: colours.darkHighlight,
 		textAlign: "right",
-
 	},
 	bodyContainer: {
 		margin: 16,
 		width: "100%",
-		aspectRatio: 1/1,
+		aspectRatio: 1 / 1,
 		position: "absolute",
 		alignItems: "flex-end",
-		justifyContent: "flex-end"
-
+		justifyContent: "flex-end",
 	},
 	headerText: {
 		fontSize: 24,
@@ -197,7 +213,7 @@ const styles = StyleSheet.create({
 	},
 	map: {
 		width: 364,
-		height: 250
+		height: 250,
 	},
 });
 
