@@ -10,7 +10,6 @@ function BuskerCardComponent({
 	instruments,
 	date,
 }) {
-	// Helper function to truncate the description
 	function truncateDescription(text, maxLength) {
 		if (text.length > maxLength) {
 			return text.substring(0, maxLength) + '...';
@@ -42,7 +41,6 @@ function BuskerCardComponent({
 			<View style={styles.cardHeader}>
 				<Image source={image} style={styles.cardImage} />
 				<View style={styles.cardHeaderText}>
-					<Text style={styles.cardName}>{name}</Text>
 					<View style={styles.cardLocationContainer}>
 						<Image
 							source={require('../assets/location.png')}
@@ -68,7 +66,9 @@ function BuskerCardComponent({
 			</View>
 			<Text style={styles.cardDescription}>
 				{truncateDescription(description, 100)}{' '}
-				{/* Adjust 100 to desired max length */}
+			</Text>
+			<Text style={styles.cardName}>
+				Busk created by <Text style={styles.cardUsername}>{name}</Text>
 			</Text>
 		</View>
 	);
@@ -107,9 +107,15 @@ const styles = StyleSheet.create({
 		marginLeft: 15,
 	},
 	cardName: {
-		fontSize: 18,
-		fontWeight: 'bold',
+		fontSize: 14,
 		color: colours.darkText,
+		marginLeft: 10,
+	},
+	cardUsername: {
+		fontSize: 14,
+		color: colours.darkText,
+		fontStyle: 'italic',
+		fontWeight: '600',
 	},
 	cardLocationContainer: {
 		flex: 1,
@@ -124,9 +130,10 @@ const styles = StyleSheet.create({
 		marginRight: 5,
 	},
 	cardLocationText: {
-		fontSize: 14,
-		color: colours.darkText,
 		marginRight: 15,
+		fontSize: 18,
+		fontWeight: 'bold',
+		color: colours.darkText,
 	},
 	cardDateContainer: {
 		flexDirection: 'row',

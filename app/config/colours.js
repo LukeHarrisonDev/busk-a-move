@@ -6,7 +6,7 @@ export default {
 	secondaryBackground: '#fede00',
 
 	// **SHADES**
-	mediumOpacityShade: 'rgba(241, 247, 247, 0.6)',
+	mediumOpacityShade: 'rgba(240, 235, 240, 0.5)',
 
 	// **TEXT**
 	// white
