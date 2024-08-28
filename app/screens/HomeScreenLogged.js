@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Text,
 	View,
@@ -7,12 +8,44 @@ import {
 	Image,
 	SafeAreaView,
 	ImageBackground,
+	FlatList,
 	Dimensions,
 	Pressable,
 } from 'react-native';
+import BuskerCardComponent from '../components/BuskerCardComponent';
+import { fetchAllBusks } from '../api';
 import colours from '../config/colours';
 
-function HomeScreen({ navigation }) {
+const { width } = Dimensions.get('window');
+
+function HomeScreenLogged({ navigation }) {
+	const [busks, setBusks] = useState([]);
+
+	useEffect(() => {
+		fetchAllBusks().then((res) => {
+			setBusks(res.busks);
+		});
+	}, []);
+
+	const formatInstruments = (instrumentsArray) => {
+		if (!instrumentsArray || instrumentsArray.length === 0) return '';
+		const formattedInstruments = instrumentsArray.map((instrument, index) =>
+			index === 0 ? instrument : instrument.toLowerCase()
+		);
+		return formattedInstruments.join(', ');
+	};
+
+	const renderBusker = ({ item }) => (
+		<BuskerCardComponent
+			name={item.username}
+			location={item.busk_location_name}
+			date={item.busk_time_date}
+			image={{ uri: item.user_image_url }}
+			description={item.busk_about_me}
+			instruments={formatInstruments(item.busk_selected_instruments)}
+		/>
+	);
+
 	return (
 		<SafeAreaView style={styles.homeContainer}>
 			<ImageBackground
@@ -41,30 +74,28 @@ function HomeScreen({ navigation }) {
 						</Text>
 						<Text style={styles.happyText}>Happy busking!</Text>
 					</View>
-					<View style={styles.buskersImgContainer}>
-						<Image
-							source={require('../assets/buskers-homepage-cold.png')}
-							style={styles.buskersImg}
-							resizeMode='contain'
-						/>
-					</View>
-					<View style={styles.sessionButtonsContainer}>
-						<Pressable
-							style={styles.signUpButton}
-							onPress={() => {
-								navigation.navigate('SignUp');
-							}}
-						>
-							<Text style={styles.signUpText}>SIGN UP</Text>
-						</Pressable>
-						<Pressable
-							style={styles.logInButton}
-							onPress={() => {
-								navigation.navigate('Login');
-							}}
-						>
-							<Text style={styles.logInText}>LOG IN</Text>
-						</Pressable>
+					<View style={styles.carouselContainer}>
+						<Text style={styles.carouselHeader}>DISCOVER BUSKS</Text>
+						<View style={styles.carouselWrapper}>
+							<View style={styles.carouselTextContainer}>
+								<Pressable
+									style={styles.linkContainer}
+									onPress={() => navigation.navigate('Busks')}
+								>
+									<Text style={styles.linkText}>See more Busks</Text>
+								</Pressable>
+							</View>
+							<FlatList
+								data={busks}
+								renderItem={renderBusker}
+								keyExtractor={(item, index) => index.toString()}
+								horizontal
+								showsHorizontalScrollIndicator={false}
+								snapToInterval={width * 0.8 + 20}
+								decelerationRate='fast'
+								bounces={false}
+							/>
+						</View>
 					</View>
 				</ScrollView>
 			</ImageBackground>
@@ -72,7 +103,7 @@ function HomeScreen({ navigation }) {
 	);
 }
 
-export default HomeScreen;
+export default HomeScreenLogged;
 
 const styles = StyleSheet.create({
 	homeContainer: {
@@ -143,41 +174,51 @@ const styles = StyleSheet.create({
 		maxHeight: 320,
 		aspectRatio: 1.7,
 	},
-	sessionButtonsContainer: {
-		width: '95%',
-		height: 110,
-		display: 'flex',
-		justifyContent: 'space-evenly',
-		alignItems: 'center',
-		position: 'absolute',
-		bottom: 80,
+	carouselContainer: {
+		minHeight: 380,
+		marginVertical: 40,
 	},
-	signUpButton: {
-		width: '95%',
-		backgroundColor: colours.primaryHighlight,
-		padding: 15,
-		alignSelf: 'center',
-		alignItems: 'center',
-		borderRadius: 5,
-		marginVertical: 15,
-	},
-	signUpText: {
+	carouselHeader: {
+		fontSize: 19,
+		fontWeight: 'bold',
 		color: colours.lightText,
-		fontWeight: 'bold',
+		textAlign: 'center',
+		textShadowColor: '#000000',
+		textShadowOffset: { width: 0, height: 0 },
+		textShadowRadius: 8,
+		shadowOpacity: 1,
+		shadowColor: '#000000',
+		shadowOffset: { width: 1, height: 1 },
+		shadowRadius: 8,
 	},
-	logInButton: {
-		width: '95%',
-		backgroundColor: colours.reversePrimaryHiglight,
-		padding: 15,
-		alignSelf: 'center',
+	carouselWrapper: {
+		height: 400,
+		paddingTop: 10,
+		paddingBottom: 20,
+		marginVertical: 20,
+		backgroundColor: colours.mediumOpacityShade,
+	},
+	carouselTextContainer: {
+		width: '100%',
+		height: 35,
+		display: 'flex',
+		flexDirection: 'row',
 		alignItems: 'center',
-		borderRadius: 5,
-		marginVertical: 15,
-		borderWidth: 2,
-		borderColor: colours.primaryHighlight,
+		justifyContent: 'flex-end',
 	},
-	logInText: {
-		color: colours.reverseLightText,
-		fontWeight: 'bold',
+	linkContainer: {
+		width: 150,
+		height: 40,
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
+		marginRight: 10,
+		marginTop: 20,
+	},
+	linkText: {
+		textDecorationLine: 'underline',
+		textDecorationColor: colours.darkText,
+		fontSize: 16,
 	},
 });
