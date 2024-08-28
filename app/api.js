@@ -57,12 +57,9 @@ export const createUser = (body) => {
 };
 
 export const addBusk = (busk) => {
-  console.log("---> adding a busk in the api: ", busk);
   return busksAPI
     .post("/busks", busk)
     .then((response) => {
-      console.log("----> response from addBusk: ", response);
-
       return response.data;
     })
     .catch((error) => {
