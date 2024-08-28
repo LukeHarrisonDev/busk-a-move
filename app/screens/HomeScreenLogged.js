@@ -12,7 +12,7 @@ import {
 	Dimensions,
 	Pressable,
 } from 'react-native';
-import BuskerCardComponent from '../components/BuskerCardComponent';
+import CarouselComponent from '../components/CarouselComponent';
 import { fetchAllBusks } from '../api';
 import colours from '../config/colours';
 
@@ -36,7 +36,7 @@ function HomeScreenLogged({ navigation }) {
 	};
 
 	const renderBusker = ({ item }) => (
-		<BuskerCardComponent
+		<CarouselComponent
 			name={item.username}
 			location={item.busk_location_name}
 			date={item.busk_time_date}
