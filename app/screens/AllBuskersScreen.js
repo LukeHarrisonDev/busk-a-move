@@ -75,12 +75,7 @@ function AllBuskersScreen({ navigation }) {
 						></View>
 					)}
 					ListEmptyComponent={<Text>No Buskers Found</Text>}
-					ListHeaderComponent={
-						<Text style={styles.headerText}>Buskers List</Text>
-					}
-					ListFooterComponent={
-						<Text style={styles.footerText}>End of list</Text>
-					}
+
 					refreshing={refreshing}
 					onRefresh={handleRefresh}
 				/>
