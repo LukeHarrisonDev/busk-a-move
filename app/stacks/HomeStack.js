@@ -17,7 +17,7 @@ function HomeStack() {
     const navigation = useNavigation();
 
     useEffect(() => {
-        
+        AsyncStorage.setItem('isAuthenticated', 'false')
         AsyncStorage.getItem('isAuthenticated')
             .then((flag) => {
                 if (flag === 'true') {
