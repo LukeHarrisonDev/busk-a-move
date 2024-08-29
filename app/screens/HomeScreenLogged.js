@@ -12,7 +12,7 @@ import {
 	Dimensions,
 	Pressable,
 } from 'react-native';
-import BuskerCardComponent from '../components/BuskerCardComponent';
+import CarouselComponent from '../components/CarouselComponent';
 import { fetchAllBusks } from '../api';
 import colours from '../config/colours';
 
@@ -36,7 +36,7 @@ function HomeScreenLogged({ navigation }) {
 	};
 
 	const renderBusker = ({ item }) => (
-		<BuskerCardComponent
+		<CarouselComponent
 			name={item.username}
 			location={item.busk_location_name}
 			date={item.busk_time_date}
@@ -59,20 +59,27 @@ function HomeScreenLogged({ navigation }) {
 							source={require('../assets/busk-a-move-header.png')}
 						/>
 					</View>
-					<View style={styles.homeBlurbContainer}>
-						<Text style={styles.homeBlurbText}>
-							<Text>Welcome! </Text>
-							Busk-A-Move app is a fun space for <Text>Buskers</Text> of all
-							levels to connect and collaborate. Whether you are{' '}
-							<Text>new to busking</Text> and eager to start, or a{' '}
-							<Text>veteran Busker</Text> looking to share your music with
-							fellow performers and passers-by, this app has you covered.
-						</Text>
-						<Text style={styles.paragraphText}>
-							Just create an account to explore local busks, connect with other
-							musicians, or kick off your own busking adventures.
-						</Text>
-						<Text style={styles.happyText}>Happy busking!</Text>
+					<View style={styles.sloganContainer}>
+						<View style={styles.guitarristImgContainer}>
+							<Image
+								source={require('../assets/guitarrist.png')}
+								style={styles.guitarristImg}
+								resizeMode='contain'
+							/>
+						</View>
+						<View style={styles.homeBlurbContainer}>
+							<Text style={styles.homeBlurbText}>
+								Connect with fellow Buskers, share your passion, and make every
+								performance unforgettable!
+							</Text>
+						</View>
+						<View style={styles.singerImgContainer}>
+							<Image
+								source={require('../assets/singer.png')}
+								style={styles.singerImg}
+								resizeMode='contain'
+							/>
+						</View>
 					</View>
 					<View style={styles.carouselContainer}>
 						<Text style={styles.carouselHeader}>DISCOVER BUSKS</Text>
@@ -131,6 +138,23 @@ const styles = StyleSheet.create({
 		width: 280,
 		height: 45,
 	},
+	sloganContainer: {
+		height: 650,
+		position: 'relative',
+	},
+	guitarristImgContainer: {
+		width: '100%',
+		height: 220,
+		position: 'absolute',
+		top: -15,
+		left: -100,
+		marginVertical: 20,
+	},
+	guitarristImg: {
+		width: '80%',
+		maxHeight: 320,
+		aspectRatio: 1.7,
+	},
 	homeBlurbContainer: {
 		width: '92%',
 		backgroundColor: colours.primaryBackground,
@@ -144,6 +168,8 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.3,
 		shadowRadius: 6,
 		elevation: 8,
+		position: 'absolute',
+		top: 220,
 	},
 	homeBlurbText: {
 		marginBottom: 5,
@@ -151,24 +177,25 @@ const styles = StyleSheet.create({
 		color: colours.darkText,
 		fontSize: 16,
 	},
-	paragraphText: {
-		marginTop: 5,
-		lineHeight: 24,
-		color: colours.darkText,
-		fontSize: 16,
+	singerImgContainer: {
+		width: '100%',
+		height: 300,
+		position: 'relative',
+		marginVertical: 20,
+		top: 300,
+		right: -80,
 	},
-	happyText: {
-		marginTop: 5,
-		lineHeight: 24,
-		color: colours.darkText,
-		fontSize: 16,
+	singerImg: {
+		width: '80%',
+		maxHeight: 300,
+		aspectRatio: 1.7,
 	},
 	carouselContainer: {
 		minHeight: 380,
 		marginVertical: 40,
 	},
 	carouselHeader: {
-		fontSize: 19,
+		fontSize: 23,
 		fontWeight: 'bold',
 		color: colours.lightText,
 		textAlign: 'center',

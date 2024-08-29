@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
 		marginBottom: 15,
 		backgroundColor: colours.lightText,
 		borderRadius: 8,
-		borderWidth: 2,
+		borderWidth: 1.3,
 		borderColor: colours.darkText,
 	},
 	picker: {
