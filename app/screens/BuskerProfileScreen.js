@@ -49,15 +49,6 @@ function BuskerProfileScreen({ route, navigation }) {
 		<SafeAreaView style={styles.container}>
 			{/* <ScrollView> */}
 			{/* contentContainerStyle={styles.scrollContainer} */}
-			<Pressable
-				style={styles.buskButton}
-				title="Create Busk"
-				onPress={() => {
-					navigation.navigate("CreateABusk", { data: singleBusker });
-				}}
-			>
-				<Text style={styles.buskButtonText}>Create New Busk</Text>
-			</Pressable>
 			{/* //Here */}
 			<View style={styles.buskerCard}>
 				<View style={[styles.buskerImgContainer, { backgroundColor }]}>
