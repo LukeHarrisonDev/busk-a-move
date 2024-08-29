@@ -150,19 +150,13 @@ function MyProfileScreen({ navigation }) {
             <Text style={styles.bodyText}>{buksersInstruments}</Text>
           </View>
           {/* <View style={styles.buskerAboutMeContainer}> */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>About Me: </Text>
-              <Pressable style={styles.smallButton} onPress={handleEditPress}>
-                <Text style={styles.editButtonText}>
-                  {" "}
-                  {isEditing ? "Save" : "Edit"}{" "}
-                </Text>
-              </Pressable>
-            </View>
-            <View>
+          <View style={styles.sectionMe}>
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>About Me: </Text>
+              </View>
               <TextInput
-                style={[styles.Textinput, { height: 100 }]}
+                style={[styles.textInput]}
                 value={aboutMe}
                 multiline={true}
                 textAlignVertical="top"
@@ -170,26 +164,34 @@ function MyProfileScreen({ navigation }) {
                 onChangeText={(text) => setAboutMe(text)}
               />
             </View>
+            <Pressable style={styles.smallButton} onPress={handleEditPress}>
+              <Text style={styles.editButtonText}>
+                {" "}
+                {isEditing ? "Save" : "Edit"}{" "}
+              </Text>
+            </Pressable>
+
             {/* <Text style={styles.bodyText}>{singleBusker.user_about_me}</Text> */}
-          </View>
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>My Setup:</Text>
-              <Pressable
-                style={styles.smallButton}
-                onPress={handleSetupEditPress}
-              >
-                <Text style={styles.editButtonText}>
-                  {isSetupEditing ? "save" : "Edit"}
-                </Text>
-              </Pressable>
+
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitleSetup}>My Setup:</Text>
+              </View>
+              <TextInput
+                style={[styles.textInput]}
+                value={mySetup}
+                editable={isSetupEditing}
+                onChangeText={(text) => setMySetup(text)}
+              />
             </View>
-            <TextInput
-              style={[styles.textInput]}
-              value={mySetup}
-              editable={isSetupEditing}
-              onChangeText={(text) => setMySetup(text)}
-            />
+            <Pressable
+              style={styles.smallButton}
+              onPress={handleSetupEditPress}
+            >
+              <Text style={styles.editButtonText}>
+                {isSetupEditing ? "save" : "Edit"}
+              </Text>
+            </Pressable>
           </View>
         </View>
         <Pressable
@@ -207,7 +209,7 @@ function MyProfileScreen({ navigation }) {
             style={[styles.buttonWrapperLogout]}
             onPress={handleLogout}
           >
-            <Text style={styles.buttonText}>Logout</Text>
+            <Text style={styles.logOutText}>Logout</Text>
           </Pressable>
           <Pressable style={styles.buttonWrapperDelete} onPress={() => {}}>
             <Text style={[styles.buttonText]}>Delete Account</Text>
@@ -392,7 +394,8 @@ const styles = StyleSheet.create({
     color: "#555",
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 10,
+    maxWidth: "100%",
   },
   sectionHeader: {
     flexDirection: "row",
@@ -407,6 +410,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 10,
   },
+  sectionTitleSetup: {
+    fontSize: 18,
+    marginBottom: 10,
+    marginTop: 20,
+  },
   textInput: {
     borderColor: "#ddd",
     borderWidth: 1,
@@ -414,7 +422,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 16,
     color: "#333",
-    width: "100%",
+    maxWidth: "100%",
     minHeight: 100,
   },
   buttonContainer: {
@@ -444,31 +452,21 @@ const styles = StyleSheet.create({
   },
   buskButtonText: {
     color: colours.lightText,
+    fontWeight: "bold",
   },
-  // buttonWrapperLogout: {
-  //   backgroundColor: colours.primaryHighlight,
-  //   paddingVertical: 5,
-  //   paddingHorizontal: 10,
-  //   borderRadius: 5,
-  //   marginBottom: 5,
-  //   width: 200,
-  //   alignItems: "center",
-  // },
-  // buttonWrapperDelete: {
-  //   paddingVertical: 5,
-  //   paddingHorizontal: 10,
-  //   borderRadius: 5,
-  //   marginBottom: 5,
-  //   width: 200,
-  //   alignItems: "center",
-  // },
   buttonWrapperLogout: {
-    backgroundColor: colours.primaryHighlight,
+    width: 150,
+    backgroundColor: colours.reversePrimaryHiglight,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5,
-    width: 150,
     alignItems: "center",
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: colours.primaryHighlight,
+  },
+  logOutText: {
+    color: colours.reverseLightText,
+    fontWeight: "bold",
   },
   buttonWrapperDelete: {
     backgroundColor: colours.errorText,
@@ -481,6 +479,19 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  containerAboutMe: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  sectionMe: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "left",
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    maxWidth: "100%",
   },
 });
 
