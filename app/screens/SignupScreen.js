@@ -105,6 +105,8 @@ export default function SignUpForm({ navigation }) {
 					setAbout("");
 					setIsSetup(false);
 				});
+		} else {
+			setIsLoading(false);
 		}
 	};
 
@@ -124,7 +126,7 @@ export default function SignUpForm({ navigation }) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView>
+			<ScrollView showsVerticalScrollIndicator={false}>
 				<Modal
 					animationType="slide"
 					transparent={true}
