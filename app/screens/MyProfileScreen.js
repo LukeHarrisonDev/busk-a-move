@@ -40,7 +40,7 @@ function MyProfileScreen({ navigation }) {
 	const [modalVisible, setModalVisile] = useState(false);
 	const [enlargedImage, setEnlargedImage] = useState("");
 	const [singleBusker, setSingleBusker] = useState([]);
-	const [instruments, setInstruments] = useState([]);
+	const [instruments, setInstruments] = useState([])
 
 	const [loading, setLoading] = useState(false);
 

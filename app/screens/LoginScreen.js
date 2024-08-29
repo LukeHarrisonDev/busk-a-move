@@ -203,19 +203,23 @@ function LoginScreen({ navigation }) {
 
   const handleSubmit = () => {
     const { emailOrUsername, password } = form;
-
+  
     authenticateUser(emailOrUsername, password)
       .then((user) => {
-        AsyncStorage.setItem("isAuthenticated", "true").then(() => {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "MyProfile", params: { userId: user.user_id } }],
+        AsyncStorage.setItem("isAuthenticated", "true")
+          .then(() => {
+            
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "MyProfile", params: { userId: user.user_id } }],
+            });
+          })
+          .catch((error) => {
+            console.error("Failed to set authentication status:", error);
           });
-        });
-        // navigation.navigate("MyProfile", { userId: user.user_id });
       })
       .catch((error) => {
-        Alert.alert("login failed", error.message);
+        Alert.alert("Login failed", error.message);
       });
   };
 
