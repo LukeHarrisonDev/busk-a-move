@@ -202,21 +202,27 @@ function MyProfileScreen({ navigation }) {
           <Text style={styles.buskButtonText}>Create New Busk</Text>
         </Pressable>
 
-        {/* here */}
         <View style={styles.buttonContainer}>
-          <Button
-            style={styles.button}
-            title="Logout"
+          <Pressable
+            style={[styles.buttonWrapperLogout]}
             onPress={handleLogout}
-            color={colours.primaryHighlight}
-          />
-          <Button
-            style={styles.button}
-            title="Delete Account"
-            color="red"
-            onPress={() => {}}
-          />
+          >
+            <Text style={styles.buttonText}>Logout</Text>
+          </Pressable>
+          <Pressable style={styles.buttonWrapperDelete} onPress={() => {}}>
+            <Text style={[styles.buttonText]}>Delete Account</Text>
+          </Pressable>
         </View>
+
+        {/* here */}
+        {/* <View style={styles.buttonContainer}>
+          <View style={styles.buttonWrapperLogout}>
+            <Button title="Logout" onPress={handleLogout} />
+          </View>
+          <View style={styles.buttonWrapperDelete}>
+            <Button title="Delete Account" color="red" onPress={() => {}} />
+          </View>
+        </View> */}
 
         <Modal
           animationType="slide"
@@ -439,15 +445,42 @@ const styles = StyleSheet.create({
   buskButtonText: {
     color: colours.lightText,
   },
-  button: {
-    borderColor: colours.primaryHighlight,
-    borderWidth: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+  // buttonWrapperLogout: {
+  //   backgroundColor: colours.primaryHighlight,
+  //   paddingVertical: 5,
+  //   paddingHorizontal: 10,
+  //   borderRadius: 5,
+  //   marginBottom: 5,
+  //   width: 200,
+  //   alignItems: "center",
+  // },
+  // buttonWrapperDelete: {
+  //   paddingVertical: 5,
+  //   paddingHorizontal: 10,
+  //   borderRadius: 5,
+  //   marginBottom: 5,
+  //   width: 200,
+  //   alignItems: "center",
+  // },
+  buttonWrapperLogout: {
+    backgroundColor: colours.primaryHighlight,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 5,
-    marginBottom: 5,
-    width: 70,
+    width: 150,
     alignItems: "center",
+  },
+  buttonWrapperDelete: {
+    backgroundColor: colours.errorText,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width: 180,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
 
