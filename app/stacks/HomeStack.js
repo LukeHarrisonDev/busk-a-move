@@ -12,8 +12,8 @@ function HomeStack() {
 	return (
 		<Stack.Navigator>
 			<Stack.Screen
-				name='HomeScreenLogged'
-				component={HomeScreenLogged}
+				name='HomeScreen'
+				component={HomeScreen}
 				options={{ headerShown: false, title: 'Home' }}
 			/>
 			<Stack.Screen
@@ -44,7 +44,6 @@ function HomeStack() {
 					},
 				}}
 			/>
-			<Stack.Screen name='Busks' component={BusksScreen} />
 		</Stack.Navigator>
 	);
 }
