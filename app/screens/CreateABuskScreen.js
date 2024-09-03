@@ -10,6 +10,9 @@ import {
   Alert,
   ScrollView,
   Modal,
+  Linking,
+  Platform,
+  Button,
   Image,
 } from "react-native";
 import { fetchSingleBusker, addBusk } from "../api";
@@ -57,11 +60,13 @@ export default function CreateABuskScreen({ route, navigation }) {
     useState("");
   const [submittedBuskTimeDate, setSubmittedBuskTimeDate] = useState("");
 
+  const [permissionStatus, setPermissionStatus] = useState(null);
+
   useEffect(() => {
     fetchSingleBusker(data.data.user_id)
       .then((user) => {
         const instruments = user.instruments || [];
-        setAvailableInstruments(instruments || []);
+        setAvailableInstruments(instruments);
         setForm((prevForm) => ({
           ...prevForm,
           busk_selected_instruments: instruments.reduce((acc, instrument) => {
@@ -78,46 +83,73 @@ export default function CreateABuskScreen({ route, navigation }) {
       });
   }, [data.data.user_id]);
 
-  useEffect(() => {
-    const getCalendarPermission = async () => {
-      const { status } = await Calendar.requestCalendarPermissionsAsync();
+  const requestCalendarPermission = async () => {
+    try {
+      const { status } = await Calendar.getCalendarPermissionsAsync();
+      console.log("---> status: ", status);
       if (status !== "granted") {
-        Alert.alert(
-          "Permission Denied",
-          "Calendar permissions are required to create events."
-        );
-      }
-    };
-    getCalendarPermission();
-  }, []);
-
-  const handleInputChange = (name, value) => {
-    setForm((prevForm) => {
-      const newForm = { ...prevForm, [name]: value };
-      if (name === "busk_latitude" || name === "busk_longitude") {
-        const latitude = parseFloat(newForm.busk_latitude);
-        const longitude = parseFloat(newForm.busk_longitude);
-        if (!isNaN(latitude) && !isNaN(longitude)) {
-          setSelectedLocation({ latitude, longitude });
-          setRegion({
-            ...region,
-            latitude,
-            longitude,
-          });
+        const { status: newStatus } =
+          await Calendar.requestCalendarPermissionsAsync();
+        if (newStatus !== "granted") {
+          Alert.alert(
+            "Permission Required",
+            "Please grant calendar permissions in your device settings.",
+            [
+              { text: "Cancel", style: "cancel" },
+              { text: "Open Settings", onPress: openAppSettings },
+            ]
+          );
+        } else {
+          console.log("Calendar permission granted");
         }
+      } else {
+        console.log("Calendar permission already granted");
       }
-      return newForm;
-    });
+    } catch (error) {
+      console.error("Error checking/requesting permission", error);
+    }
   };
 
-  const handleSwitchChange = (instrument) => {
-    setForm((prevForm) => ({
-      ...prevForm,
-      busk_selected_instruments: {
-        ...prevForm.busk_selected_instruments,
-        [instrument]: !prevForm.busk_selected_instruments[instrument],
-      },
-    }));
+  const openAppSettings = () => {
+    if (Platform.OS === "android") {
+      Linking.openSettings();
+    } else if (Platform.OS === "ios") {
+      Linking.openURL("app-settings:");
+    }
+  };
+
+  const createCalendarEvent = async (title, dateTime) => {
+    try {
+      const { status } = await Calendar.getCalendarPermissionsAsync();
+
+      if (status !== "granted") {
+        const permissionResponse =
+          await Calendar.requestCalendarPermissionsAsync();
+        if (permissionResponse.status !== "granted") {
+          throw new Error("Calendar permissions denied.");
+        }
+      }
+
+      const calendars = await Calendar.getCalendarsAsync();
+      const defaultCalendar = calendars.find((cal) => cal.allowsModifications);
+
+      if (!defaultCalendar) {
+        throw new Error("No modifiable calendar found.");
+      }
+
+      const eventDetails = {
+        title,
+        startDate: new Date(dateTime),
+        endDate: new Date(new Date(dateTime).getTime() + 2 * 60 * 60 * 1000),
+        timeZone: "GMT",
+        location: `${form.busk_location_name}, ${form.busk_latitude}, ${form.busk_longitude}`,
+      };
+
+      await Calendar.createEventAsync(defaultCalendar.id, eventDetails);
+    } catch (error) {
+      console.error("Error creating calendar event:", error);
+      throw new Error("Failed to create calendar event");
+    }
   };
 
   const handleSubmit = async () => {
@@ -234,23 +266,33 @@ export default function CreateABuskScreen({ route, navigation }) {
     }
   };
 
-  const createCalendarEvent = async (title, dateTime) => {
-    try {
-      const calendars = await Calendar.getCalendarsAsync();
-      const defaultCalendar = calendars.find((cal) => cal.allowsModifications);
+  const handleInputChange = (name, value) => {
+    setForm((prevForm) => {
+      const newForm = { ...prevForm, [name]: value };
+      if (name === "busk_latitude" || name === "busk_longitude") {
+        const latitude = parseFloat(newForm.busk_latitude);
+        const longitude = parseFloat(newForm.busk_longitude);
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+          setSelectedLocation({ latitude, longitude });
+          setRegion({
+            ...region,
+            latitude,
+            longitude,
+          });
+        }
+      }
+      return newForm;
+    });
+  };
 
-      const eventDetails = {
-        title,
-        startDate: new Date(dateTime),
-        endDate: new Date(new Date(dateTime).getTime() + 2 * 60 * 60 * 1000),
-        timeZone: "GMT",
-        location: `${form.busk_location_name}, ${form.busk_latitude}, ${form.busk_longitude}`,
-      };
-
-      await Calendar.createEventAsync(defaultCalendar.id, eventDetails);
-    } catch (error) {
-      throw new Error("Failed to create calendar event");
-    }
+  const handleSwitchChange = (instrument) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      busk_selected_instruments: {
+        ...prevForm.busk_selected_instruments,
+        [instrument]: !prevForm.busk_selected_instruments[instrument],
+      },
+    }));
   };
 
   const resetForm = () => {
@@ -262,50 +304,15 @@ export default function CreateABuskScreen({ route, navigation }) {
       busk_longitude: "",
       busk_about_me: "",
       busk_setup: "",
-      busk_selected_instruments: availableInstruments.reduce(
-        (acc, instrument) => {
-          acc[instrument] = false;
-          return acc;
-        },
-        {}
-      ),
+      busk_selected_instruments: {},
     });
-    setSelectedLocation({
-      latitude: null,
-      longitude: null,
-    });
+    setSelectedLocation({ latitude: null, longitude: null });
     setRegion({
       latitude: 51.5074,
       longitude: -0.1278,
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
     });
-  };
-
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirmDate = (selectedDate) => {
-    hideDatePicker();
-    setForm((prevForm) => ({ ...prevForm, busk_date: selectedDate }));
-  };
-
-  const showTimePicker = () => {
-    setTimePickerVisibility(true);
-  };
-
-  const hideTimePicker = () => {
-    setTimePickerVisibility(false);
-  };
-
-  const handleConfirmTime = (selectedTime) => {
-    hideTimePicker();
-    setForm((prevForm) => ({ ...prevForm, busk_time: selectedTime }));
   };
 
   const handleMapSelect = (e) => {
@@ -353,6 +360,20 @@ export default function CreateABuskScreen({ route, navigation }) {
           visible={isModalVisible}
           onRequestClose={() => setIsModalVisible(false)}
         >
+          <View>
+            {permissionStatus === null ? (
+              <Button
+                title="Check Calendar Permission"
+                onPress={requestCalendarPermission}
+              />
+            ) : (
+              <Button
+                title="Request Calendar Permission"
+                onPress={requestCalendarPermission}
+                disabled={permissionStatus === "granted"}
+              />
+            )}
+          </View>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.successMessage}>
@@ -396,52 +417,56 @@ export default function CreateABuskScreen({ route, navigation }) {
           </View>
         </Modal>
 
-        <Text style={styles.label}>Busk Location Name:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter busk location name"
-          value={form.busk_location_name}
-          onChangeText={(text) => handleInputChange("busk_location_name", text)}
-        />
-
-        <Text style={styles.label}>Event Date:</Text>
-        <Pressable onPress={showDatePicker}>
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Location Name:</Text>
           <TextInput
             style={styles.input}
-            placeholder="Select event date"
-            value={form.busk_date.toDateString()}
-            editable={false}
+            placeholder="Enter busk location name"
+            value={form.busk_location_name}
+            onChangeText={(text) =>
+              setForm({ ...form, busk_location_name: text })
+            }
           />
-        </Pressable>
+        </View>
 
-        <DateTimePickerModal
-          isVisible={isDatePickerVisible}
-          mode="date"
-          onConfirm={handleConfirmDate}
-          onCancel={hideDatePicker}
-        />
-
-        <Text style={styles.label}>Event Time:</Text>
-        <Pressable onPress={showTimePicker}>
-          <TextInput
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Event Date:</Text>
+          <Pressable
             style={styles.input}
-            placeholder="Select event time"
-            value={form.busk_time.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-            editable={false}
+            onPress={() => setDatePickerVisibility(true)}
+          >
+            <Text>{form.busk_date.toDateString()}</Text>
+          </Pressable>
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={(date) => {
+              setForm({ ...form, busk_date: date });
+              setDatePickerVisibility(false);
+            }}
+            onCancel={() => setDatePickerVisibility(false)}
           />
-        </Pressable>
+        </View>
 
-        <DateTimePickerModal
-          isVisible={isTimePickerVisible}
-          mode="time"
-          onConfirm={handleConfirmTime}
-          onCancel={hideTimePicker}
-        />
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Event Time:</Text>
+          <Pressable
+            style={styles.input}
+            onPress={() => setTimePickerVisibility(true)}
+          >
+            <Text>{form.busk_time.toTimeString().slice(0, 5)}</Text>
+          </Pressable>
+          <DateTimePickerModal
+            isVisible={isTimePickerVisible}
+            mode="time"
+            onConfirm={(time) => {
+              setForm({ ...form, busk_time: time });
+              setTimePickerVisibility(false);
+            }}
+            onCancel={() => setTimePickerVisibility(false)}
+          />
+        </View>
 
-        <Text style={styles.label}>Location:</Text>
         <Pressable
           style={styles.mapButton}
           onPress={() => setIsMapModalVisible(true)}
@@ -449,23 +474,27 @@ export default function CreateABuskScreen({ route, navigation }) {
           <Text style={styles.mapButtonText}>Pick Location on Map</Text>
         </Pressable>
 
-        <Text style={styles.label}>Latitude:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter latitude"
-          value={form.busk_latitude}
-          onChangeText={(text) => handleInputChange("busk_latitude", text)}
-          keyboardType="numeric"
-        />
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Latitude:</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            placeholder="Enter latitude"
+            value={form.busk_latitude}
+            onChangeText={(text) => setForm({ ...form, busk_latitude: text })}
+          />
+        </View>
 
-        <Text style={styles.label}>Longitude:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter longitude"
-          value={form.busk_longitude}
-          onChangeText={(text) => handleInputChange("busk_longitude", text)}
-          keyboardType="numeric"
-        />
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Longitude:</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            placeholder="Enter longitude"
+            value={form.busk_longitude}
+            onChangeText={(text) => setForm({ ...form, busk_longitude: text })}
+          />
+        </View>
 
         <Text style={styles.label}>Instruments:</Text>
         {availableInstruments.map((instrument) => (
@@ -480,35 +509,39 @@ export default function CreateABuskScreen({ route, navigation }) {
           </View>
         ))}
 
-        <Text style={styles.label}>About Me:</Text>
-        <TextInput
-          style={styles.textArea}
-          placeholder="Tell us about yourself"
-          value={form.busk_about_me}
-          onChangeText={(text) => handleInputChange("busk_about_me", text)}
-          multiline
-          numberOfLines={4}
-        />
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>About Me:</Text>
+          <TextInput
+            style={styles.textArea}
+            placeholder="Tell us about yourself"
+            multiline
+            value={form.busk_about_me}
+            onChangeText={(text) => setForm({ ...form, busk_about_me: text })}
+          />
+        </View>
 
-        <Text style={styles.label}>Setup:</Text>
-        <TextInput
-          style={styles.textArea}
-          placeholder="Describe your setup"
-          value={form.busk_setup}
-          onChangeText={(text) => handleInputChange("busk_setup", text)}
-          multiline
-          numberOfLines={4}
-        />
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Setup:</Text>
+          <TextInput
+            style={styles.textArea}
+            placeholder="Describe your setup"
+            multiline
+            value={form.busk_setup}
+            onChangeText={(text) => setForm({ ...form, busk_setup: text })}
+          />
+        </View>
 
-        <Pressable
-          style={styles.submitButton}
-          onPress={handleSubmit}
-          disabled={submitting}
-        >
-          <Text style={styles.submitText}>
-            {submitting ? "Submitting..." : "Submit"}
-          </Text>
-        </Pressable>
+        <View style={styles.buttonContainer}>
+          <Pressable
+            style={styles.submitButton}
+            onPress={handleSubmit}
+            disabled={submitting}
+          >
+            <Text style={styles.submitText}>
+              {submitting ? "Submitting..." : "Submit"}
+            </Text>
+          </Pressable>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -565,7 +598,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   submitText: {
-    color: colours.lightText,
+    color: "white",
+    fontSize: 16,
   },
   modalContainer: {
     flex: 1,
@@ -633,5 +667,17 @@ const styles = StyleSheet.create({
   selectLocationText: {
     color: colours.lightText,
     fontSize: 16,
+  },
+  buttonContainer: {
+    marginTop: 20,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 16,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
