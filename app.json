@@ -13,7 +13,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.lukeharrisondev.buskamove"
+      "bundleIdentifier": "com.lukeharrisondev.buskamove",
+      "infoPlist": {
+        "NSCalendarsUsageDescription": "We need access to your calendar to add events.",
+        "NSRemindersUsageDescription": "We need access to your reminders to schedule events."
+      }
     },
     "android": {
       "config": {
@@ -23,7 +27,8 @@
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.lukeharrisondev.buskamove"
+      "package": "com.lukeharrisondev.buskamove",
+      "permissions": ["READ_CALENDAR", "WRITE_CALENDAR"]
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
@@ -37,7 +42,18 @@
       [
         "expo-calendar",
         {
-          "calendarPermission": "The app needs to access your calendar."
+          "calendarPermission": "The app needs to access your calendar.",
+          "remindersPermission": "The app needs to access your reminders."
+        }
+      ],
+      [
+        "react-native-permissions",
+        {
+          "permissions": {
+            "android": {
+              "calendar": "The app needs access to your calendar."
+            }
+          }
         }
       ]
     ]
